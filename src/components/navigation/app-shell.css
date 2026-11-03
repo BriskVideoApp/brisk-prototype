@@ -300,16 +300,6 @@
   position: relative;
 }
 
-.app-global-brief-actions-slot {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.app-global-brief-actions-slot:empty {
-  display: none;
-}
-
 .app-global-history-navigation {
   display: flex;
   flex: 0 0 auto;

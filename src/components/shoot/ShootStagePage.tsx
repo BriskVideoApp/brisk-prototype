@@ -45,7 +45,7 @@ import {
 } from "@/components/script/FloatingCommentShell";
 import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl } from "@/components/share/ShareActionRow";
 import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
@@ -1709,7 +1709,15 @@ export function ShootStagePage({ project }: { project: Project }) {
   return (
     <main className={`shoot-shell ${activeSection === "quick-start" ? "is-setup-screen" : ""}`}>
       <div className="shoot-main">
-        <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} showProjectShare={false} />
+        <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} showProjectShare={false}
+          actions={<StageShareControl context="shoot" userRole={selectedRole} projectId={project.id}
+            projectName={project.name} studioName={studioCompanyName} customerName={project.clientName}
+            initialAccess={accessLevel === "viewOnly" ? "viewOnly" : "canEdit"} initialLinkOpens="stageOnly"
+            allowProjectScope shareTitle={requestedShootMode === "on-set" ? "Call Sheet" : "Shoot"} scopeType="stage"
+            stageLabelOverride={requestedShootMode === "on-set" ? "Call Sheet" : "Shoot"}
+            shareUrl={requestedShootMode === "on-set" ? `/projects/${project.id}/stages/shoot?section=call-sheet&view=on-set&day=${encodeURIComponent(currentDay?.id ?? "")}` : `/projects/${project.id}/stages/shoot`}
+          />}
+        />
         {!hasLoaded ? <ShootSetupLoading /> : <ShootPreProductionWorkspace
           accessLevel={accessLevel}
           activeSection={activeSection}
@@ -2013,7 +2021,9 @@ function ShootPreProductionWorkspace({
   const shootApproval = getProjectStages(project).shoot;
   const canEdit = accessLevel !== "viewOnly";
   const canManage = accessLevel === "canManage";
-  const { registerActions: registerShootGlobalActions } = useShootGlobalActions();
+  const { actions: registeredShootActions, registerActions: registerShootGlobalActions } = useShootGlobalActions();
+  const shootDecisionActions = registeredShootActions?.projectId === project.id
+    ? <ShootStageDecisionActions actions={registeredShootActions} /> : null;
   const shootGlobalActionHandlersRef = useRef<Pick<ShootGlobalActions, "beforeAction" | "onApprove" | "onRequestReview" | "onSendToStudio" | "onUnapprove">>({
     beforeAction: (_action, proceed) => proceed(),
     onApprove: () => undefined,
@@ -2347,13 +2357,14 @@ function ShootPreProductionWorkspace({
     onUnapprove,
   };
   useEffect(() => {
-    if (shootMode === "on-set" && activeSection === "call-sheet") return;
     return registerShootGlobalActions({
       canApprove: canManage || selectedRole === "Customer",
       canEdit,
       customerName: project.clientName,
       initialAccess: accessLevel === "viewOnly" ? "viewOnly" : "canEdit",
       isApproved: setupState.status === "released",
+      approvedAt: shootApproval.approvedAt,
+      approvedBy: shootApproval.approvedBy,
       isWaitingOnReview: setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client",
       waitingOnCompany: setupState.status === "waiting_on_studio" ? studioName : project.clientName,
       projectId: project.id,
@@ -2368,7 +2379,7 @@ function ShootPreProductionWorkspace({
       onSendToStudio: () => shootGlobalActionHandlersRef.current.onSendToStudio(),
       onUnapprove: () => runShootGlobalAction("onUnapprove"),
     });
-  }, [accessLevel, activeSection, callSheet, canEdit, canManage, currentDay?.id, project.clientName, project.id, project.name, registerShootGlobalActions, runShootGlobalAction, selectedRole, setupState.status, shootMode, studioName]);
+  }, [accessLevel, activeSection, callSheet, canEdit, canManage, currentDay?.id, project.clientName, project.id, project.name, registerShootGlobalActions, runShootGlobalAction, selectedRole, setupState.status, shootMode, shootApproval.approvedAt, shootApproval.approvedBy, studioName]);
   const openCallSheetSectionFocus = (sectionId: string) => {
     const url = new URL(window.location.href);
     url.searchParams.set("section", "call-sheet");
@@ -2614,23 +2625,7 @@ function ShootPreProductionWorkspace({
   } else {
     sectionContent = <section className="shoot-preproduction-call-sheet">
       {!focusedCallSheetSection ? <header className="shoot-call-sheet-utility" aria-label="Call Sheet actions">
-        <ShareActionRow
-          context="shoot"
-          userRole={selectedRole}
-          density="compact"
-          scopeType="stage"
-          shareTitle="Call Sheet"
-          stageLabelOverride="Call Sheet"
-          allowProjectScope
-          projectId={project.id}
-          projectName={project.name}
-          studioName={studioName}
-          customerName={project.clientName}
-          shareUrl={`/projects/${project.id}/stages/shoot?section=call-sheet&day=${encodeURIComponent(currentDay?.id ?? "")}&view=on-set`}
-          copyLinkLabel="Share Call Sheet"
-          showSend={false}
-          showApprove={false}
-        />
+
         {canEdit ? <a className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot?section=schedule&day=${encodeURIComponent(currentDay?.id ?? "")}`}><DsIcon name="pencil-simple-ds" size={16} />Edit</a> : null}
         <a className="shoot-button secondary shoot-call-sheet-pdf label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a>
         <ShootCommandMenu label="Call Sheet actions" trigger={<>More<DsIcon name="caret-down" size={14} /></>} actions={[
@@ -2696,37 +2691,7 @@ function ShootPreProductionWorkspace({
           ) : undefined}
         />
       </div>
-      {!focusedCallSheetSection ? <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">
-        <ShareActionRow
-          context="shoot"
-          userRole={selectedRole}
-          density="compact"
-          presentation="brief-summary"
-          scopeType="stage"
-          shareTitle="Shoot"
-          showCopyLink={false}
-          projectId={project.id}
-          projectName={project.name}
-          studioName={studioName}
-          customerName={project.clientName}
-          reviewScopeKey="shoot"
-          reviewFingerprint={JSON.stringify(callSheet)}
-          shareUrl={`/projects/${project.id}/stages/shoot`}
-          sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName} to review the Shoot`}
-          approveLabel="Approve Shoot"
-          approveDisabled={!canManage && selectedRole !== "Customer"}
-          isApproved={setupState.status === "released"}
-          approvedAt={shootApproval.approvedAt}
-          approvedBy={shootApproval.approvedBy}
-          isWaitingOnReview={setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client"}
-          waitingOnCompany={setupState.status === "waiting_on_studio" ? studioName : project.clientName}
-          onApprove={onApprove}
-          onRequestReview={(recipient) => recordScheduleSent(recipient)}
-          onSendToStudio={() => recordScheduleSent("studio")}
-          onUnapprove={onUnapprove}
-          beforeAction={beforeShootShareAction}
-        />
-      </footer> : null}
+      {!focusedCallSheetSection ? <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">{shootDecisionActions}</footer> : null}
     </section>;
   }
 
@@ -2829,7 +2794,8 @@ function ShootPreProductionWorkspace({
       onMarkUnready={() => markPlanningSectionUnready(activeReadySection)}
       onReviewReadiness={() => setReadinessReviewSection(activeReadySection)}
       onSendUpdated={() => sendSchedule(true)}
-    /> : null}
+      decisions={shootDecisionActions}
+    /> : <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">{shootDecisionActions}</footer>}
 
     {readinessReviewSection === "schedule" ? <ScheduleReadinessModal
       isUpdate={scheduleHasChanges}
@@ -6343,7 +6309,8 @@ function PlanningSectionChangesNotice({ label, wasSent }: { label: string; wasSe
   </aside>;
 }
 
-function PlanningReadinessFooter({ canEdit, config, hasChanges, isReady, needsSending, nextAction, wasConfirmed, onMarkUnready, onReviewReadiness, onSendUpdated }: {
+function PlanningReadinessFooter({ decisions, canEdit, config, hasChanges, isReady, needsSending, nextAction, wasConfirmed, onMarkUnready, onReviewReadiness, onSendUpdated }: {
+  decisions: ReactNode;
   canEdit: boolean;
   config: (typeof planningReadinessConfig)[ReadyShootSection];
   hasChanges: boolean;
@@ -6368,6 +6335,7 @@ function PlanningReadinessFooter({ canEdit, config, hasChanges, isReady, needsSe
         onChange={(value) => { if (value === "unready") onMarkUnready(); }}
         actionTrigger={(props) => <button {...props} type="button" className="shoot-schedule-ready-button label-s-semibold"><DsIcon name={config.icon} size={16} />{config.readyLabel}<DsIcon name="caret-down" size={14} /></button>}
       /> : null}
+      {decisions}
     </div>
   </footer>;
 }
@@ -10421,4 +10389,39 @@ function isEntryComplete(entry: ProductionEntry) {
 function formatDayAssignment(assignment: ShootPerson["shootDayIds"], days: ShootDay[]) {
   if (assignment === "all") return "All shoot days";
   return assignment.map((dayId) => days.find((day) => day.id === dayId)?.label).filter(Boolean).join(", ") || "No days";
+}
+
+function ShootStageDecisionActions({ actions }: { actions: ShootGlobalActions }) {
+  return <ShareActionRow
+    context="shoot"
+    userRole={actions.userRole}
+    stageDecisionActions
+    showCopyLink={false}
+    allowProjectScope
+    initialAccess={actions.initialAccess}
+    initialLinkOpens="stageOnly"
+    projectId={actions.projectId}
+    projectName={actions.projectName}
+    reviewScopeKey="shoot"
+    reviewFingerprint={actions.reviewFingerprint}
+    studioName={actions.studioName}
+    customerName={actions.customerName}
+    shareUrl={actions.shareUrl}
+    sendLabel={`Ask ${actions.userRole === "Customer" || actions.userRole === "Studio Freelancer" ? actions.studioName : actions.customerName} to review the Shoot`}
+    approveLabel="Approve Shoot"
+    approvedAt={actions.approvedAt}
+    approvedBy={actions.approvedBy}
+    approveDisabled={!actions.canApprove}
+    approveDisabledTooltip="Only Studio Staff or Clients can approve the Shoot"
+    sendDisabled={!actions.canEdit}
+    sendDisabledTooltip="You need edit access to send the Shoot"
+    isApproved={actions.isApproved}
+    isWaitingOnReview={actions.isWaitingOnReview}
+    waitingOnCompany={actions.waitingOnCompany}
+    beforeAction={actions.beforeAction}
+    onApprove={actions.onApprove}
+    onRequestReview={actions.onRequestReview}
+    onSendToStudio={actions.onSendToStudio}
+    onUnapprove={actions.onUnapprove}
+  />;
 }

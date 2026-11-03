@@ -1,7 +1,19 @@
 import type { Project, ProjectDeadline } from "@/components/active-videos/types";
 import type { ChatMessage } from "@/components/chat/types";
+import type { BriefFields } from "@/data/brief";
 
 export const deliveryTimeZone = "Australia/Sydney";
+
+export function briefDeliveryDate(fields: BriefFields): string {
+  try {
+    const rows: unknown = JSON.parse(fields.deliverables.value || "[]");
+    if (Array.isArray(rows)) {
+      const main: unknown = rows.find((row: unknown) => row && typeof row === "object" && "isMain" in row && row.isMain) ?? rows[0];
+      if (main && typeof main === "object" && "deadline" in main && typeof main.deadline === "string" && main.deadline) return main.deadline;
+    }
+  } catch { /* Use the standalone deadline for an incomplete Brief. */ }
+  return fields.deadline.value;
+}
 
 export type DeliveryDateProposal = {
   id: string;
@@ -11,6 +23,8 @@ export type DeliveryDateProposal = {
   proposedAt: string;
   proposedBy: string;
   proposedById: string;
+  /** Older proposals were always made by the Studio. */
+  proposedByRole?: "Studio Staff" | "Customer";
   status: "pending" | "agreed" | "superseded";
   agreedAt: string | null;
   agreedBy: string | null;
@@ -22,6 +36,18 @@ export type ProjectDeliveryAgreement = {
   originalDate: string | null;
   agreedDate: string | null;
   proposals: DeliveryDateProposal[];
+  changes?: DeliveryDateChange[];
+};
+
+export type DeliveryDateChange = {
+  id: string;
+  date: string;
+  previousDate: string | null;
+  changedAt: string;
+  changedBy: string;
+  changedById: string;
+  source: "brief" | "studio";
+  reason: string;
 };
 
 export function initialDeliveryAgreement(project: Project): ProjectDeliveryAgreement {
@@ -31,6 +57,10 @@ export function initialDeliveryAgreement(project: Project): ProjectDeliveryAgree
 
 export function getPendingDeliveryProposal(agreement: ProjectDeliveryAgreement) {
   return [...agreement.proposals].reverse().find((proposal) => proposal.status === "pending") ?? null;
+}
+
+export function deliveryAgreementSide(proposal: DeliveryDateProposal): "Studio Staff" | "Customer" {
+  return proposal.proposedByRole === "Customer" ? "Studio Staff" : "Customer";
 }
 
 export function applyDeliveryAgreement(deadline: ProjectDeadline | undefined, agreement: ProjectDeliveryAgreement): ProjectDeadline | undefined {
@@ -76,16 +106,30 @@ export function deliveryInstant(date: string, time: string): string | null {
   return checked.date === date && checked.time === time ? result : null;
 }
 
-export function formatDeliveryDate(value: string | null) {
+export function formatDeliveryDate(value: string | null, includeTime = true) {
   if (!value) return "Not yet agreed";
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return "Not yet agreed";
   const day = new Intl.DateTimeFormat("en-AU", { timeZone: deliveryTimeZone, weekday: "short", day: "numeric", month: "short" }).format(date).replace(",", "");
-  return `${day} · ${deliveryDateParts(value).time}`;
+  return includeTime ? `${day} · ${deliveryDateParts(value).time}` : day;
 }
 
-export function createDeliveryMessages(agreement: ProjectDeliveryAgreement, readBy: Record<string, string[]>): ChatMessage[] {
-  return agreement.proposals.flatMap((proposal) => {
+export function createDeliveryMessages(agreement: ProjectDeliveryAgreement, readBy: Record<string, string[]>, projectComplete = false): ChatMessage[] {
+  const changes: ChatMessage[] = (agreement.changes ?? []).map((change) => {
+    const id = `delivery-${change.id}-changed`;
+    const copy = `${change.changedBy} ${change.source === "brief" ? "set final delivery in the Brief" : "changed final delivery"} to ${formatDeliveryDate(change.date)}.${change.reason ? ` ${change.reason}` : ""}`;
+    return { id, projectId: agreement.projectId, channel: "external", threadId: null,
+      senderId: null, senderSystem: "Project update", senderRole: "system", body: copy, attachments: [], reactions: [],
+      sourceChannel: "brisk", createdAt: change.changedAt, editedAt: null, deletedAt: null,
+      readBy: readBy[id] ?? [], mentions: [], projectUpdate: {
+        kind: "event", eventKey: "project.delivery.date_changed", canonicalEventId: id,
+        presentation: "passive", state: "information", label: "Changed",
+        title: change.source === "brief" ? "Delivery deadline set" : "Delivery deadline changed", copy,
+        href: deliveryHref(agreement.projectId), ctaLabel: "View deadline",
+      } };
+  });
+  return [...changes, ...agreement.proposals.flatMap<ChatMessage>((proposal) => {
+    const needsAgreement = proposal.status === "pending" && !projectComplete;
     const proposedId = deliveryMessageId(proposal.id, "proposed");
     const base: ChatMessage = {
       id: proposedId, projectId: agreement.projectId, channel: "external", threadId: null,
@@ -96,9 +140,9 @@ export function createDeliveryMessages(agreement: ProjectDeliveryAgreement, read
     const copy = `Proposed delivery: ${formatDeliveryDate(proposal.date)}. ${proposal.reason}`;
     const proposed: ChatMessage = { ...base, body: copy, projectUpdate: {
       kind: "event", eventKey: "project.delivery.date_proposed", canonicalEventId: proposedId,
-      presentation: "actionable", state: proposal.status === "pending" ? "warning" : proposal.status === "agreed" ? "success" : "information", label: proposal.status === "pending" ? "Needs attention" : proposal.status === "agreed" ? "Approved" : "Update",
-      title: proposal.status === "superseded" ? "Earlier delivery proposal" : proposal.status === "agreed" ? "Delivery proposal agreed" : "New delivery date proposed", copy,
-      href: deliveryHref(agreement.projectId), ctaLabel: "Review date",
+      presentation: needsAgreement ? "actionable" : "passive", state: needsAgreement ? "warning" : proposal.status === "agreed" ? "success" : "information", label: needsAgreement ? "Needs attention" : proposal.status === "agreed" ? "Approved" : "Update",
+      title: needsAgreement ? "New delivery date proposed" : proposal.status === "agreed" ? "Delivery proposal agreed" : "Earlier delivery proposal", copy,
+      href: deliveryHref(agreement.projectId), ctaLabel: needsAgreement ? "Review date" : "View delivery",
     } };
     if (proposal.status !== "agreed") return [proposed];
     const agreedId = deliveryMessageId(proposal.id, "agreed");
@@ -109,5 +153,5 @@ export function createDeliveryMessages(agreement: ProjectDeliveryAgreement, read
         presentation: "passive", state: "success", label: "Approved", title: "New delivery date agreed", copy: agreedCopy,
         href: deliveryHref(agreement.projectId), ctaLabel: "View delivery",
       } }];
-  });
+  })];
 }

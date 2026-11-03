@@ -10,6 +10,8 @@ export type ShootGlobalActions = {
   customerName: string;
   initialAccess: ShareAccess;
   isApproved: boolean;
+  approvedAt?: string;
+  approvedBy?: string;
   isWaitingOnReview: boolean;
   waitingOnCompany?: string;
   projectName: string;

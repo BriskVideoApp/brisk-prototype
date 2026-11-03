@@ -105,7 +105,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     ]);
   }, []);
 
-  const sendInvitation = useCallback((submission: InvitePersonSubmission, onComplete?: InvitePersonCompleteHandler) => {
+  const sendInvitation = useCallback((submission: InvitePersonSubmission, onComplete?: InvitePersonCompleteHandler, sendBrief = false) => {
     if (submission.role === "Studio Staff" && !canManageStudio) return;
     if (selectedRole === "Studio Staff" && !canManageStudio && !submission.projectIds.length) return;
     if (selectedRole === "Customer" && (!canManageClientAccount || submission.role !== "Customer"
@@ -175,6 +175,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
           name,
           email,
           role: submission.clientMembershipRole,
+          sendBrief,
         });
       } else {
         inviteClientTeammate({
@@ -245,7 +246,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
           key={openInvitation.id}
           prefill={openInvitation.prefill}
           onClose={() => setOpenInvitation(null)}
-          onSubmit={(submission) => sendInvitation(submission, openInvitation.onComplete)}
+          onSubmit={(submission) => sendInvitation(submission, openInvitation.onComplete, openInvitation.prefill.purpose === "brief-send")}
         />
       ) : null}
       {toast ? <div className="invitation-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={16} /> {toast}</div> : null}

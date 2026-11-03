@@ -1,3 +1,4 @@
+import type { ClientVideoTagCollection } from "@/data/project-tags";
 import type { Project, ProjectVideoType } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { getProjectFixture } from "@/data/project-fixtures";
@@ -140,6 +141,7 @@ export type PrototypeOnboardingProgress = {
 };
 
 export type PrototypeState = {
+  clientVideoTags?: ClientVideoTagCollection[];
   fixtureKind: PrototypeFixtureKind;
   session: PrototypeSession;
   users: PrototypeUser[];
@@ -173,7 +175,7 @@ const emptyOnboarding: PrototypeOnboardingProgress = {
   step: "studio-setup",
   view: "sign-in",
   aiPhase: "question",
-  followUpStepId: "contextual",
+  followUpStepId: "production-model",
   studioAnswer: null,
   followUpAnswers: null,
   reviewDraft: null,
@@ -340,6 +342,9 @@ export function commitStudioSetupState(state: PrototypeState, draft: StudioRevie
       name: draft.studioName,
       status: "active",
       studioType: draft.studioType,
+      description: draft.studioDescription,
+      website: draft.studioWebsite ?? "",
+      logoPreviewUrl: draft.logoPreviewUrl,
     } : workspace),
     studioBriefTemplates: [
       ...state.studioBriefTemplates.filter((candidate) => candidate.workspaceId !== workspaceId),
@@ -367,12 +372,19 @@ export function updateWorkspaceDetailsState(
       description: details.description,
       website: details.website,
     } : workspace),
+    onboarding: !state.onboarding.studioSetupCommitted && state.onboarding.reviewDraft ? {
+      ...state.onboarding,
+      reviewDraft: { ...state.onboarding.reviewDraft, studioName: details.name,
+        studioDescription: details.description, studioWebsite: details.website },
+      studioAnswer: state.onboarding.studioAnswer ? { ...state.onboarding.studioAnswer,
+        studioName: details.name, studioDescription: details.description } : null,
+    } : state.onboarding,
   };
 }
 
 export function updateWorkspaceBrandingState(
   state: PrototypeState,
-  branding: Pick<PrototypeWorkspace, "brandAccentId" | "brandColours" | "logoPreviewUrl">,
+  branding: Pick<PrototypeWorkspace, "brandAccentId" | "brandColours" | "logoPreviewUrl"> & { logoOptions?: readonly string[] },
 ): PrototypeState {
   const workspaceId = state.session.activeWorkspaceId;
   return {
@@ -383,6 +395,11 @@ export function updateWorkspaceBrandingState(
       brandColours: getStudioBrandColours(branding),
       logoPreviewUrl: branding.logoPreviewUrl,
     } : workspace),
+    onboarding: !state.onboarding.studioSetupCommitted && state.onboarding.reviewDraft ? {
+      ...state.onboarding,
+      reviewDraft: { ...state.onboarding.reviewDraft, logoPreviewUrl: branding.logoPreviewUrl,
+        logoOptions: branding.logoOptions ? [...branding.logoOptions] : state.onboarding.reviewDraft.logoOptions },
+    } : state.onboarding,
   };
 }
 
@@ -441,6 +458,8 @@ export function createProjectFromStudioTemplateState(
   const client = selectScopedClient(state, workspaceId, input.clientId);
   const template = state.studioBriefTemplates.find((candidate) => candidate.workspaceId === workspaceId);
   if (!client || !template) return null;
+  const studioName = selectWorkspace(state, workspaceId)?.name ?? "the Studio";
+  const isFirstClientVideo = !state.projects.some((project) => project.workspaceId === workspaceId && project.clientId === client.id);
   const projectId = makeUniqueId(input.requestedId ?? makeClientId(input.name), state.projects.map((project) => project.id));
   const code = getNextClientProjectCode(client.projectCodePrefix ?? getDefaultProjectCodePrefix(client.name), state.projects.flatMap((project) => project.code ? [project.code] : []));
   const now = "2026-09-02T09:00:00+10:00";
@@ -457,12 +476,12 @@ export function createProjectFromStudioTemplateState(
     latestUpdate: { label: "Project created", daysAgo: 0, timestamp: now },
     deadlineAt: "",
     isCritical: false,
-    status: "Queued",
+    status: isFirstClientVideo ? "In Production" : "Queued",
     briefStatus: "Not sent",
     clientMemberIds: [],
     file_locations: [],
     stages: {
-      brief: { state: "not_started" },
+      brief: { state: "in_progress", assignedTo: studioName, daysAgo: 0, inputRequired: true },
       script: { state: "not_started" },
       shoot: { state: "not_started" },
       media: { state: "not_started" },
@@ -524,6 +543,8 @@ export function createClientVideoState(
   const project: ScopedProject = {
     ...created.project,
     code,
+    status: "Queued",
+    stages: { ...created.project.stages, brief: { state: "waiting", assignedTo: client.name, daysAgo: 0, inputRequired: true } },
     clientMemberIds: [user.id],
     latestUpdate: { label: "Video started by Client", daysAgo: 0, timestamp: now },
   };
@@ -632,7 +653,7 @@ export function inviteClientTeammateState(
 
 export function inviteClientToProjectState(
   state: PrototypeState,
-  input: { clientId: string; projectId: string; name: string; email: string; role?: ClientContact["membershipRole"] },
+  input: { clientId: string; projectId: string; name: string; email: string; role?: ClientContact["membershipRole"]; sendBrief?: boolean },
 ): PrototypeState {
   const workspaceId = state.session.activeWorkspaceId;
   const client = selectScopedClient(state, workspaceId, input.clientId);
@@ -677,11 +698,12 @@ export function inviteClientToProjectState(
     } : candidate),
     projects: state.projects.map((candidate) => candidate.id === project.id && candidate.workspaceId === workspaceId ? {
       ...candidate,
-      status: "In Production",
-      briefStatus: "Waiting on Client",
       clientMemberIds: [...new Set([...candidate.clientMemberIds, userId])],
-      stages: { ...candidate.stages, brief: { state: "waiting", daysAgo: 0 } },
-      latestUpdate: { label: `Brief sent to ${contact.name}`, daysAgo: 0, timestamp: sentAt },
+      ...(input.sendBrief ? {
+        briefStatus: "Waiting on Client" as const,
+        stages: { ...candidate.stages, brief: { state: "waiting" as const, assignedTo: client.name, daysAgo: 0 } },
+      } : {}),
+      latestUpdate: { label: input.sendBrief ? `Brief sent to ${contact.name}` : `Invite sent to ${contact.name}`, daysAgo: 0, timestamp: sentAt },
     } : candidate),
     invitations: existingInvitation ? state.invitations.map((invitation) => invitation.id === existingInvitation.id ? {
       ...invitation,

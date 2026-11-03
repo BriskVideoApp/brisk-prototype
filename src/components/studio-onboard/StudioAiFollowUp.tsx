@@ -18,7 +18,6 @@ import { defaultStudioCustomVideoTypeIconId } from "@/data/studio-onboard";
 
 export type { StudioFollowUpAnswers } from "@/data/studio-onboard";
 
-const customAnswerOption = "Something else";
 const answerAdvanceDelayMs = 180;
 const defaultCustomVideoTypeIcon = defaultStudioCustomVideoTypeIconId;
 
@@ -98,8 +97,7 @@ type StudioAiFollowUpProps = {
 
 export function StudioAiFollowUp({
   initialAnswers,
-  initialStepId = "contextual",
-  scenario,
+  initialStepId = "production-model",
   onAnswersChange,
   onBack,
   onContinue,
@@ -119,15 +117,9 @@ export function StudioAiFollowUp({
     customVideoType: null,
     customVideoTypeIcon: null,
   });
-  const [activeStepId, setActiveStepId] = useState<StudioFollowUpStepId>(initialStepId);
-  const [customAnswer, setCustomAnswer] = useState(() => {
-    const initialAnswer = initialAnswers?.contextualAnswer ?? "";
-    return scenario.suggestedAnswers.includes(initialAnswer) ? "" : initialAnswer;
-  });
-  const [isCustomAnswerSelected, setIsCustomAnswerSelected] = useState(() => {
-    const initialAnswer = initialAnswers?.contextualAnswer ?? "";
-    return initialAnswer.length > 0 && !scenario.suggestedAnswers.includes(initialAnswer);
-  });
+  const [activeStepId, setActiveStepId] = useState<StudioFollowUpStepId>(
+    initialStepId === "contextual" ? "production-model" : initialStepId,
+  );
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [showMoreVideoTypes, setShowMoreVideoTypes] = useState(() => Boolean(
     normaliseCustomVideoTypes(initialAnswers).length > 0
@@ -140,13 +132,11 @@ export function StudioAiFollowUp({
     defaultCustomVideoTypeIcon,
   );
   const advanceTimerRef = useRef<number | null>(null);
-  const showCustomAnswerOption = scenario.id !== "full-service";
-  const isCustomAnswer = showCustomAnswerOption && isCustomAnswerSelected;
   const canContinue = getCanContinue(activeStepId, answers)
     && !(activeStepId === "video-types" && isCustomVideoTypeInputOpen);
-  const questionCount = 3;
-  const questionNumber = activeStepId === "contextual" ? 1 : activeStepId === "production-model" ? 2 : 3;
-  const showExplicitAction = isCustomAnswer || activeStepId === "video-types" || (canContinue && !isAdvancing);
+  const questionCount = 2;
+  const questionNumber = activeStepId === "production-model" ? 1 : 2;
+  const showExplicitAction = activeStepId === "video-types" || (canContinue && !isAdvancing);
 
   useEffect(() => () => {
     if (advanceTimerRef.current !== null) {
@@ -177,13 +167,6 @@ export function StudioAiFollowUp({
     onStepChange?.(stepId);
   }
 
-  function selectContextualAnswer(contextualAnswer: string) {
-    setCustomAnswer("");
-    setIsCustomAnswerSelected(false);
-    updateAnswers({ ...answers, contextualAnswer });
-    advanceAfterSelection(() => goToStep("production-model"));
-  }
-
   function selectProductionModel(productionModel: "shoot-and-post" | "post-production-only") {
     updateAnswers({
       ...answers,
@@ -202,11 +185,6 @@ export function StudioAiFollowUp({
 
     if (activeStepId === "video-types") {
       onContinue(answers);
-      return;
-    }
-
-    if (activeStepId === "contextual") {
-      goToStep("production-model");
       return;
     }
 
@@ -286,46 +264,6 @@ export function StudioAiFollowUp({
         <div className="studio-follow-up-progress label-xs-semibold">
           Question {questionNumber} of {questionCount}
         </div>
-
-        {activeStepId === "contextual" ? (
-          <>
-            <FollowUpIntro question={scenario.question} />
-            <div className="studio-follow-up-chips" role="group" aria-label="Suggested answers">
-              {scenario.suggestedAnswers.map((suggestedAnswer) => (
-                <FollowUpChip
-                  key={suggestedAnswer}
-                  label={suggestedAnswer}
-                  selected={answers.contextualAnswer === suggestedAnswer}
-                  disabled={isAdvancing}
-                  onClick={() => selectContextualAnswer(suggestedAnswer)}
-                />
-              ))}
-              {showCustomAnswerOption ? (
-                <FollowUpChip
-                  label={customAnswerOption}
-                  selected={isCustomAnswer}
-                  disabled={isAdvancing}
-                  onClick={() => {
-                    setIsCustomAnswerSelected(true);
-                    updateAnswers({ ...answers, contextualAnswer: customAnswer.trim() });
-                  }}
-                />
-              ) : null}
-            </div>
-            {isCustomAnswer ? (
-              <div className="studio-follow-up-custom-answer">
-                <Input
-                  placeholder="Add a short answer..."
-                  value={customAnswer}
-                  onChange={(event) => {
-                    setCustomAnswer(event.target.value);
-                    updateAnswers({ ...answers, contextualAnswer: event.target.value.trim() });
-                  }}
-                />
-              </div>
-            ) : null}
-          </>
-        ) : null}
 
         {activeStepId === "production-model" ? (
           <>
@@ -581,7 +519,6 @@ function getCanContinue(
   stepId: StudioFollowUpStepId,
   answers: StudioFollowUpAnswers,
 ) {
-  if (stepId === "contextual") return answers.contextualAnswer.trim().length > 0;
   if (stepId === "production-model") return answers.productionModel !== null;
   if (stepId === "video-types") {
     return answers.videoTypeIds.length > 0 || Boolean(answers.customVideoTypes?.length);

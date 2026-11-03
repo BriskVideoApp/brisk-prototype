@@ -64,7 +64,7 @@ export default function ClientStartVideoRoute() {
   return (
     <main className="client-video-naming-page">
       <form className="client-video-naming-form" onSubmit={handleSubmit}>
-        <h1 className="headings-s-bold">Name your video</h1>
+        <h1 className="headings-s-bold">Name {client.name}&apos;s video</h1>
         <div className="client-video-naming-fields">
           <div className="client-video-naming-code">
             <span className="label-m-semibold">Project code</span>
@@ -73,7 +73,7 @@ export default function ClientStartVideoRoute() {
           <Input
             id="client-video-name"
             label="Video name"
-            placeholder="For example, Customer story"
+            placeholder="Eg Customer Story"
             value={name}
             onChange={(event) => {
               setName(event.target.value);

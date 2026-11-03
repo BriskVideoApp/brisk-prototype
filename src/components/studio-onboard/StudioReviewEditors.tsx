@@ -5,6 +5,7 @@ import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialo
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
@@ -31,8 +32,12 @@ export function StudioEditor({
   draft,
   onCancel,
   onSave,
+  profileOnly = false,
+  profileSection,
 }: {
   draft: StudioReviewDraft;
+  profileOnly?: boolean;
+  profileSection?: "details" | "logo";
   onCancel: () => void;
   onSave: (nextDraft: StudioReviewDraft) => void;
 }) {
@@ -42,6 +47,11 @@ export function StudioEditor({
   const [logoOptions, setLogoOptions] = useState(draft.logoOptions ?? []);
   const [brandAccentId, setBrandAccentId] = useState<StudioBrandAccentId>(draft.brandAccentId);
   const [studioType, setStudioType] = useState(draft.studioType);
+  const [studioDescription, setStudioDescription] = useState(draft.studioDescription);
+  const showDetails = !profileOnly || profileSection !== "logo";
+  const showLogo = !profileOnly || profileSection !== "details";
+  const dialogTitle = !profileOnly ? "Edit Studio" : profileSection === "logo" ? "Edit Studio logo"
+    : profileSection === "details" ? "Edit Studio details" : "Edit Studio profile";
 
   function updateLogo(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -62,7 +72,8 @@ export function StudioEditor({
   }
 
   return (
-    <StudioReviewDialog title="Edit Studio" onClose={onCancel} actions={<DialogActions
+    <StudioReviewDialog title={dialogTitle} onClose={onCancel} actions={<DialogActions
+        disabled={profileOnly && showDetails && (!studioName.trim() || !studioDescription.trim())}
         onCancel={onCancel}
         onSave={() => onSave({
           ...draft,
@@ -71,11 +82,12 @@ export function StudioEditor({
           logoPreviewUrl,
           logoOptions,
           brandAccentId,
+          ...(profileOnly ? { studioDescription: studioDescription.trim() } : {}),
         })}
-        saveLabel="Save Studio"
+        saveLabel={profileOnly && profileSection === "logo" ? "Save logo" : "Save Studio"}
       />}> <div className="studio-editor-fields">
-        <Input label="Studio name" value={studioName} onChange={(event) => setStudioName(event.target.value)} />
-        <div className="studio-review-field-group">
+        {showDetails ? <Input label="Studio name" value={studioName} onChange={(event) => setStudioName(event.target.value)} /> : null}
+        {showLogo ? <div className="studio-review-field-group">
           <span className="label-m-semibold">Studio logo</span>
           <div className="studio-logo-editor-row">
             <span className={`studio-logo-editor-preview studio-client-accent-${brandAccentId}`}>
@@ -83,18 +95,21 @@ export function StudioEditor({
             </span>
             <Button size="S" variant="secondary" onClick={() => logoInputRef.current?.click()}>
               <DsIcon name="upload-simple" size={16} />
-              Upload logo
+              {profileOnly && logoPreviewUrl ? "Replace logo" : "Upload logo"}
             </Button>
             {logoPreviewUrl ? (
               <Button size="S" variant="ghost" className="studio-review-text-button" type="button" onClick={() => setLogoPreviewUrl(null)}>
-                Remove
+                {profileOnly ? "Remove logo" : "Remove"}
               </Button>
             ) : null}
             <input ref={logoInputRef} className="studio-hidden-file-input" type="file" accept="image/*" onChange={updateLogo} />
           </div>
-        </div>
-        <StudioAccentPicker value={brandAccentId} onChange={setBrandAccentId} />
-        <Input label="Studio type" value={studioType} onChange={(event) => setStudioType(event.target.value)} />
+        </div> : null}
+        {profileOnly ? showDetails ? <Textarea label="About Studio" rows={3} value={studioDescription}
+          onChange={(event) => setStudioDescription(event.target.value)} /> : null : <>
+          <StudioAccentPicker value={brandAccentId} onChange={setBrandAccentId} />
+          <Input label="Studio type" value={studioType} onChange={(event) => setStudioType(event.target.value)} />
+        </>}
       </div>  </StudioReviewDialog>
   );
 }

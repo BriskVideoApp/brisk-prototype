@@ -12,6 +12,7 @@ import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceL
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { ProjectSystemPost } from "@/components/notifications/ProjectSystemPost";
 import { ProjectTimingPost } from "@/components/project-timing/ProjectTimingPost";
+import { useDeadlineDialog } from "@/components/project-timing/DeadlineDialogContext";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import type {
   ChatAttachment,
@@ -244,6 +245,7 @@ export function ChatMessageCard({
   onNavigate,
 }: ChatMessageCardProps) {
   const [isReactionPickerOpen, setIsReactionPickerOpen] = useState(false);
+  const openDeadline = useDeadlineDialog();
   const sender = message.senderId ? usersById.get(message.senderId) : undefined;
   const hasDisplayOnlySlackReactions = message.sourceChannel === "slack";
 
@@ -284,7 +286,11 @@ export function ChatMessageCard({
           createdAt={message.createdAt}
           messageId={message.id}
           highlighted={highlighted}
-          onAction={(event) => { if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onNavigate?.(); }}
+          onAction={(event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            if (projectUpdate.eventKey.startsWith("project.delivery.")) { event.preventDefault(); openDeadline(message.projectId); }
+            onNavigate?.();
+          }}
         />
       );
     }

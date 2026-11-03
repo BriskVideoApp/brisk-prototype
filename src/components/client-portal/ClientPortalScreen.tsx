@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CustomerDashboard } from "@/components/customer-dashboard/CustomerDashboard";
 import { ClientPortalPreviewBanner } from "@/components/client-portal/ClientPortalPreviewBanner";
+import { ClientAvatar } from "@/components/clients/ClientPrimitives";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { getClientPortalAccess } from "@/data/prototype-access";
@@ -60,7 +61,6 @@ export function ClientPortalScreen({ workspaceId, clientId, embedded = false }: 
         initialProjects={dashboardProjects}
         initialSeries={dashboardSeries}
         key={`${workspaceId}:${clientId}`}
-        logoPreviewUrl={portal.workspace.logoPreviewUrl}
         studioPreview={isStudioPreview}
         storageScopeKey={`${workspaceId}:${clientId}`}
         studioName={portal.workspace.name}
@@ -76,9 +76,7 @@ export function ClientPortalScreen({ workspaceId, clientId, embedded = false }: 
         {isStudioPreview ? <ClientPortalPreviewBanner clientName={portal.client.name} /> : null}
         <header className="customer-dashboard-header">
           <div className="customer-dashboard-heading">
-            <span className="customer-dashboard-studio-logo label-m-semibold" aria-hidden="true">
-              {portal.workspace.name.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("")}
-            </span>
+            <ClientAvatar client={portal.client} />
             <div>
               <span className="label-xs">{portal.client.name} Client portal</span>
               <h1>Your videos</h1>
@@ -140,7 +138,7 @@ function getDashboardStatusDetail(project: ScopedProject): CustomerDashboardProj
   if (project.status === "Archived") return "Archived";
   if (project.status === "Queued") return "Ready to start";
 
-  return Object.values(project.stages).some((stage) => stage.state === "waiting")
+  return Object.values(project.stages).some((stage) => stage.state === "waiting" && stage.assignedTo === project.clientName)
     ? "Waiting on you"
     : "Waiting on studio";
 }

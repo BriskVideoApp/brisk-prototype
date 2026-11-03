@@ -89,7 +89,7 @@ export function StudioDetailsPage({ rewriteDescription }: { rewriteDescription?:
           />
           <div className="studio-settings-textarea-field">
             <span className="studio-settings-textarea-heading">
-              <label className="label-m-semibold" htmlFor="studio-description">Studio description</label>
+              <label className="label-m-semibold" htmlFor="studio-description">About Studio</label>
               {rewriteDescription ? (
                 <Button size="S" type="button" variant="secondary" onClick={() => updateField("description", rewriteDescription())}>
                   <span className="studio-settings-button-content"><DsIcon name="sparkle" size={16} /> Rewrite with AI</span>

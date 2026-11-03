@@ -107,7 +107,6 @@
 
 .invite-role-choice label:is(:hover, :focus-within),
 .invite-selection-options label:is(:hover, :focus-within) {
-  background: var(--brisk-brand-secondary);
   box-shadow: var(--brisk-shadow-s);
 }
 

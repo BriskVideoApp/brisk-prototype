@@ -131,6 +131,11 @@
   width: 100%;
 }
 
+.share-link-dialog-content {
+  display: grid;
+  gap: var(--brisk-space-l);
+}
+
 .share-popover {
   position: absolute;
   top: calc(100% + var(--brisk-space-l));
@@ -401,6 +406,13 @@
   position: relative;
 }
 
+/* Keep Brief suggestions inside the confirmation dialog's scrollable content. */
+.share-submit-message-editor.is-simple .share-submit-mention-suggestions {
+  position: relative;
+  inset: auto;
+  margin-top: var(--brisk-space-xs);
+}
+
 .share-submit-mention-suggestions > span {
   padding: var(--brisk-space-s);
   color: var(--brisk-text-secondary);
@@ -446,7 +458,8 @@
 }
 
 .share-submit-mention-suggestions button:hover,
-.share-submit-mention-suggestions button:focus-visible {
+.share-submit-mention-suggestions button:focus-visible,
+.share-submit-message-editor.is-simple .share-submit-mention-suggestions button.is-active {
   background: var(--brisk-brand-secondary);
   outline: none;
 }
@@ -479,7 +492,7 @@
   text-decoration: underline;
 }
 
-.share-send-message textarea,
+.share-send-message textarea:not([data-brisk-textarea]),
 .share-submit-rich-text {
   min-height: calc(var(--brisk-space-3xl) * 2);
   border: 1px solid var(--brisk-border-primary);
@@ -496,7 +509,7 @@
   overflow-y: auto;
 }
 
-.share-send-message textarea {
+.share-send-message textarea:not([data-brisk-textarea]) {
   resize: vertical;
 }
 
@@ -581,7 +594,8 @@
   padding-top: var(--brisk-space-l);
 }
 
-.share-popover > .share-option-section {
+.share-popover > .share-option-section,
+.share-link-dialog-content > .share-option-section {
   border-top: var(--brisk-space-none);
   padding-top: var(--brisk-space-none);
 }

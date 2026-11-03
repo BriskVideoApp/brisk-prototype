@@ -263,26 +263,6 @@
   gap: var(--brisk-space-s);
 }
 
-.customer-dashboard-studio-logo {
-  display: inline-flex;
-  width: var(--brisk-space-3xl);
-  height: var(--brisk-space-3xl);
-  flex: 0 0 var(--brisk-space-3xl);
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--studio-client-accent-soft);
-  color: var(--studio-client-accent-ink);
-}
-
-.customer-dashboard-studio-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 .customer-dashboard-heading h1,
 .customer-dashboard-section-heading h2,
 .customer-queue-heading-row h2,
@@ -1040,9 +1020,9 @@
 }
 
 .customer-all-videos-section .customer-queue-table {
-  border-color: var(--brisk-gray-20);
-  border-radius: var(--brisk-radius-m);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--brisk-black) 8%, transparent);
+  border-color: var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-none);
+  box-shadow: none;
 }
 
 .customer-dashboard-shell.is-client-view .customer-queue-row,
@@ -1053,14 +1033,14 @@
 .customer-dashboard-shell.is-client-view .customer-all-videos-section .customer-queue-table-header,
 .customer-dashboard-shell.is-client-view .customer-all-videos-section .customer-queue-row,
 .customer-dashboard-shell.is-client-view .customer-all-videos-section .customer-series-row {
-  grid-template-columns: minmax(300px, 1.25fr) minmax(380px, 1.7fr) 132px 112px 88px;
+  grid-template-columns: 300px minmax(380px, 1.7fr) 132px 112px;
   min-width: 1012px;
 }
 
 .customer-dashboard-shell:not(.is-client-view) .customer-all-videos-section .customer-queue-table-header,
 .customer-dashboard-shell:not(.is-client-view) .customer-all-videos-section .customer-queue-row,
 .customer-dashboard-shell:not(.is-client-view) .customer-all-videos-section .customer-series-row {
-  grid-template-columns: minmax(300px, 1.25fr) minmax(380px, 1.7fr) 132px 112px 88px;
+  grid-template-columns: 300px minmax(380px, 1.7fr) 132px 112px;
   min-width: 1012px;
 }
 
@@ -1082,12 +1062,13 @@
   padding: var(--brisk-space-none) var(--brisk-space-l);
 }
 
-.customer-queue-table-header span:last-child {
-  text-align: right;
+.customer-queue-table-header span:first-child {
+  text-align: left;
 }
 
 .customer-all-videos-section .customer-queue-table-header {
-  border-color: var(--brisk-gray-20);
+  min-height: 52px;
+  border-color: var(--brisk-border-primary);
 }
 
 .customer-all-videos-section .customer-queue-table-header span:nth-child(2),
@@ -1134,8 +1115,7 @@
   cursor: grabbing;
 }
 
-.customer-queue-row.is-reorderable .customer-queue-drag,
-.customer-series-row.is-reorderable .customer-queue-drag {
+.customer-queue-row.is-reorderable .customer-queue-drag {
   position: absolute;
   top: 50%;
   left: var(--brisk-space-l);
@@ -1143,8 +1123,7 @@
   transform: translateY(-50%);
 }
 
-.customer-queue-row.is-reorderable .customer-queue-project,
-.customer-series-row.is-reorderable .customer-series-primary {
+.customer-queue-row.is-reorderable .customer-queue-project {
   padding-left: var(--brisk-space-xl);
 }
 
@@ -1278,37 +1257,11 @@
 }
 
 .customer-series-toggle {
-  position: absolute;
-  top: 50%;
-  left: var(--brisk-space-3xl);
-  z-index: 2;
-  display: inline-flex;
-  width: var(--brisk-space-xl);
-  height: var(--brisk-space-xl);
-  align-items: center;
-  justify-content: center;
-  border: 1px solid transparent;
-  border-radius: var(--brisk-radius-s);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-xs);
-  transform: translateY(-50%);
-}
-
-.customer-series-toggle:hover,
-.customer-series-toggle:focus-visible {
-  border-color: var(--brisk-border-primary);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-s);
-  outline: 0;
+  position: static;
 }
 
 .customer-series-toggle[aria-expanded="true"] .ds-icon {
   transform: rotate(90deg);
-}
-
-.customer-series-primary {
-  padding-left: var(--brisk-space-2xl);
 }
 
 .customer-series-summary {
@@ -1429,31 +1382,40 @@
 }
 
 .customer-all-videos-section .customer-series-summary {
+  grid-row: 1;
   grid-column: 2;
   justify-self: center;
   max-width: 180px;
 }
 
 .customer-all-videos-section .customer-series-statuses {
+  grid-row: 1;
   grid-column: 3;
   align-items: center;
 }
 
-.customer-dashboard-shell.is-client-view .customer-all-videos-section .customer-series-primary {
+.customer-all-videos-section .customer-series-primary {
+  grid-row: 1;
   grid-column: 1;
-  padding-left: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
+  align-self: stretch;
+  align-content: center;
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+  border-right: 1px solid var(--brisk-border-primary);
 }
 
 .customer-dashboard-shell.is-client-view .customer-all-videos-section .customer-series-created {
+  grid-row: 1;
   grid-column: 4;
 }
 
 .customer-dashboard-shell.is-client-view .customer-all-videos-section .customer-series-actions {
-  grid-column: 5;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .customer-all-videos-section .customer-queue-status,
 .customer-all-videos-section .customer-series-statuses {
+  grid-row: 1;
   justify-items: center;
 }
 
@@ -1464,7 +1426,36 @@
 
 .customer-all-videos-section .customer-queue-actions,
 .customer-all-videos-section .customer-series-actions {
-  justify-self: end;
+  justify-self: start;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.customer-all-videos-section .customer-queue-project {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.customer-all-videos-section .customer-queue-progress {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.customer-all-videos-section .customer-queue-status {
+  grid-column: 3;
+}
+
+.customer-all-videos-section .customer-queue-created {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+.customer-all-videos-section .customer-series-row {
+  padding: var(--brisk-space-none);
+}
+
+.customer-all-videos-section .is-reorderable .customer-queue-drag {
+  left: var(--brisk-space-l);
 }
 
 .customer-activity-panel {
@@ -1747,4 +1738,76 @@
   .customer-production-card .stage-icon-surface {
     animation: none;
   }
+}
+
+/* Reuse the main Videos title/action composition inside the Client video cell. */
+.customer-all-videos-section .project-title-row {
+  width: 100%;
+}
+
+.customer-all-videos-section .project-title-row .project-title {
+  flex: 1 1 auto;
+}
+
+.customer-all-videos-section .project-quick-actions {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+/* Match the main Videos 300px project column and its full-height divider. */
+.customer-all-videos-section .customer-queue-row {
+  min-height: 156px;
+  padding: var(--brisk-space-none);
+  border-bottom-color: var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-primary);
+}
+
+.customer-all-videos-section .customer-queue-project {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-self: stretch;
+  height: auto;
+  min-height: 156px;
+  border-bottom: var(--brisk-space-none);
+}
+
+.customer-all-videos-section .customer-queue-table-header {
+  padding: var(--brisk-space-none);
+}
+
+.customer-all-videos-section .customer-queue-table-header > span {
+  display: flex;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--brisk-space-none) var(--brisk-space-l);
+}
+
+.customer-all-videos-section .customer-queue-table-header > span:first-child {
+  justify-content: flex-start;
+  border-right: 1px solid var(--brisk-border-primary);
+}
+
+.customer-all-videos-section .customer-queue-row:hover,
+.customer-all-videos-section .customer-queue-row:hover .customer-queue-project {
+  background: var(--brisk-bg-block-secondary);
+}
+
+.customer-all-videos-section .customer-queue-row.series-child,
+.customer-all-videos-section .customer-queue-row.series-child .customer-queue-project {
+  background: color-mix(in srgb, var(--brisk-brand-secondary) 44%, var(--brisk-white));
+}
+
+.customer-queue-project .project-meta-row {
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.customer-queue-row:hover .project-plus-action,
+.customer-queue-project:focus-within .project-plus-action {
+  opacity: 1;
+  pointer-events: auto;
 }

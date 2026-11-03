@@ -1,6 +1,8 @@
 "use client";
 
 import { StageDeadlinePanel } from "@/components/project-timing/StageDeadlinePanel";
+import { useDeadlineDialog } from "@/components/project-timing/DeadlineDialogContext";
+import { LegacyClientPortalRoute } from "@/components/client-portal/ClientPortalScreen";
 import { useTurnaround } from "@/components/project-timing/TurnaroundContext";
 import { countdown } from "@/data/turnaround";
 import { matchesSearchText } from "@/components/search/search-data";
@@ -30,6 +32,9 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 import { Popover } from "../../../Brisk DS/src/app/components/Popover";
 import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
+import { ProjectTags } from "@/components/project/ProjectTags";
+import { getTagClass, type TagClass } from "@/data/project-tags";
+import { ProjectTitleRow } from "@/components/project/ProjectTitleRow";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -74,7 +79,6 @@ type FilterKey = "client" | "teammate" | "tags" | "status" | "deadline";
 type DataColumnKey = "progress" | "latestUpdate" | "status" | "deadline" | "hours" | "costs" | "team" | "actions";
 type TableColumnKey = "project" | DataColumnKey;
 type DeadlineCategory = "Overdue" | "Due Soon" | "On Track";
-type TagClass = "critical" | "high-priority" | "in-review" | "neutral" | "green" | "peach" | "cream";
 type ProjectPanelEditSection = "hours" | "deadline" | "notes";
 type ProjectPanelSection = "hours" | "team" | "costs" | "deadline" | "latestActions" | "notes";
 type ProjectTimeEntry = {
@@ -167,16 +171,12 @@ const defaultTagClasses: Record<string, TagClass> = {
   "High Priority": "high-priority",
   "In Review": "in-review",
 };
-const tagColourOptions: { className: TagClass; label: string }[] = [
-  { className: "critical", label: "Purple" },
-  { className: "high-priority", label: "Blue" },
-  { className: "neutral", label: "Grey" },
-  { className: "green", label: "Green" },
-  { className: "peach", label: "Peach" },
-  { className: "cream", label: "Cream" },
-];
+
 export function ActiveVideosPage() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
+
+  if (!hasLoadedRole) return null;
+  if (selectedRole === "Customer") return <LegacyClientPortalRoute />;
 
   if (hasLoadedRole && selectedRole === "Studio Freelancer") {
     return <FreelancerVideosPage />;
@@ -610,7 +610,7 @@ function ActiveVideosWorkspace() {
       if (
         target instanceof HTMLElement &&
         target.closest(
-          ".project-detail-panel, .active-project-row, a, button, input, textarea, select, [role='button'], .project-tag-menu, .deadline-popover",
+          ".project-detail-panel, .active-project-row, a, button, input, textarea, select, [role='button'], [data-brisk-popover], .deadline-popover",
         )
       ) {
         return;
@@ -812,7 +812,7 @@ function ActiveVideosWorkspace() {
                       {selectedRole === "Studio Freelancer" ? "Open Chat" : "Back to dashboard"}
                     </Link>
                   ) : availableClients.length === 0 ? (
-                    <Link className="active-videos-empty-primary label-s-semibold" href="/clients">Add Client</Link>
+                    <Link className="active-videos-empty-primary label-s-semibold" href="/clients?dialog=add">Add Client</Link>
                   ) : availableClients.length === 1 ? (
                     <Link className="active-videos-empty-primary label-s-semibold" href={`/customer-dashboard/start-video?client=${encodeURIComponent(availableClients[0].id)}`}>Start a video</Link>
                   ) : (
@@ -2112,7 +2112,7 @@ function ProjectRow({
 
         if (
           target instanceof HTMLElement &&
-          target.closest("a, button, input, [role='button'], .project-tag-menu, .deadline-popover, .status-pill")
+          target.closest("a, button, input, [role='button'], [data-brisk-popover], .deadline-popover, .status-pill")
         ) {
           return;
         }
@@ -2210,11 +2210,7 @@ function ProjectCell({
   onRemoveTag: (tag: string) => void;
   onCreateTag: (tag: string, tagClass: TagClass) => void;
 }) {
-  const [isCreatingTag, setIsCreatingTag] = useState(false);
-  const [draftTagName, setDraftTagName] = useState("");
-  const [draftTagClass, setDraftTagClass] = useState<TagClass>("critical");
   const unreadMessages = project.unreadMessages ?? 0;
-  const availableTags = tagOptions.filter((tag) => !tags.includes(tag));
   const chatTooltip =
     unreadMessages > 0
       ? `Open chat (${unreadMessages} unread)`
@@ -2226,26 +2222,6 @@ function ProjectCell({
       : getFileLocationTooltip(primaryFileLocation)
     : "";
 
-  useEffect(() => {
-    if (!isTagMenuOpen) {
-      setIsCreatingTag(false);
-      setDraftTagName("");
-      setDraftTagClass("critical");
-    }
-  }, [isTagMenuOpen]);
-
-  const submitNewTag = () => {
-    const trimmedTagName = draftTagName.trim();
-
-    if (!trimmedTagName) {
-      return;
-    }
-
-    onCreateTag(trimmedTagName, draftTagClass);
-    setIsCreatingTag(false);
-    setDraftTagName("");
-    setDraftTagClass("critical");
-  };
 
   return (
     <td className={`project-cell ${isTagMenuOpen ? "project-cell-tag-menu-open" : ""}`}>
@@ -2262,11 +2238,14 @@ function ProjectCell({
         ) : (
           <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
         )}
-        <div className="project-title-row">
-          <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
-            {project.name}
-          </a>
-          <div className="project-quick-actions" aria-label={`Quick actions for ${project.name}`}>
+        <ProjectTitleRow
+          label={`Quick actions for ${project.name}`}
+          title={
+            <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
+              {project.name}
+            </a>
+          }
+          actions={<>
             <a
               className="project-quick-action"
               href={`/chat?project=${encodeURIComponent(project.id)}`}
@@ -2329,138 +2308,11 @@ function ProjectCell({
             >
               <DsIcon name="queue" size={20} />
             </a>
-          </div>
-        </div>
-        <div className="project-meta-row">
-          {tags.map((tag) => (
-            <span className={`project-tag-chip tag-option ${getTagClass(tag, tagClasses)} label-s-semibold`} key={tag}>
-              {tag}
-              <button
-                className="project-tag-remove"
-                type="button"
-                aria-label={`Remove ${tag} tag from ${project.name}`}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onRemoveTag(tag);
-                }}
-              >
-                ×
-              </button>
-            </span>
-          ))}
-          <button
-            className="project-plus-action label-s"
-            type="button"
-            aria-label={`Add tag to ${project.name}`}
-            aria-expanded={isTagMenuOpen}
-            onClick={(event) => {
-              event.stopPropagation();
-              onToggleTagMenu();
-            }}
-          >
-            +
-          </button>
-          {isTagMenuOpen ? (
-            <div className="project-tag-menu" onClick={(event) => event.stopPropagation()}>
-              <span className="project-tag-menu-title label-s-semibold">Select a tag</span>
-              {availableTags.length > 0 ? (
-                availableTags.map((tag) => (
-                  <button
-                    className="project-tag-menu-option label-s"
-                    type="button"
-                    key={tag}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onAddTag(tag);
-                    }}
-                  >
-                    <span className={`tag-option ${getTagClass(tag, tagClasses)}`}>{tag}</span>
-                  </button>
-                ))
-              ) : (
-                <span className="project-tag-menu-empty label-s">All tags are added.</span>
-              )}
-              {isCreatingTag ? (
-                <div className="project-tag-create-form">
-                  <input
-                    className="project-tag-input label-s"
-                    type="text"
-                    value={draftTagName}
-                    placeholder="Tag name..."
-                    autoFocus
-                    onChange={(event) => setDraftTagName(event.target.value)}
-                    onClick={(event) => event.stopPropagation()}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") {
-                        event.preventDefault();
-                        submitNewTag();
-                      }
-
-                      if (event.key === "Escape") {
-                        event.preventDefault();
-                        setIsCreatingTag(false);
-                        setDraftTagName("");
-                      }
-                    }}
-                  />
-                  <div className="project-tag-colour-grid" aria-label="Tag colour">
-                    {tagColourOptions.map((tagColour) => (
-                      <button
-                        className={`project-tag-colour-swatch tag-option ${tagColour.className} ${
-                          draftTagClass === tagColour.className ? "selected" : ""
-                        }`}
-                        type="button"
-                        key={tagColour.className}
-                        aria-label={tagColour.label}
-                        aria-pressed={draftTagClass === tagColour.className}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setDraftTagClass(tagColour.className);
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div className="project-tag-create-actions">
-                    <Button size="S" variant="primary"
-                      className="project-tag-create-submit"
-                      type="button"
-                      disabled={draftTagName.trim().length === 0}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        submitNewTag();
-                      }}
-                    >
-                      Create
-                    </Button>
-                    <Button size="S" variant="ghost"
-                      className="project-tag-create-cancel"
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setIsCreatingTag(false);
-                        setDraftTagName("");
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  className="project-tag-create label-s-semibold"
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setIsCreatingTag(true);
-                  }}
-                >
-                  <span aria-hidden="true">+</span>
-                  Create new tag
-                </button>
-              )}
-            </div>
-          ) : null}
-        </div>
+          </>}
+        />
+        <ProjectTags projectName={project.name} tags={tags} tagOptions={tagOptions}
+          tagClasses={tagClasses} isTagMenuOpen={isTagMenuOpen} onToggleTagMenu={onToggleTagMenu}
+          onAddTag={onAddTag} onRemoveTag={onRemoveTag} onCreateTag={onCreateTag} />
       </div>
     </td>
   );
@@ -2569,7 +2421,6 @@ function ProjectDataCell({
         <DeadlineCell
           project={project}
           deadline={deadline}
-          onOpen={() => onOpenPanelSection("deadline")}
         />
       </td>
     );
@@ -2581,36 +2432,35 @@ function ProjectDataCell({
 
     return (
       <td className={columnClassName}>
-        <div className="hours-cell">
-          {estimatedHours > 0 ? (
-            <>
-              <span className="hours-copy label-s-semibold">
-                {formatHours(loggedHours)} <span>/</span> {formatHours(estimatedHours)}
-              </span>
-              <button
-                className="hours-button label-s-semibold"
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onOpenPanelSection("hours");
-                }}
-              >
-                + Log
-              </button>
-            </>
-          ) : (
+        {estimatedHours > 0 ? (
+          <div className="hours-cell">
+            <span className="hours-copy label-s-semibold">
+              {formatHours(loggedHours)} <span>/</span> {formatHours(estimatedHours)}
+            </span>
             <button
-              className="hours-button add label-s-semibold"
+              className="hours-button label-s-semibold"
               type="button"
               onClick={(event) => {
                 event.stopPropagation();
                 onOpenPanelSection("hours");
               }}
             >
-              + Add
+              + Log
             </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <Button
+            size="S"
+            variant="secondary"
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpenPanelSection("hours");
+            }}
+          >
+            + Add
+          </Button>
+        )}
       </td>
     );
   }
@@ -2740,23 +2590,23 @@ function ProjectDataCell({
   );
 }
 
-function DeadlineCell({ project, deadline, onOpen }: {
+function DeadlineCell({ project, deadline }: {
   project: Project;
   deadline: ProjectDeadline | undefined;
-  onOpen: () => void;
 }) {
   const timing = useTurnaround();
+  const openDeadline = useDeadlineDialog();
   const { selectedRole } = usePrototypeRole();
   const active = timing.getActiveDeadlines(project, deadline);
   const ordered = [...active].sort((left, right) => Date.parse(left.dueAt ?? "9999-12-31") - Date.parse(right.dueAt ?? "9999-12-31"));
   const first = ordered[0];
-  const category = first?.dueAt && Date.parse(first.dueAt) < timing.now ? "overdue" : "on-track";
+  const isOverdue = Boolean(first?.dueAt && Date.parse(first.dueAt) < timing.now);
   return <div className="deadline-cell">
-    <button className="deadline-display" type="button" aria-label={`View deadlines for ${project.name}`} onClick={(event) => { event.stopPropagation(); onOpen(); }}>
-      {first ? <span className={`deadline-stage-chip deadline-${category} label-xs-semibold`}>{first.label} - {first.dueAt ? countdown(first.dueAt, timing.now, timing.timezone) : selectedRole === "Studio Staff" ? "Set deadline" : "No deadline set"}{active.length > 1 ? ` · +${active.length - 1}` : ""}</span> : null}
-      {deadline?.finalDueAt ? <span className="deadline-final-text label-xs">Final due - {formatShortDeadlineDate(deadline.finalDueAt)}</span> : <span className="deadline-final-text label-xs">Final delivery to be agreed</span>}
+    <button className="deadline-display" type="button" aria-label={`View deadlines for ${project.name}`} onClick={(event) => { event.stopPropagation(); openDeadline(project.id); }}>
+      {first ? <span className={`deadline-stage-text label-xs-semibold${isOverdue ? " is-overdue" : ""}`}>{first.label} · {first.dueAt ? countdown(first.dueAt, timing.now, timing.timezone).replace(" working", "") : selectedRole === "Studio Staff" ? "Set deadline" : "No deadline set"}{active.length > 1 ? ` · +${active.length - 1}` : ""}</span> : null}
+      <span className="deadline-final-text label-xs">Final delivery · {deadline?.finalDueAt ? formatShortDeadlineDate(deadline.finalDueAt) : "TBC"}</span>
     </button>
-    <ProjectTimingWarning projectId={project.id} />
+    <ProjectTimingWarning projectId={project.id} label="Review timing" />
   </div>;
 }
 
@@ -3394,8 +3244,4 @@ function getLatestUpdateLabelParts(label: string) {
     action: words.slice(0, 2).join(" "),
     detail: words.slice(2).join(" "),
   };
-}
-
-function getTagClass(option: string, tagClasses: Record<string, TagClass>) {
-  return tagClasses[option] ?? "in-review";
 }

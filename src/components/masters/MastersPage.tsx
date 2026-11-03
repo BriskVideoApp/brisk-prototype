@@ -27,7 +27,7 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { canActOnProject } from "@/data/prototype-access";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl, type ShareActionRowProps } from "@/components/share/ShareActionRow";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -364,10 +364,10 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
     });
   };
 
-  const sendMastersReview = (message: string) => {
+  const sendMastersReview = (message: string, notifiedPeople?: readonly string[]) => {
     if ((!expandedVersion && !canDownloadAll) || !canActOnProject(viewer, project, state, "send", "masters")) return;
     const sendsToStudio = role === "Customer" || role === "Studio Freelancer";
-    const recipients = sendsToStudio ? studioRecipientNames : clientRecipientNames;
+    const recipients = [...(notifiedPeople ?? (sendsToStudio ? studioRecipientNames : clientRecipientNames))];
     const occurredAt = new Date().toISOString();
     recordMastersReviewAudit({
       id: `masters-send-${project.id}-${Date.now()}`,
@@ -1276,6 +1276,18 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
 
+  const mastersShareProps = {
+    context: "masters",
+    scopeType: expandedVersion ? "version" : "stage",
+    shareTitle: reviewScopeLabel,
+    userRole: role,
+    projectId: project.id,
+    projectName: project.name,
+    studioName: mastersStudioName,
+    customerName: project.clientName,
+    shareUrl: reviewHref,
+  } satisfies ShareActionRowProps;
+
   return (
     <main className="masters-shell">
       {confirmationDialog}
@@ -1284,6 +1296,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
         project={project}
         activeStage="masters"
         showProjectShare={false}
+        actions={<StageShareControl {...mastersShareProps} allowProjectScope openPanelSignal={sharePanelOpenSignal} />}
       />
 
         <section className="masters-register-workspace">
@@ -1657,19 +1670,10 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
         <footer className="masters-action-footer" aria-label="Masters actions">
           <div className="masters-action-footer-inner">
             <ShareActionRow
-              context="masters"
-              scopeType={expandedVersion ? "version" : "stage"}
-              shareTitle={reviewScopeLabel}
+              {...mastersShareProps}
+              stageDecisionActions
+              showCopyLink={false}
               allowProjectScope
-              userRole={role}
-              projectId={project.id}
-              projectName={project.name}
-              studioName={mastersStudioName}
-              customerName={project.clientName}
-              copyLinkIconOnly
-              copyLinkLabel="Copy link"
-              shareUrl={reviewHref}
-              openPanelSignal={sharePanelOpenSignal}
               sendChangesProjectStatus
               sendButtonVariant="secondary"
               sendCompanyName={reviewCompany}
@@ -1687,7 +1691,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
                 onSendReminder: (message) => followUpMastersReview("reminded", message),
                 onSendUpdated: (message) => followUpMastersReview("updated", message),
               } : undefined}
-              onSend={sendMastersReview}
+              onSubmit={(_destination, message, notifiedPeople) => sendMastersReview(message, notifiedPeople)}
               showApprove={Boolean(approvedReviewEntry) || (role === "Customer" && Boolean(pendingReviewRequest))}
               approveLabel={`Approve ${reviewScopeLabel}`}
               approveDisabled={mastersChangedSinceSend || (reviewScopeKey === "masters" ? hasUnresolvedClientComments : Boolean(expandedDeliverable?.comments.some((comment) => comment.visibility === "external" && !comment.resolved)))}

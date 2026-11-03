@@ -156,6 +156,13 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
         ...current.details,
         name: draft.studioName,
         studioType: draft.studioType,
+        description: draft.studioDescription,
+        website: draft.studioWebsite ?? "",
+      },
+      branding: {
+        ...current.branding,
+        logoPreviewUrl: draft.logoPreviewUrl,
+        logoOptions: [...draft.logoOptions],
       },
     }));
   }, [commitStudio, commitStudioSetup]);

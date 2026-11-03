@@ -26,8 +26,7 @@ export function getAppShellPresentation(
   const isClientPortal = scopedClientPortalPattern.test(pathname)
     || pathname === "/customer-dashboard";
 
-  if (isClientPortal && role === "Studio Staff") return "product";
-  if (isClientPortal && studioPreview) return "clean-entry";
+  if (isClientPortal) return "product";
 
   if (!testModeIsActive && (isEntryRoute || isClientPortal)) return "clean-entry";
 

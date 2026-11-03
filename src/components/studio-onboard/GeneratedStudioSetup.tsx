@@ -12,6 +12,7 @@ import {
   type StudioReviewDialogId,
 } from "@/components/studio-onboard/StudioReviewEditors";
 import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
+import { readFileAsDataUrl } from "./studioLogoFiles";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   briefSteps,
@@ -467,22 +468,6 @@ function getLogoOptions(draft: StudioReviewDraft) {
   return logoOptions.includes(draft.logoPreviewUrl)
     ? logoOptions
     : [draft.logoPreviewUrl, ...logoOptions];
-}
-
-function readFileAsDataUrl(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      if (typeof reader.result === "string") {
-        resolve(reader.result);
-        return;
-      }
-
-      reject(new Error("The selected logo could not be read."));
-    });
-    reader.addEventListener("error", () => reject(reader.error ?? new Error("The selected logo could not be read.")));
-    reader.readAsDataURL(file);
-  });
 }
 
 function getBriefOptionsEditorTitle(fieldId: BriefFieldId) {

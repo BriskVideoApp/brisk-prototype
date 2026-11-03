@@ -102,6 +102,10 @@ These describe the immediate state of an in-production video. Shown alongside th
 
 Design rule: every In-production video must show both a stage and a within-video status. The client portal should make "Waiting on client" unmissable.
 
+#### Initial Brief responsibility - approved 2 November 2026
+
+The first Studio-created video for a Client starts In production at Brief. Further Studio-created videos retain Queued by default. A Client-created request retains its queue position, with Brief initially Waiting on Client; a Studio-created Brief initially waits on the Studio. These are separate video-level and Stage states. Responsibility follows later explicit Brief handovers rather than remaining fixed to the creator. Initial Brief input is distinct from a formal review request; ordinary access invitations do not start production or send a Brief. See the [desktop approval baseline](Docs/desktop-design-baseline.md#client-dashboard-briefing-and-brief-responsibility---approved-2-november-2026) for the exact prototype scope and verification limits.
+
 ## Versions and approvals (basics)
 
 - Versions are numbered (V1, V2, V3...). Each one carries comments and an approval state.

@@ -23,7 +23,17 @@
 .header { display: grid; min-width: 0; overflow-wrap: anywhere; flex: 0 0 auto; gap: var(--brisk-space-s); }
 .header h2, .header p { margin: var(--brisk-space-none); }
 .header > div { color: var(--brisk-text-secondary); }
-.content { display: grid; min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; gap: var(--brisk-space-l); }
+.content {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  gap: var(--brisk-space-l);
+  /* Allow outward focus rings inside the scroll area without moving the fields. */
+  padding: var(--brisk-space-xs);
+  margin: calc(var(--brisk-space-xs) * -1);
+}
 .actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--brisk-space-s); }
 .dialog button:focus-visible, .dialog input:focus-visible, .dialog textarea:focus-visible, .dialog select:focus-visible {
   outline: 2px solid var(--brisk-border-focus);

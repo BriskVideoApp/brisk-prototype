@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Radio } from "../../../Brisk DS/src/app/components/Radio";
-import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -12,40 +10,63 @@ import type { Project, ProjectDeadline } from "@/components/active-videos/types"
 import { ProjectTimingWarning } from "./ProjectTimingNotice";
 import { useTurnaround, type ActiveStageDeadline } from "./TurnaroundContext";
 import { countdown, deadlineInput, formatStageDeadline, localDeadline, type TurnaroundRule } from "@/data/turnaround";
-import { deliveryHref, formatDeliveryDate } from "@/data/project-delivery";
+import { deliveryTimeZone, formatDeliveryDate } from "@/data/project-delivery";
+import type { ProductionFlowStageKey } from "@/data/production-flow";
+import { ProjectDeadlineLink, useDeadlineDialog } from "./DeadlineDialogContext";
+import { TimingDisclosure } from "./TimingDisclosure";
 
-export function StageDeadlinePanel({ project, deadline }: { project: Project; deadline?: ProjectDeadline }) {
+export function StageDeadlinePanel({ project, deadline, embedded = false, initialStage, onSaved }: { project: Project; deadline?: ProjectDeadline; embedded?: boolean; initialStage?: ProductionFlowStageKey; onSaved?: () => void }) {
   const timing = useTurnaround();
+  const openDeadline = useDeadlineDialog();
   const { selectedRole } = usePrototypeRole();
-  const [editing, setEditing] = useState<ActiveStageDeadline | null>(null);
-  const [mode, setMode] = useState<TurnaroundRule["mode"]>("dates");
-  const [internal, setInternal] = useState("");
-  const [client, setClient] = useState("");
-  const [error, setError] = useState("");
   const active = timing.getActiveDeadlines(project, deadline);
+  const initial = active.find((entry) => entry.stage === initialStage);
+  const [editing, setEditing] = useState<ActiveStageDeadline | null>(initial ?? null);
+  const [mode, setMode] = useState<TurnaroundRule["mode"]>(initial?.cycle?.mode ?? (initial?.dueAt ? "dates" : "automatic"));
+  const [internal, setInternal] = useState(deadlineInput(initial?.internalDueAt, timing.timezone));
+  const [client, setClient] = useState(deadlineInput(initial?.dueAt, timing.timezone));
+  const [error, setError] = useState("");
   const preview = editing ? timing.previewDeadline(project, editing.stage) : null;
   const canEdit = selectedRole === "Studio Staff" && project.status !== "Paused";
   const internalInstant = internal ? localDeadline(internal, timing.timezone) : null;
   const clientInstant = client ? localDeadline(client, timing.timezone) : null;
   const valid = mode === "automatic" || Boolean(clientInstant && (!internal || internalInstant && internalInstant <= clientInstant));
-  const open = (entry: ActiveStageDeadline) => { setEditing(entry); setMode(entry.cycle?.mode ?? (entry.dueAt ? "dates" : "automatic")); setInternal(deadlineInput(entry.internalDueAt, timing.timezone)); setClient(deadlineInput(entry.dueAt, timing.timezone)); setError(""); };
+  const open = (entry: ActiveStageDeadline) => { if (!embedded) { openDeadline(project.id, { stage: entry.stage }); return; } setEditing(entry); setMode(entry.cycle?.mode ?? (entry.dueAt ? "dates" : "automatic")); setInternal(deadlineInput(entry.internalDueAt, timing.timezone)); setClient(deadlineInput(entry.dueAt, timing.timezone)); setError(""); };
   return <div className="deadline-read-list">
     {active.length ? active.map((entry) => <div className="deadline-read-row-v2" key={entry.stage}><div className="deadline-read-copy">
-      <span className="deadline-read-label label-xs-semibold">{entry.label} · Waiting on Studio</span>
-      <span className="deadline-read-date label-s-semibold">{entry.dueAt ? formatStageDeadline(entry.dueAt, timing.timezone) : "No deadline set"}</span>
+      <span className="deadline-read-date label-s"><strong className="label-s-semibold">{entry.label} due</strong> · {entry.dueAt ? formatDeadlineDay(entry.dueAt, timing.timezone) : "Not set"}</span>
       {entry.dueAt ? <span className={`deadline-helper deadline-text-${Date.parse(entry.dueAt) < timing.now ? "overdue" : "on-track"} label-xs-semibold`}>{countdown(entry.dueAt, timing.now, timing.timezone)}</span> : null}
-      {selectedRole !== "Customer" && entry.internalDueAt ? <span className="label-xs">Internal WIP1: {formatStageDeadline(entry.internalDueAt, timing.timezone)}</span> : null}
-      <span className="label-xs">{entry.cycle?.mode === "automatic" ? entry.cycle.revision ? "Automatic · revision turnaround" : "Automatic · first WIP" : entry.dueAt ? "Specific date" : "Choose a date or start a timer."}</span>
-    </div>{canEdit ? <Button size="S" variant="ghost" onClick={() => open(entry)}>{entry.dueAt ? "Edit" : "Set deadline"}<span className="sr-only"> for {entry.label}</span></Button> : null}</div>) : <p className="paragraph-s">No stages are Waiting on Studio.</p>}
+    </div>{canEdit ? <Button size="S" variant="ghost" onClick={() => open(entry)}>{entry.dueAt ? "Change date" : "Set deadline"}<span className="sr-only"> for {entry.label}</span></Button> : null}</div>) : <p className="paragraph-s">No active stage deadlines.</p>}
     {project.status === "Paused" && active.length ? <p className="label-xs">Project paused. Existing dates stay unchanged.</p> : null}
-    <p className="label-xs">{timing.timezone} · Working days exclude weekends.</p>
-    <div className="deadline-read-row-v2"><div className="deadline-read-copy"><span className="deadline-read-label label-xs-semibold">Final delivery</span><span className="deadline-read-date label-s-semibold">{deadline?.finalDueAt ? formatDeliveryDate(deadline.finalDueAt) : "To be agreed"}</span><Link className="timing-review-deadline-link label-xs-semibold" href={deliveryHref(project.id)}>View final delivery</Link><ProjectTimingWarning projectId={project.id} /></div></div>
-    {editing ? <EditingDialog title={`${editing.label} deadline`} description="Waiting on Studio" onCancel={() => setEditing(null)} actions={<><Button size="S" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button><Button size="S" disabled={!valid} onClick={() => { if (timing.saveDeadline(project, editing.stage, mode, internalInstant, clientInstant)) setEditing(null); else setError("This stage has changed. Close and review its current status."); }}>Save deadline</Button></>}>
+    {!embedded ? <div className="deadline-read-copy">
+      <span className="deadline-read-date label-s"><strong className="label-s-semibold">Final delivery</strong> · {deadline?.finalDueAt ? formatDeadlineDay(deadline.finalDueAt, deliveryTimeZone) : "TBC"}</span>
+      <div className="deadline-summary-actions">
+        <ProjectDeadlineLink className="timing-review-deadline-link label-xs-semibold" projectId={project.id}>View deadline</ProjectDeadlineLink>
+        <ProjectTimingWarning projectId={project.id} label="Review timing" />
+      </div>
+    </div> : null}
+    <TimingDisclosure key={project.id} label={embedded ? "Stage details" : "Timing details"}>
+      {active.map((entry) => <div className="deadline-read-copy" key={entry.stage}>
+        <strong className="label-xs-semibold">{entry.label}</strong>
+        <span className="label-xs">Version due to Client: {entry.dueAt ? formatStageDeadline(entry.dueAt, timing.timezone) : "Not set"}</span>
+        {selectedRole !== "Customer" && entry.internalDueAt ? <span className="label-xs">Internal review due: {formatStageDeadline(entry.internalDueAt, timing.timezone)}</span> : null}
+        <span className="label-xs">{entry.cycle ? `${entry.cycle.mode === "automatic" ? "Automatic" : "Specific date"} · ${entry.cycle.revision ? "Revision turnaround" : "First WIP"}` : entry.dueAt ? "Specific date" : "Choose a date or start a timer."}</span>
+      </div>)}
+      {!embedded && deadline?.finalDueAt ? <span className="label-xs">Final delivery: {formatDeliveryDate(deadline.finalDueAt)} · {deliveryTimeZone}</span> : null}
+      <span className="label-xs">Stage times: {timing.timezone}. Working days exclude weekends.</span>
+    </TimingDisclosure>
+    {editing && embedded && canEdit ? <div className="turnaround-form" role="group" aria-label={`${editing.label} deadline`}>
+      <h3 className="label-s-semibold">{editing.label} deadline</h3>
       <div className="turnaround-form"><div className="turnaround-mode" role="group" aria-label="Stage deadline mode"><Radio name="stage-deadline-mode" label="Automatic" checked={mode === "automatic"} onChange={() => setMode("automatic")} /><Radio name="stage-deadline-mode" label="Specific date" checked={mode === "dates"} onChange={() => setMode("dates")} /></div>
       {mode === "automatic" ? <><p className="paragraph-s">{editing.cycle ? "Uses your Studio’s current rules from this cycle’s original start." : "Starts now using your Studio’s turnaround times. This existing stage has no recorded start time."} Final delivery stays unchanged.</p><div className="deadline-read-list">{preview?.internalDueAt ? <div className="deadline-read-copy"><span className="label-xs">Internal WIP1</span><strong className="label-s-semibold">{formatStageDeadline(preview.internalDueAt, timing.timezone)}</strong></div> : null}{preview?.clientDueAt ? <div className="deadline-read-copy"><span className="label-xs">{preview.revision ? "Next WIP to Client" : "Client WIP1"}</span><strong className="label-s-semibold">{formatStageDeadline(preview.clientDueAt, timing.timezone)}</strong></div> : null}</div></> : <><div className="turnaround-form"><span className="label-s-semibold">{editing.cycle?.revision ? "Internal review (optional)" : "Internal WIP1 (optional)"}</span><DeadlineDateTimePicker ariaLabel="Internal WIP1 date" value={internal} onChange={setInternal} /><span className="label-s-semibold">{editing.cycle?.revision ? "Next WIP to Client" : "Client WIP1"}</span><DeadlineDateTimePicker ariaLabel="Client WIP deadline" value={client} onChange={setClient} /></div><p className="label-xs">{timing.timezone}. Client delivery must be on or after the internal WIP.</p></>}
       {error ? <p className="paragraph-s" role="alert">{error}</p> : null}</div>
-    </EditingDialog> : null}
+      <div className="final-delivery-actions"><Button size="S" variant="ghost" onClick={() => setEditing(null)}>Cancel stage change</Button><Button size="S" variant="secondary" disabled={!valid} onClick={() => { if (timing.saveDeadline(project, editing.stage, mode, internalInstant, clientInstant)) { setEditing(null); onSaved?.(); } else setError("This stage has changed. Review its current status."); }}>Save stage deadline</Button></div>
+    </div> : null}
   </div>;
+}
+
+function formatDeadlineDay(instant: string, timeZone: string) {
+  return new Intl.DateTimeFormat("en-AU", { timeZone, weekday: "short", day: "numeric", month: "short" }).format(new Date(instant)).replace(",", "");
 }
 
 /** Reuses the existing project-panel date and time picker composition. */

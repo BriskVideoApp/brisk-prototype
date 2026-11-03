@@ -10,6 +10,7 @@ import {
 } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { prototypeAccessLevelLabels } from "@/data/prototype-permissions";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { chatUsers, chatWorkspace } from "@/data/chat";
@@ -28,18 +29,13 @@ const prototypeUserIdByRole: Record<PrototypeRole, string> = {
   Customer: "user-jess",
 };
 
-const organisationByRole: Record<PrototypeRole, string> = {
-  "Studio Staff": chatWorkspace.name,
-  "Studio Freelancer": chatWorkspace.name,
-  Customer: "Loom",
-};
-
 export function UserAvatarMenu({ placement, collapsed = false, onNavigate }: UserAvatarMenuProps) {
   const pathname = usePathname();
   const { selectedRole, selectedAccessLevel, canManageStudio: canManageStudioSettings } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { people } = usePeople();
   const { account, access, buildHref } = useClientAccountSettings();
+  const { studio } = useStudioSettings();
   const [isOpen, setIsOpen] = useState(false);
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -108,7 +104,7 @@ export function UserAvatarMenu({ placement, collapsed = false, onNavigate }: Use
   const displayName = viewer?.name ?? (isClient ? customer?.name ?? account.profile.fullName : isFreelancer ? freelancer?.name ?? user.name : studioMember?.name ?? user.name);
   const displayEmail = viewer?.email ?? (isClient ? customer?.email ?? account.profile.signInEmail : isFreelancer ? freelancer?.email ?? user.email : studioMember?.email ?? user.email);
   const photoUrl = isClient ? customer?.avatarUrl ?? account.profile.photoUrl : isFreelancer ? freelancer?.avatarUrl ?? null : studioMember?.avatarUrl ?? null;
-  const organisationName = isClient ? account.company.name : organisationByRole[selectedRole];
+  const organisationName = isClient ? account.company.name : studio.details.name;
   const roleLine = `${prototypeAccessLevelLabels[selectedAccessLevel]} · ${organisationName}`;
   const closeAfterNavigation = () => {
     setIsOpen(false);

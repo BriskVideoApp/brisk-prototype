@@ -9,7 +9,6 @@ import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/Confirm
 
 import { useSearchSource } from "@/components/search/SearchContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createPortal } from "react-dom";
 import {
   createContext,
   useEffect,
@@ -28,7 +27,7 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
-import { BriskSelect } from "@/components/form/BriskSelect";
+import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
@@ -40,10 +39,11 @@ import { useNotificationInbox } from "@/components/notifications/NotificationInb
 import { useInvitations } from "@/components/invitations/InvitationContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
-import { ShareActionRow, type ShareAccess } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl, type ShareAccess } from "@/components/share/ShareActionRow";
 import type { SubmitDestination } from "@/data/submit-review";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import {
+  briefAudienceOptions,
   briefClarifyingQuestions,
   briefDraftOptions,
   briefFilmingContentOptions,
@@ -74,6 +74,8 @@ import { getStudioBriefFieldOrder, type StudioBriefConfiguration } from "@/data/
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { formatBriefDate, parseBriefDateValue } from "@/lib/brief-dates";
 import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
+import { ProjectDeadlineLink, useDeadlineDialog } from "@/components/project-timing/DeadlineDialogContext";
+import { briefDeliveryDate, formatDeliveryDate } from "@/data/project-delivery";
 import { BriefTimingSuggestion } from "@/components/project-timing/ProjectTimingNotice";
 
 type BriefPageProps = {
@@ -601,7 +603,8 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const currentStudioName = useStudioCompanyName();
   const studioName = providedStudioName ?? currentStudioName;
   const { selectedRole } = usePrototypeRole();
-  const { submitBriefTiming } = useProjectTiming();
+  const { submitBriefTiming, getDeliveryAgreement } = useProjectTiming();
+  const openDeadline = useDeadlineDialog();
   const { publishStageReviewFollowUp } = useNotificationInbox();
   const { openInvitePerson } = useInvitations();
   const { state, hasHydrated } = usePrototypeState();
@@ -618,6 +621,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const initialBriefHasContent = Object.values(initialFields ?? initialBriefFields).some((field) => field.value.trim());
   const clientHasBriefToApprove = selectedRole === "Customer"
     && briefStageStatus.state === "waiting"
+    && !briefStageStatus.inputRequired
     && briefStageStatus.assignedTo === project.clientName
     && initialBriefHasContent;
   const briefActorName = selectedRole === "Customer"
@@ -660,9 +664,10 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     .map((field) => ({ id: `brief:${project.id}:${field.id}`, source: `brief:${project.id}`, kind: "Briefs" as const,
       title: field.label, text: field.value, meta: `${project.clientName} · ${project.name}`, projectId: project.id,
       href: `/projects/${project.id}/stages/brief?searchField=${field.id}`, onSelect: () => revealSearchField(field.id) })) });
-  const mainDeliverable = parseDeliverables(briefFields.deliverables.value, briefFields.deadline.value)[0];
-  const timingRequestedDate = mainDeliverable?.deadline || briefFields.deadline.value;
-  const timingSuggestion = <BriefTimingSuggestion projectId={project.id} requestedDate={timingRequestedDate} />;
+  const timingRequestedDate = briefDeliveryDate(briefFields);
+  const finalDeadline = getDeliveryAgreement(project).agreedDate;
+  const timingSuggestion = finalDeadline ? <p className="brief-timing-suggestion label-s">Final delivery · {formatDeliveryDate(finalDeadline, false)} · <ProjectDeadlineLink projectId={project.id} className="timing-review-deadline-link label-s-semibold">{selectedRole === "Customer" ? "Propose a change" : "Change deadline"}</ProjectDeadlineLink></p>
+    : <BriefTimingSuggestion projectId={project.id} requestedDate={timingRequestedDate} />;
   const briefFieldsRef = useRef(briefFields);
   const summaryMissingActiveIndexRef = useRef(-1);
   const [logline, setLogline] = useBriefAiState(project.id, "logline", { text: "", status: "not_generated" });
@@ -689,11 +694,14 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const nextStageLabel = nextStage === "edit" && projectFlow.postProductionTerm === "animation"
     ? "Animation"
     : productionFlowStages[nextStage].label;
-  const isSummaryStep = activeStepId === "summary";
+  const isSummaryStep = briefMode === "steps" && activeStepId === "summary";
   const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName);
   const hasBriefContent = Object.values(briefFields).some((field) => field.value.trim());
+  const canSendBrief = canActOnProject(viewer, project, state, "send", "brief");
+  const canApproveBrief = canActOnProject(viewer, project, state, "approve", "brief");
   const approvalDisabledReason = selectedRole === "Studio Freelancer"
     ? "Only Studio Staff and Clients can approve this Brief"
+    : !canApproveBrief ? "You don't have access to approve this Brief"
     : !hasBriefContent ? "Add Brief details before approving" : undefined;
   const approvalGuidance = isBriefApproved ? "This Brief is approved."
     : approvalDisabledReason ? `${approvalDisabledReason}.` : "You can still approve this brief.";
@@ -708,7 +716,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     }
   }, [hasHydrated, hasBriefContent, isBriefApproved, project.id, setProjectStageStatus]);
   const lastBriefAudit = briefAudit[briefAudit.length - 1];
-  const reviewCompany = briefStageStatus.assignedTo ?? (selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName);
+  const reviewCompany = selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName;
   const latestReviewRequest = [...briefAudit].reverse().find((entry): entry is BriefReviewAuditEntry => entry.action === "sent" && entry.company === reviewCompany);
   const pendingReviewRequest = !isBriefApproved && briefStageStatus.assignedTo === reviewCompany ? latestReviewRequest : undefined;
   const reviewFollowUps = pendingReviewRequest
@@ -741,7 +749,19 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }, []);
 
   function commitBriefFields(update: BriefFields | ((current: BriefFields) => BriefFields)) {
-    const nextFields = typeof update === "function" ? update(briefFieldsRef.current) : update;
+    let nextFields = typeof update === "function" ? update(briefFieldsRef.current) : update;
+    const previousFields = briefFieldsRef.current;
+    const requestedDate = briefDeliveryDate(nextFields);
+    if (finalDeadline && (requestedDate !== briefDeliveryDate(previousFields) || nextFields.deadline.value !== previousFields.deadline.value)) {
+      const proposed = requestedDate !== briefDeliveryDate(previousFields) ? requestedDate : nextFields.deadline.value;
+      openDeadline(project.id, { date: proposed || undefined });
+      const rows = parseDeliverables(nextFields.deliverables.value, previousFields.deadline.value);
+      const mainIndex = Math.max(0, rows.findIndex((row) => row.isMain));
+      nextFields = { ...nextFields, deadline: previousFields.deadline,
+        deliverables: nextFields.deliverables.value === previousFields.deliverables.value ? nextFields.deliverables
+          : { ...nextFields.deliverables, value: JSON.stringify(rows.map((row, index) => index === mainIndex
+            ? { ...row, deadline: briefDeliveryDate(previousFields) } : row)) } };
+    }
     if (isBriefApproved && Object.keys(nextFields).some((key) => {
       const fieldId = key as BriefFieldId;
       return nextFields[fieldId].value !== briefFieldsRef.current[fieldId].value;
@@ -984,6 +1004,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function sendBrief(destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) {
+    if (!hasBriefContent || !canSendBrief) return;
     const sendsToStudio = destination === "studio";
     const company = sendsToStudio ? studioName : project.clientName;
     const recipients = [...notifiedPeople];
@@ -1022,6 +1043,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function checkBriefClientAccess(destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) {
+    if (!hasBriefContent || !canSendBrief) return false;
     if (destination !== "customer") return true;
 
     const hasClientProjectAccess = Boolean(projectClient && projectState?.clientMemberIds.some((contactId) => {
@@ -1051,7 +1073,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function followUpBriefReview(action: "reminded" | "updated", message: string) {
-    if (!pendingReviewRequest || !lastReviewContact || !lastBriefSent) return;
+    if (!canSendBrief || !pendingReviewRequest || !lastReviewContact || !lastBriefSent) return;
     const changed = lastBriefSent.fingerprint && lastBriefSent.fingerprint !== getBriefReviewFingerprint(briefFieldsRef.current, logline.text);
     if (action === "reminded" && changed) return;
     if (action === "updated" && !changed) return;
@@ -1084,7 +1106,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function requestApproveBrief() {
-    if (selectedRole === "Studio Freelancer" || isBriefApproved || !hasBriefContent) return;
+    if (!canApproveBrief || isBriefApproved || !hasBriefContent) return;
     if (summaryMissingCount > 0) {
       setIsApprovalConfirmationOpen(true);
       return;
@@ -1093,8 +1115,9 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function approveBrief() {
-    if (selectedRole === "Studio Freelancer" || isBriefApproved || !hasBriefContent) return;
+    if (!canApproveBrief || isBriefApproved || !hasBriefContent) return;
     const now = new Date();
+    submitBriefTiming(project.id, timingRequestedDate, now.toISOString());
     const approvedAt = formatBriefApprovalDate(now);
     setProjectStageStatus(project.id, "brief", {
       state: "done",
@@ -1128,7 +1151,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     }
     setIsApprovalConfirmationOpen(false);
     if (approvalDestination) {
-      router.push(withBriefApprovalToast(approvalDestination, "Tom"));
+      router.push(withBriefApprovalToast(approvalDestination, briefActorName));
       return;
     }
     setIsApprovalCelebrationVisible(true);
@@ -1143,11 +1166,11 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     }
     setIsApprovalCelebrationVisible(false);
     const nextStageHref = getProjectStageHref(project.id, nextStage);
-    router.push(nextStage === "script" ? withBriefApprovalToast(nextStageHref, "Tom") : nextStageHref);
+    router.push(nextStage === "script" ? withBriefApprovalToast(nextStageHref, briefActorName) : nextStageHref);
   }
 
   function unapproveBrief() {
-    if (selectedRole === "Studio Freelancer" || !isBriefApproved) return;
+    if (!canApproveBrief || !isBriefApproved) return;
     const now = new Date();
     setProjectStageStatus(project.id, "brief", {
       state: selectedRole === "Customer" ? "waiting" : "in_progress",
@@ -1246,12 +1269,9 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       context="brief"
       userRole={selectedRole}
       density="compact"
-      presentation={isSummaryStep ? "brief-summary" : "overflow"}
+      stageDecisionActions
+      showCopyLink={false}
       briefControls
-      allowProjectScope
-      initialAccess={briefShareAccess}
-      onAccessChange={setBriefShareAccess}
-      initialLinkOpens="stageOnly"
       projectId={project.id}
       projectName={project.name}
       studioName={studioName}
@@ -1273,8 +1293,8 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
         onSendReminder: (message) => followUpBriefReview("reminded", message),
         onSendUpdated: (message) => followUpBriefReview("updated", message),
       } : undefined}
-      copyLinkIconOnly
-      copyLinkLabel="Copy link"
+      sendDisabled={!hasBriefContent || !canSendBrief}
+      sendDisabledTooltip={!canSendBrief ? "You don't have access to send this Brief" : "Add Brief details before sending"}
       approveLabel="Approve Brief"
       approveDisabled={Boolean(approvalDisabledReason)}
       approveDisabledTooltip={approvalDisabledReason}
@@ -1291,16 +1311,36 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   return (
     <main className="brief-shell">
       <div className="brief-main">
-        {(briefMode === "landing" || (briefMode === "steps" && !isSummaryStep)) ? (
-          <BriefGlobalActionsPortal>{briefActionsRow}</BriefGlobalActionsPortal>
-        ) : null}
         <ProjectStageHeader
           activeStage="brief"
           project={project}
           showProjectShare={false}
+          actions={<StageShareControl
+            context="brief"
+            userRole={selectedRole}
+            density="compact"
+            allowProjectScope
+            initialAccess={briefShareAccess}
+            onAccessChange={setBriefShareAccess}
+            initialLinkOpens="stageOnly"
+            projectId={project.id}
+            projectName={project.name}
+            studioName={studioName}
+            customerName={project.clientName}
+            scopeType="stage"
+            shareTitle="Brief"
+            shareUrl={`/projects/${project.id}/stages/brief`}
+          />}
         />
+        {lastBriefAudit ? <p
+          className="brief-action-audit brief-action-audit-inline label-xs"
+          role="status"
+          title={describeBriefAuditEntry(lastBriefAudit)}
+          aria-label={describeBriefAuditEntry(lastBriefAudit)}
+        >{summariseBriefAuditEntry(lastBriefAudit)}</p> : null}
         {briefMode === "landing" ? (
           <BriefLandingScreen
+            footerShare={briefActionsRow}
             steps={configuredSteps}
             backHref={selectedRole === "Customer" ? "/customer-dashboard" : "/active-videos"}
             canDraft={!hasDraftedBrief}
@@ -1322,33 +1362,12 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             steps={configuredSteps}
             footerAction={
               isSummaryStep ? null : (
-                <Button size="S" type="button" variant="primary" onClick={() => goToRelativeStep(1)}>
-                  Next
+                <Button size="S" type="button" variant="secondary" onClick={() => goToRelativeStep(1)}>
+                  {configuredSteps[activeStepIndex + 1]?.id === "summary" ? "Review Brief" : "Next"}
                 </Button>
               )
             }
-            footerShare={isSummaryStep ? (
-            <div className="brief-footer-share-layout">
-                {lastBriefAudit ? <span
-                  className="brief-action-audit label-xs"
-                  role="status"
-                  title={describeBriefAuditEntry(lastBriefAudit)}
-                  aria-label={describeBriefAuditEntry(lastBriefAudit)}
-                >
-                  {summariseBriefAuditEntry(lastBriefAudit)}
-                </span> : null}
-                {briefActionsRow}
-              </div>
-            ) : lastBriefAudit ? (
-              <span
-                className="brief-action-audit label-xs"
-                role="status"
-                title={describeBriefAuditEntry(lastBriefAudit)}
-                aria-label={describeBriefAuditEntry(lastBriefAudit)}
-              >
-                {summariseBriefAuditEntry(lastBriefAudit)}
-              </span>
-            ) : null}
+            footerShare={briefActionsRow}
             onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
             onStartWithAi={resetToLanding}
             onSelectStep={selectStep}
@@ -1781,42 +1800,25 @@ function BriefStepShell({
           {children}
         </div>
       </section>
-      <footer className={`brief-step-footer${footerNotice ? " has-summary-note" : ""}`}>
+      <footer className={`brief-step-footer has-review-actions${footerNotice ? " has-summary-note" : ""}`}>
         <div className="brief-step-footer-inner">
-          <span className="brief-footer-side">
+          <div className="brief-footer-side">
             {onBack ? (
               <Button size="S" type="button" variant="secondary" onClick={onBack}>
                 Back
               </Button>
             ) : null}
-          </span>
-          <BriefStepDots activeStepIndex={activeStepIndex} steps={steps} onSelectStep={onSelectStep} onStartWithAi={onStartWithAi} />
-          <span className="brief-footer-side right">
-            {footerNotice}
             {footerAction}
-          </span>
+          </div>
+          <BriefStepDots activeStepIndex={activeStepIndex} steps={steps} onSelectStep={onSelectStep} onStartWithAi={onStartWithAi} />
+          <div className="brief-footer-side right">
+            {footerNotice}
+            {footerShare}
+          </div>
         </div>
-        {footerShare ? <div className="brief-step-footer-share">{footerShare}</div> : null}
       </footer>
     </>
   );
-}
-
-function BriefGlobalActionsPortal({ children }: { children: ReactNode }) {
-  const [target, setTarget] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const findTarget = () => {
-      const nextTarget = document.querySelector<HTMLElement>("[data-brief-global-actions-slot]");
-      setTarget((current) => current === nextTarget ? current : nextTarget);
-    };
-    findTarget();
-    const observer = new MutationObserver(findTarget);
-    observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, []);
-
-  return target ? createPortal(children, target) : null;
 }
 
 function BriefStepDots({
@@ -1865,6 +1867,7 @@ function BriefStepDots({
 }
 
 function BriefLandingScreen({
+  footerShare,
   backHref,
   canDraft,
   hasDraftContext,
@@ -1878,6 +1881,7 @@ function BriefLandingScreen({
   onSubmit,
   studioName,
 }: {
+  footerShare: ReactNode;
   backHref: string;
   canDraft: boolean;
   hasDraftContext: boolean;
@@ -2022,7 +2026,7 @@ function BriefLandingScreen({
           <div className="brief-landing-intro">
             <h1 id="brief-landing-title">What video are we making?</h1>
             <p className="brief-landing-guidance paragraph-s">
-              {studioName} will ask a few questions, then draft your Brief for you to review.
+              Answer a few questions and Brisk will draft your Brief for you to review.
             </p>
           </div>
         )}
@@ -2036,12 +2040,13 @@ function BriefLandingScreen({
               {!isClarifying ? <Button size="S" variant="ghost" className="brief-landing-skip" type="button" disabled={isDrafting} onClick={onSkip}>
                 Fill manually
               </Button> : null}
-              <Button size="S" variant="secondary" className="brief-landing-next" type="button"
+              {isClarifying && canDraft && (hasDraftContext || canSendMessage) ? <Button
+                size="S" variant="ghost" type="button" disabled={!canDraftNow} onClick={handleDraft}>
+                {isDrafting ? "Drafting Brief…" : "Draft Brief now"}
+              </Button> : null}
+              <Button size="S" variant="primary" className="brief-landing-next" type="button"
                 disabled={!canSendMessage || isDrafting} onClick={submitLandingPrompt}>
-                Continue
-              </Button>
-              <Button size="S" variant="primary" type="button" disabled={!canDraftNow} onClick={handleDraft}>
-                {isDrafting ? "Drafting your brief…" : "OK, draft my brief"}
+                {isClarifying ? "Send answer" : "Continue"}
               </Button>
             </>
           }
@@ -2068,7 +2073,7 @@ function BriefLandingScreen({
         <div className="brief-landing-footer-centre">
           <BriefStepDots activeStepIndex={null} steps={steps} onSelectStep={onSelectStep} onStartWithAi={() => undefined} />
         </div>
-        <span aria-hidden="true" />
+        <div className="brief-footer-side right">{footerShare}</div>
       </footer>
     </section>
   );
@@ -2717,18 +2722,46 @@ function BriefPurposeAudienceSection({
 function BriefPurposeSelect({ excludedOptions = [], onChange, value }: {
   excludedOptions?: readonly string[]; onChange: (value: string) => void; value: string;
 }) {
-  const isKnownPurpose = briefPurposeOptions.includes(value as (typeof briefPurposeOptions)[number]);
-  const isCustomPurpose = value === "Something else" || (!!value && !isKnownPurpose);
+  return <BriefPresetPicker ariaLabel="Purpose" placeholder="Choose purpose"
+    inputLabel="Custom purpose" inputPlaceholder="Describe the purpose"
+    presetValues={briefPurposeOptions} value={value} onChange={onChange}
+    options={briefPurposeOptions.filter((option) => !excludedOptions.includes(option)).map((option) => ({
+      value: option, label: isBriefCustomOption(option) ? briefCustomOptionLabel : option,
+      icon: isBriefCustomOption(option) ? "plus" : undefined,
+      content: isBriefCustomOption(option) ? undefined : <BriefPurposeOptionLabel option={option} />,
+    }))}
+  />;
+}
+
+/** Shared Brief composition: a preset dropdown with editable custom wording. */
+function BriefPresetPicker({ ariaLabel, placeholder, inputLabel, inputPlaceholder, inputId,
+  presetValues, options, value, onChange, editablePresets = false,
+  customOptionValue = "Something else", customEmptyValue = customOptionValue,
+}: {
+  ariaLabel: string; placeholder: string; inputLabel: string; inputPlaceholder: string; inputId?: string;
+  presetValues: readonly string[]; options: readonly BriskSelectOption[];
+  value: string; onChange: (value: string) => void; editablePresets?: boolean;
+  customOptionValue?: string; customEmptyValue?: string;
+}) {
+  const [customRequested, setCustomRequested] = useState(false);
+  const isPreset = value !== customOptionValue && presetValues.includes(value);
+  const isCustom = value === customOptionValue || (!isPreset && (Boolean(value) || customRequested));
   return <div className="brief-purpose-picker">
-    <BriskSelect ariaLabel="Purpose" clearable={false} placeholder="Choose purpose"
-      value={isCustomPurpose ? "Something else" : value}
-      options={briefPurposeOptions.filter((option) => !excludedOptions.includes(option)).map((option) => ({
-        value: option, label: isBriefCustomOption(option) ? briefCustomOptionLabel : option,
-        icon: isBriefCustomOption(option) ? "plus" : undefined,
-        content: isBriefCustomOption(option) ? undefined : <BriefPurposeOptionLabel option={option} />,
-      }))} onChange={onChange} />
-    {isCustomPurpose ? <input className="brief-custom-select-input label-s" aria-label="Custom purpose" placeholder="Describe the purpose"
-      value={value === "Something else" ? "" : value} onChange={(event) => onChange(event.target.value || "Something else")} /> : null}
+    <BriskSelect ariaLabel={ariaLabel} id={inputId ? `${inputId}-preset` : undefined}
+      clearable={false} placeholder={placeholder} value={isCustom ? customOptionValue : value}
+      options={options} onChange={(nextValue) => {
+        const custom = nextValue === customOptionValue;
+        setCustomRequested(custom);
+        onChange(custom ? customEmptyValue : nextValue);
+      }} />
+    {isCustom || (editablePresets && isPreset) ? <input
+      id={inputId} className="brief-custom-select-input label-s" aria-label={inputLabel} placeholder={inputPlaceholder}
+      value={value === customOptionValue ? "" : value}
+      onChange={(event) => {
+        setCustomRequested(true);
+        onChange(event.target.value || customEmptyValue);
+      }}
+    /> : null}
   </div>;
 }
 
@@ -2813,7 +2846,7 @@ function BriefAudienceList({
   onChange: (value: string) => void;
   value: string;
 }) {
-  const audiences = parseAudienceList(value);
+  const audiences = parseAudienceList(value, true);
 
   function updateAudience(index: number, nextValue: string) {
     const nextAudiences = audiences.map((audience, audienceIndex) =>
@@ -2841,23 +2874,26 @@ function BriefAudienceList({
         return (
           <div className="brief-audience-item" key={`${label}-${index}`}>
             <div className="brief-audience-input-wrap">
-              <input
-                id={`brief-audience-${index}`}
-                className="brief-audience-input label-s"
-                aria-label={label}
-                placeholder={getAudiencePlaceholder(index)}
-                value={audience}
-                onChange={(event) => updateAudience(index, event.target.value)}
+              <BriefPresetPicker
+                ariaLabel={label} placeholder={`Choose ${label.toLowerCase()}`}
+                inputId={`brief-audience-${index}`} inputLabel={`${label} details`}
+                inputPlaceholder={getAudiencePlaceholder(index)}
+                presetValues={briefAudienceOptions} editablePresets
+                customOptionValue="__custom_audience__" customEmptyValue=""
+                value={audience} onChange={(nextValue) => updateAudience(index, nextValue)}
+                options={[
+                  ...briefAudienceOptions.map((option) => ({ value: option, label: option })),
+                  { value: "__custom_audience__", label: "Custom audience…", icon: "plus" },
+                ]}
               />
               {index > 0 ? (
-                <button
-                  className="brief-audience-remove"
-                  type="button"
+                <IconButton
+                  size="S"
                   aria-label={`Remove ${label}`}
                   onClick={() => removeAudience(index)}
                 >
-                  <DsIcon name="x-close-cross" size={12} />
-                </button>
+                  <DsIcon name="x-close-cross" size={16} />
+                </IconButton>
               ) : null}
             </div>
           </div>
@@ -3941,16 +3977,18 @@ function parseMultiSelectValue(value: string) {
     .filter(Boolean);
 }
 
-function parseAudienceList(value: string) {
+function parseAudienceList(value: string, preserveEditingWhitespace = false) {
   if (!value.trim()) {
     return [""];
   }
 
   const audiences = value
     .split("\n")
-    .map((line) => line.replace(/^(Primary audience|Secondary audience|Audience \d+):\s*/i, "").trim());
+    .map((line) => preserveEditingWhitespace
+      ? line.replace(/^(Primary audience|Secondary audience|Audience \d+): ?/i, "")
+      : line.replace(/^(Primary audience|Secondary audience|Audience \d+):\s*/i, "").trim());
 
-  if (audiences.length === 1 && audiences[0].includes(". ")) {
+  if (!/^Primary audience:/i.test(value) && audiences.length === 1 && audiences[0].includes(". ")) {
     const splitAudience = audiences[0]
       .split(". ")
       .map((item) => item.replace(/\.$/, "").trim())
@@ -3966,7 +4004,7 @@ function parseAudienceList(value: string) {
 
 function serialiseAudienceList(audiences: string[]) {
   const normalisedAudiences = audiences
-    .map((audience, index) => ({ label: getAudienceLabel(index), value: audience.trim() }));
+    .map((audience, index) => ({ label: getAudienceLabel(index), value: audience }));
 
   if (normalisedAudiences.length <= 1 && !normalisedAudiences.some((audience) => audience.value)) {
     return "";
@@ -4952,11 +4990,21 @@ function BriefWrittenSlot({
     );
   }
 
+  const Slot = className === "hero" ? "span" : "button";
+
   return (
-    <button
+    <Slot
       className={`brief-written-slot ${className ?? ""} ${isGuess ? "is-guess" : ""} ${isMissing ? "is-missing" : ""}`}
-      type="button"
+      type={Slot === "button" ? "button" : undefined}
+      role={Slot === "span" ? "button" : undefined}
+      tabIndex={Slot === "span" ? 0 : undefined}
       aria-label={isMissing ? label : isGuess ? `Confirm ${label}` : `Edit ${label}`}
+      onKeyDown={Slot === "span" ? (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          event.currentTarget.click();
+        }
+      } : undefined}
       onClick={() => {
         if (!isMissing && isGuess) {
           onConfirm(field.id);
@@ -4967,7 +5015,7 @@ function BriefWrittenSlot({
       }}
     >
       {value.trim() ? value : <BriefWrittenMissingControl label={missingLabel} />}
-    </button>
+    </Slot>
   );
 }
 
@@ -5458,9 +5506,16 @@ function BriefSummaryLogline({
             onEdit={onEdit}
             onStopEditing={onStopEditing}
             editor={
-              <input
+              <textarea
                 autoFocus
-                className="brief-summary-inline-input label-s"
+                aria-label="Audience"
+                className="brief-summary-inline-textarea brief-summary-audience-editor label-s"
+                rows={1}
+                ref={(element) => {
+                  if (!element) return;
+                  element.style.height = "auto";
+                  element.style.height = `${element.scrollHeight}px`;
+                }}
                 value={fields.audience.value}
                 onBlur={onStopEditing}
                 onChange={(event) => onChange("audience", event.target.value)}

@@ -75,18 +75,6 @@ function InlinePrototypeScenarioToolbar({ placement }: { placement: "header" | "
               <DsIcon name="circles-three" size={16} />
               <span className="label-s-semibold">Testing scenarios</span>
             </Link>
-            <Link href="/prototype/production-flow">
-              <DsIcon name="circles-three" size={16} />
-              <span className="label-s-semibold">Production flow</span>
-            </Link>
-            <Link href="/share">
-              <DsIcon name="link" size={16} />
-              <span className="label-s-semibold">Share controls</span>
-            </Link>
-            <Link href="/studio-onboard">
-              <DsIcon name="sparkle" size={16} />
-              <span className="label-s-semibold">Studio onboarding</span>
-            </Link>
           </div>
         </div>
       </details>

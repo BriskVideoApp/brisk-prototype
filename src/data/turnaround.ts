@@ -79,9 +79,11 @@ export function countdown(instant: string, now: number, timeZone: string) {
   const start = parts(now, timeZone); const end = parts(new Date(instant), timeZone);
   const day = new Date(Date.UTC(start.year, start.month - 1, start.day));
   const until = Date.UTC(end.year, end.month - 1, end.day);
+  if (day.getTime() === until) return "Due today";
   let days = 0;
   while (day.getTime() < until) { day.setUTCDate(day.getUTCDate() + 1); if (day.getUTCDay() !== 0 && day.getUTCDay() !== 6) days += 1; }
-  return days ? `${days} working ${days === 1 ? "day" : "days"} left` : "Due today";
+  return days ? `${days} working ${days === 1 ? "day" : "days"} left`
+    : `Due ${new Intl.DateTimeFormat("en-AU", { timeZone, weekday: "short" }).format(new Date(instant))}`;
 }
 
 /** Main-video Brief duration, including custom minutes/seconds; cutdowns have separate scope. */

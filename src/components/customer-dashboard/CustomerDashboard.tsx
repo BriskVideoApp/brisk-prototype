@@ -1,5 +1,8 @@
 "use client";
 
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+import { useInvitations } from "@/components/invitations/InvitationContext";
+import { readSharedReviewActivity, sharedReviewActivityStorageKey } from "@/data/share-review-activity";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
@@ -8,6 +11,8 @@ import type { DragEvent as ReactDragEvent } from "react";
 import { useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ClientVideoTags } from "@/components/project/ClientVideoTags";
+import { ProjectTitleRow, StartProductionAction } from "@/components/project/ProjectTitleRow";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { DeferredChatPage as ChatPage } from "@/components/chat/DeferredChatPage";
@@ -22,9 +27,11 @@ import { useProjectStageStatus } from "@/components/project/ProjectStageStatusCo
 import { canActOnProject, canViewProject } from "@/data/prototype-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { getProjectEntryHref } from "@/data/project-fixtures";
+import { getProjectEntryHref, getProjectStageHref } from "@/data/project-fixtures";
 import {
   customerDashboardActivity,
+  appendClientVideoHistory,
+  readClientVideoHistory,
   customerDashboardProjects,
   customerDashboardSeries,
   withSavedClientStageStatus,
@@ -35,6 +42,10 @@ import {
 } from "@/data/customer-dashboard";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { ClientPortalPreviewBanner } from "@/components/client-portal/ClientPortalPreviewBanner";
+import { ClientAvatar } from "@/components/clients/ClientPrimitives";
+import { AskBriskInsight } from "@/components/ai/AskBriskInsight";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { getClientDashboardBriefing, type ClientDashboardBriefingPart } from "@/data/client-dashboard-briefing";
 
 type QueueTab = "All" | "Active" | "Queued" | "Completed" | "Paused" | "Archived";
 type QueueScope = "All videos" | "Series only" | "Standalone only";
@@ -71,7 +82,6 @@ type CustomerDashboardProps = {
   clientName?: string;
   initialProjects?: CustomerDashboardProject[];
   initialSeries?: CustomerDashboardSeries[];
-  logoPreviewUrl?: string | null;
   samplePreview?: boolean;
   storageScopeKey?: string;
   studioName?: string;
@@ -89,10 +99,10 @@ const queueTabDescriptions: Record<QueueTab, string> = {
 };
 const queueScopes: QueueScope[] = ["All videos", "Series only", "Standalone only"];
 const projectStatuses: CustomerDashboardStatus[] = ["In Production", "Queued", "Paused", "Completed", "Archived"];
-const clientProjectStatuses: CustomerDashboardStatus[] = ["In Production", "Queued", "Paused", "Archived"];
+const clientProjectStatuses: CustomerDashboardStatus[] = ["In Production", "Queued", "Paused"];
 const projectStatusActions: Record<CustomerDashboardStatus, { icon: DsIconName; label: string }> = {
-  "In Production": { icon: "play", label: "Move to production" },
-  Queued: { icon: "queue", label: "Move to queue" },
+  "In Production": { icon: "play", label: "Move to In Production" },
+  Queued: { icon: "queue", label: "Move to Queue" },
   Paused: { icon: "pause", label: "Pause video" },
   Completed: { icon: "check-circle", label: "Mark completed" },
   Archived: { icon: "folder", label: "Archive video" },
@@ -105,14 +115,14 @@ export function CustomerDashboard({
   clientName = "Loom",
   initialProjects = customerDashboardProjects,
   initialSeries = customerDashboardSeries,
-  logoPreviewUrl,
   samplePreview = false,
   storageScopeKey = "legacy:loom",
   studioName,
   studioPreview = false,
 }: CustomerDashboardProps = {}) {
-  const { selectedRole } = usePrototypeRole();
-  const { state: prototypeState } = usePrototypeState();
+  const { selectedRole, canManageStudio } = usePrototypeRole();
+  const { openInvitePerson } = useInvitations();
+  const { state: prototypeState, updateProjectStatus } = usePrototypeState();
   const { getProjectStages } = useProjectStageStatus();
   const viewer = usePrototypeViewer();
   const { activeScenario } = usePrototypeScenario();
@@ -125,12 +135,16 @@ export function CustomerDashboard({
     && (studioPreview || searchParams.get("studio-preview") === "1"));
   const canManageProjectStatus = (projectId: string) => {
     const project = prototypeState.projects.find((candidate) => candidate.id === projectId);
-    return !isStudioPreview && Boolean(project && canActOnProject(viewer, project, prototypeState, "status"));
+    if (samplePreview || !project || !canViewProject(viewer, project, prototypeState)) return false;
+    return viewer?.role === "Customer" || canActOnProject(viewer, project, prototypeState, "status");
   };
-  const isClientView = selectedRole === "Customer";
-  const showStandaloneClientBrand = isClientView && !activeScenario;
+  const isClientView = selectedRole === "Customer" || isStudioPreview;
+  const showStandaloneClientBrand = isStudioPreview || (isClientView && !activeScenario);
   const resolvedStudioName = studioName ?? studio.details.name;
-  const resolvedLogoPreviewUrl = logoPreviewUrl === undefined ? studio.branding.logoPreviewUrl : logoPreviewUrl;
+  const scopedClient = prototypeState.clients.find((client) => client.id === clientId
+    && client.workspaceId === prototypeState.session.activeWorkspaceId);
+  const canInviteClient = Boolean(!samplePreview && isStudioPreview && selectedRole === "Studio Staff"
+    && canManageStudio && scopedClient && scopedClient.status !== "Archived");
   const initialQueueOrder = useMemo(() => createInitialQueueOrder(initialProjects), [initialProjects]);
   const initialSeriesChildOrder = useMemo(
     () => createInitialSeriesChildOrder(initialProjects, initialSeries),
@@ -155,6 +169,19 @@ export function CustomerDashboard({
   const [toast, setToast] = useState<string | null>(null);
   const [loadedPreferenceRole, setLoadedPreferenceRole] = useState<string | null>(null);
   const [hasLoadedSharedState, setHasLoadedSharedState] = useState(false);
+
+  useEffect(() => {
+    if (samplePreview || !isStudioPreview || selectedRole !== "Studio Staff" || !scopedClient
+      || scopedClient.id !== prototypeState.onboarding.clientId || searchParams.get("client-added") !== "1") return;
+    setToast(`${clientName} added`);
+    const timeout = window.setTimeout(() => {
+      setToast(null);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("client-added");
+      window.history.replaceState(window.history.state, "", url);
+    }, 2400);
+    return () => window.clearTimeout(timeout);
+  }, [clientName, isStudioPreview, prototypeState.onboarding.clientId, samplePreview, scopedClient?.id, searchParams, selectedRole]);
 
   const preferenceStorageKey = `brisk-customer-dashboard-preferences-v1:${storageScopeKey}:${selectedRole}`;
   const sharedStateStorageKey = `brisk-customer-dashboard-shared-state-v1:${storageScopeKey}`;
@@ -331,8 +358,9 @@ export function CustomerDashboard({
   const displayProjects = visibleProjects.map((project) => {
     const scopedProject = prototypeState.projects.find((candidate) => candidate.id === project.id
       && candidate.workspaceId === prototypeState.session.activeWorkspaceId);
-    return scopedProject
-      ? withSavedClientStageStatus(project, getProjectStages(scopedProject), clientName)
+    return scopedProject && !samplePreview
+      ? withSavedClientStageStatus({ ...project, status: scopedProject.status,
+        statusDetail: getDefaultStatusDetail(scopedProject.status) }, getProjectStages(scopedProject), clientName)
       : project;
   });
   const visibleActivityProjectIds = new Set(displayProjects.filter((project) => {
@@ -348,11 +376,18 @@ export function CustomerDashboard({
   );
   const inProductionProjects = displayProjects.filter((project) => project.status === "In Production");
   const needsInputProjects = inProductionProjects.filter((project) => project.statusDetail === "Waiting on you");
-  const inProgressProjects = inProductionProjects.filter((project) => project.statusDetail !== "Waiting on you");
+  const briefing = !samplePreview && scopedClient ? getClientDashboardBriefing({
+    clientName, studioName: resolvedStudioName, isStudio: selectedRole === "Studio Staff", canInviteClient, projects: displayProjects,
+    briefsWithContent: prototypeState.projectBriefSnapshots.filter((snapshot) => snapshot.workspaceId === scopedClient.workspaceId
+      && snapshot.clientId === scopedClient.id && Object.values(snapshot.fields).some((field) => field.value.trim()))
+      .map((snapshot) => snapshot.projectId),
+    hasInvitation: prototypeState.invitations.some((invitation) => invitation.workspaceId === scopedClient.workspaceId
+      && invitation.clientId === scopedClient.id),
+  }) : null;
   const tabProjects = displayProjects.filter((project) => selectedTab === "All"
     || (selectedTab === "Active" ? project.status === "In Production" : project.status === selectedTab));
   const isQueueFilteredEmpty = previewState === "no-results" || (tabProjects.length === 0 && selectedTab !== "All");
-  const canReorderQueue = !samplePreview && selectedTab === "Queued" && (isClientView || selectedRole === "Studio Staff");
+  const canReorderQueue = !isStudioPreview && selectedTab === "Queued" && (isClientView || selectedRole === "Studio Staff");
   const visibleQueueEntries = previewState === "no-results" ? [] : queueOrder.reduce<QueueEntry[]>((entries, token) => {
     const [kind, id] = token.split(":", 2);
 
@@ -401,18 +436,8 @@ export function CustomerDashboard({
     window.setTimeout(() => setToast(null), 2400);
   };
 
-  const copyProjectLink = async (project: CustomerDashboardProject) => {
-    try {
-      await navigator.clipboard?.writeText(new URL(`/projects/${encodeURIComponent(project.id)}`, window.location.origin).toString());
-    } catch {
-      // Keep prototype feedback available when clipboard access is blocked.
-    }
-    setOpenMenuProjectId(null);
-    notify("Project link copied.");
-  };
-
   const changeProjectStatus = (projectId: string, status: CustomerDashboardStatus) => {
-    if (!canManageProjectStatus(projectId)) return;
+    if (!canManageProjectStatus(projectId) || (selectedRole === "Customer" && !clientProjectStatuses.includes(status))) return;
     const project = projectsById.get(projectId);
 
     if (!project) {
@@ -420,6 +445,18 @@ export function CustomerDashboard({
     }
 
     if (project.status !== status) {
+      updateProjectStatus(projectId, status);
+      appendClientVideoHistory(prototypeState.session.activeWorkspaceId, projectId, {
+        id: `status:${projectId}:${Date.now()}`,
+        actor: viewer?.name ?? clientName,
+        action: "changed the video status to",
+        object: status,
+        projectId,
+        projectLabel: project.name,
+        timestamp: new Date().toISOString(),
+        icon: projectStatusActions[status].icon,
+        href: getProjectEntryHref(project),
+      });
       setProjects((current) =>
         current.map((candidate) =>
           candidate.id === projectId
@@ -475,10 +512,26 @@ export function CustomerDashboard({
     setIsProductionDropActive(false);
   };
 
-  const startVideo = () => {
-    router.push(clientId
-      ? `/customer-dashboard/start-video?client=${encodeURIComponent(clientId)}`
-      : "/customer-dashboard/start-video");
+  const startVideoHref = clientId
+    ? `/customer-dashboard/start-video?client=${encodeURIComponent(clientId)}`
+    : "/customer-dashboard/start-video";
+  const startVideo = () => router.push(startVideoHref);
+
+  const inviteClient = (projectId?: string) => {
+    if (!canInviteClient || !scopedClient) return;
+    openInvitePerson({ role: "Customer", clientId: scopedClient.id, projectIds: projectId ? [projectId] : [] });
+  };
+
+  const renderBriefingPart = (part: ClientDashboardBriefingPart, index: number) => {
+    if (typeof part === "string") return part;
+    const project = "projectId" in part && part.projectId ? projectsById.get(part.projectId) : undefined;
+    if ("projectId" in part && part.projectId && !project) return part.label;
+    if (part.action === "invite") return canInviteClient
+      ? <button key={index} className="ask-brisk-inline-action" type="button" onClick={() => inviteClient(part.projectId)}><strong>{part.label}</strong></button>
+      : part.label;
+    const href = part.action === "start" ? startVideoHref
+      : project ? part.action === "brief" ? getProjectStageHref(project.id, "brief") : getProjectEntryHref(project) : null;
+    return href ? <Link key={index} className="ask-brisk-inline-action" href={href}><strong>{part.label}</strong></Link> : part.label;
   };
 
   return (
@@ -489,21 +542,20 @@ export function CustomerDashboard({
           <div className="customer-dashboard-heading">
             {showStandaloneClientBrand ? (
               <div className="customer-dashboard-portal-brand">
-                <span className="customer-dashboard-studio-logo label-m-semibold" aria-label={`${resolvedStudioName} logo`}>
-                  {resolvedLogoPreviewUrl ? <img src={resolvedLogoPreviewUrl} alt="" /> : resolvedStudioName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("")}
-                </span>
-                <strong className="label-m-semibold">{resolvedStudioName}</strong>
+                {scopedClient ? <ClientAvatar client={scopedClient} /> : null}
+                <strong className="label-m-semibold">{scopedClient?.name ?? clientName}</strong>
               </div>
             ) : null}
             <div className="customer-dashboard-title-row">
               <h1>Your videos</h1>
               <div className="customer-dashboard-heading-actions">
-                {!samplePreview ? (
+                {!samplePreview ? <>
+                  {canInviteClient ? <Button size="S" variant="secondary" onClick={() => inviteClient()}>Invite Client</Button> : null}
                   <Button size="S" variant="primary" className="customer-dashboard-primary-button" type="button" onClick={startVideo}>
                     <DsIcon name="plus" size={16} />
                     Start Video
                   </Button>
-                ) : null}
+                </> : null}
               </div>
             </div>
           </div>
@@ -511,28 +563,20 @@ export function CustomerDashboard({
 
         <div className="customer-dashboard-layout">
           <div className="customer-dashboard-content">
-            {displayProjects.length === 0 ? (
-              <section className="customer-dashboard-global-empty">
-                <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={24} /></span>
-                <h2 className="headings-s-bold">{samplePreview ? "Your videos will appear here" : "Your first video starts here"}</h2>
-                <p className="paragraph-s">{samplePreview
-                  ? "Clients will see their videos here as they move from Brief through Masters."
-                  : `Start a video with ${resolvedStudioName} and follow it from Brief through Masters.`}</p>
-                {!samplePreview ? <Button size="S" variant="primary" className="customer-dashboard-primary-button" type="button" onClick={startVideo}>Start Video</Button> : null}
-              </section>
-            ) : (
-              <>
+            {briefing ? <AskBriskInsight dashboard eyebrow="Your briefing" title={briefing.title}>
+              <p className="paragraph-s">{briefing.body.map(renderBriefingPart)}</p>
+            </AskBriskInsight> : null}
             {needsInputProjects.length > 0 ? (
               <section className="customer-needs-input-section" aria-labelledby="customer-needs-input-title">
                 <div className="customer-section-heading">
                   <div>
                     <h2
                       className="headings-s-bold"
-                      data-tooltip="Waiting for your review."
+                      data-tooltip={isStudioPreview ? "Waiting for Client input." : "Waiting for your team's input."}
                       id="customer-needs-input-title"
                       tabIndex={0}
                     >
-                      To review ({needsInputProjects.length})
+                      {isStudioPreview ? "Waiting on Client" : "Needs your input"} ({needsInputProjects.length})
                     </h2>
                   </div>
                 </div>
@@ -548,9 +592,8 @@ export function CustomerDashboard({
                       needsReview
                       series={project.seriesId ? seriesById.get(project.seriesId) : undefined}
                       onOpenChat={() => { setChatProjectId(project.id); setOpenMenuProjectId(null); }}
-                      onCopyProjectLink={() => { void copyProjectLink(project); }}
                       onChangeStatus={canManageProjectStatus(project.id) ? (status) => changeProjectStatus(project.id, status) : undefined}
-                      statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
+                      statusOptions={selectedRole === "Customer" ? clientProjectStatuses : projectStatuses}
                       isMenuOpen={openMenuProjectId === `card:${project.id}`}
                       onToggleMenu={() => {
                         setOpenStatusProjectId(null);
@@ -595,11 +638,11 @@ export function CustomerDashboard({
                 <div className="customer-production-tab">
                   <h2
                     className="headings-s-bold"
-                    data-tooltip="Your Studio is working on these videos."
+                    data-tooltip="Videos currently in production, including those waiting on Client input."
                     id="customer-production-title"
                     tabIndex={0}
                   >
-                    In progress ({inProgressProjects.length})
+                    In production ({inProductionProjects.length})
                   </h2>
                 </div>
                 {isProductionDropActive ? (
@@ -607,9 +650,9 @@ export function CustomerDashboard({
                 ) : null}
               </div>
 
-              {inProgressProjects.length > 0 ? (
-                <div className={`customer-production-grid production-count-${Math.min(inProgressProjects.length, 5)}`}>
-                  {inProgressProjects.map((project) => (
+              {inProductionProjects.length > 0 ? (
+                <div className={`customer-production-grid production-count-${Math.min(inProductionProjects.length, 5)}`}>
+                  {inProductionProjects.map((project) => (
                     <ProductionCard
                       readOnly={samplePreview}
                       clientName={clientName}
@@ -619,9 +662,8 @@ export function CustomerDashboard({
                       project={project}
                       series={project.seriesId ? seriesById.get(project.seriesId) : undefined}
                       onOpenChat={() => { setChatProjectId(project.id); setOpenMenuProjectId(null); }}
-                      onCopyProjectLink={() => { void copyProjectLink(project); }}
                       onChangeStatus={canManageProjectStatus(project.id) ? (status) => changeProjectStatus(project.id, status) : undefined}
-                      statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
+                      statusOptions={selectedRole === "Customer" ? clientProjectStatuses : projectStatuses}
                       isMenuOpen={openMenuProjectId === `card:${project.id}`}
                       onToggleMenu={() => {
                         setOpenStatusProjectId(null);
@@ -635,7 +677,7 @@ export function CustomerDashboard({
               ) : (
                 <div className="customer-production-empty">
                   <strong className="headings-2xs-bold">No videos in production</strong>
-                  <span className="label-s">Your planned videos appear in All videos.</span>
+                  <span className="label-s">{displayProjects.length === 0 ? "Videos appear here when they enter production." : "Your planned videos appear in All videos."}</span>
                   <Button size="S" variant="secondary" className="customer-dashboard-secondary-button" type="button" onClick={() => document.getElementById("customer-all-videos-title")?.scrollIntoView({ behavior: "smooth" })}>View all videos</Button>
                 </div>
               )}
@@ -677,13 +719,13 @@ export function CustomerDashboard({
                 {queueTabs.map((tab) => (
                   <FilterButton
                     key={tab}
-                    aria-label={`${tab}. ${queueTabDescriptions[tab]}`}
+                    aria-label={`${tab === "Active" ? "In production" : tab}. ${queueTabDescriptions[tab]}`}
                     selected={selectedTab === tab}
-                    count={getTabCount(projects, tab)}
+                    count={getTabCount(displayProjects, tab)}
                     data-tooltip={queueTabDescriptions[tab]}
                     onClick={() => setSelectedTab(tab)}
                   >
-                    {tab}
+                    {tab === "Active" ? "In production" : tab}
                   </FilterButton>
                 ))}
               </FilterGroup>
@@ -694,7 +736,6 @@ export function CustomerDashboard({
                   <span role="columnheader">Progress</span>
                   <span role="columnheader">Status</span>
                   <span role="columnheader">Created</span>
-                  <span role="columnheader">Actions</span>
                 </div>
 
                 {visibleQueueEntries.map((entry) => {
@@ -719,11 +760,15 @@ export function CustomerDashboard({
                         }}
                         onSetDropTarget={() => setDropTargetToken(entry.token)}
                         onOpenChat={() => setChatProjectId(entry.project.id)}
-                        onCopyProjectLink={() => { void copyProjectLink(entry.project); }}
+                        onMoveUp={canReorderQueue && visibleQueueEntries.indexOf(entry) > 0
+                          ? () => moveTopLevelEntry(entry.token, visibleQueueEntries[visibleQueueEntries.indexOf(entry) - 1].token) : undefined}
+                        onMoveDown={canReorderQueue && visibleQueueEntries.indexOf(entry) < visibleQueueEntries.length - 1
+                          ? () => moveTopLevelEntry(entry.token, visibleQueueEntries[visibleQueueEntries.indexOf(entry) + 1].token) : undefined}
                         onStart={() => startProject(entry.project.id)}
                         canManageStatus={canManageProjectStatus(entry.project.id)}
+                        canStartProduction={canManageProjectStatus(entry.project.id)}
                         isStatusMenuOpen={openStatusProjectId === entry.project.id}
-                        statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
+                        statusOptions={selectedRole === "Customer" ? clientProjectStatuses : projectStatuses}
                         onToggleStatusMenu={() => {
                           setOpenMenuProjectId(null);
                           setIsFilterOpen(false);
@@ -766,28 +811,39 @@ export function CustomerDashboard({
                           finishDrag();
                         } : undefined}
                       >
-                        {canReorderQueue ? <span className="customer-queue-drag" aria-hidden="true">
-                          <DsIcon name="dots-six-vertical" size={18} />
-                        </span> : null}
-                        <button
-                          className="customer-series-toggle"
-                          type="button"
-                          aria-expanded={isExpanded}
-                          aria-label={`${isExpanded ? "Collapse" : "Expand"} ${entry.series.name} series`}
-                          data-tooltip={isExpanded ? "Collapse series" : "Expand series"}
-                          onClick={() =>
-                            setExpandedSeriesIds((current) =>
-                              current.includes(entry.series.id)
-                                ? current.filter((seriesId) => seriesId !== entry.series.id)
-                                : [...current, entry.series.id],
-                            )
-                          }
-                        >
-                          <DsIcon name="caret-right" size={16} />
-                        </button>
                         <div className="customer-series-primary" role="cell">
                           <span className="customer-series-tag label-xs-semibold">SERIES</span>
-                          <strong className="heading-3xs">{entry.series.name}</strong>
+                          <ProjectTitleRow label={`Quick actions for ${entry.series.name}`}
+                            title={<strong className="project-title heading-3xs">{entry.series.name}</strong>}
+                            actions={<>
+                          {canReorderQueue ? <span className="customer-queue-drag" aria-hidden="true">
+                            <DsIcon name="dots-six-vertical" size={18} />
+                          </span> : null}
+                          <button
+                            className="project-quick-action"
+                            type="button"
+                            aria-label={`Open ${entry.series.name} conversations`}
+                            onClick={() => setChatProjectId(entry.visibleChildren[0]?.id ?? null)}
+                          >
+                            <DsIcon name="chats" size={20} />
+                          </button>
+                          <button
+                            className="project-quick-action customer-series-toggle"
+                            type="button"
+                            aria-expanded={isExpanded}
+                            aria-label={`${isExpanded ? "Collapse" : "Expand"} ${entry.series.name} series`}
+                            data-tooltip={isExpanded ? "Collapse series" : "Expand series"}
+                            onClick={() =>
+                              setExpandedSeriesIds((current) =>
+                                current.includes(entry.series.id)
+                                  ? current.filter((seriesId) => seriesId !== entry.series.id)
+                                  : [...current, entry.series.id],
+                              )
+                            }
+                          >
+                            <DsIcon name="caret-right" size={16} />
+                          </button>
+                            </>} />
                           <span className="customer-latest-action label-xs">
                             {latestAction.label} · {formatRelativeTime(latestAction.timestamp)}
                           </span>
@@ -805,21 +861,13 @@ export function CustomerDashboard({
                         <span className="customer-series-created label-xs" role="cell">
                           {formatCreatedDate(getOldestCreatedAt(allChildren))}
                         </span>
-                        <span className="customer-series-actions" role="cell">
-                          <button
-                            className="customer-dashboard-icon-button"
-                            type="button"
-                            aria-label={`Open ${entry.series.name} conversations`}
-                            onClick={() => setChatProjectId(entry.visibleChildren[0]?.id ?? null)}
-                          >
-                            <DsIcon name="chats" size={18} />
-                          </button>
-                        </span>
+
                       </div>
 
                       {isExpanded
                         ? entry.visibleChildren.map((project) => (
                             <QueueProjectRow
+                              readOnly={samplePreview}
                               canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                               clientName={clientName}
                               key={project.id}
@@ -843,11 +891,15 @@ export function CustomerDashboard({
                               }}
                               onSetDropTarget={() => setDropTargetToken(`child:${project.id}`)}
                               onOpenChat={() => setChatProjectId(project.id)}
-                              onCopyProjectLink={() => { void copyProjectLink(project); }}
+                              onMoveUp={canReorderQueue && entry.visibleChildren.indexOf(project) > 0
+                                ? () => moveSeriesChild(entry.series.id, project.id, entry.visibleChildren[entry.visibleChildren.indexOf(project) - 1].id) : undefined}
+                              onMoveDown={canReorderQueue && entry.visibleChildren.indexOf(project) < entry.visibleChildren.length - 1
+                                ? () => moveSeriesChild(entry.series.id, project.id, entry.visibleChildren[entry.visibleChildren.indexOf(project) + 1].id) : undefined}
                               onStart={() => startProject(project.id)}
                               canManageStatus={canManageProjectStatus(project.id)}
+                              canStartProduction={canManageProjectStatus(project.id)}
                               isStatusMenuOpen={openStatusProjectId === project.id}
-                              statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
+                              statusOptions={selectedRole === "Customer" ? clientProjectStatuses : projectStatuses}
                               onToggleStatusMenu={() => {
                                 setOpenMenuProjectId(null);
                                 setIsFilterOpen(false);
@@ -871,20 +923,18 @@ export function CustomerDashboard({
                 {visibleQueueEntries.length === 0 ? (
                   <div className="customer-queue-empty">
                     <span className="customer-queue-empty-icon"><DsIcon name="queue" size={24} /></span>
-                    <strong className="headings-2xs-bold">{isQueueFilteredEmpty ? "No videos in this view" : "Plan your next video"}</strong>
-                    <p className="paragraph-s">{isQueueFilteredEmpty ? "There are no videos matching this status or filter." : "Add videos here to plan ahead. Drag any into production when you’re ready."}</p>
-                    <Button size="S" variant={isQueueFilteredEmpty ? "secondary" : "primary"}
+                    <strong className="headings-2xs-bold">{isQueueFilteredEmpty ? "No videos in this view" : displayProjects.length === 0 ? "No videos yet" : "Plan your next video"}</strong>
+                    <p className="paragraph-s">{isQueueFilteredEmpty ? "There are no videos matching this status or filter." : displayProjects.length === 0 ? "Start a video to begin the Brief. Your videos will appear here." : "Add videos here to plan ahead. Drag any into production when you’re ready."}</p>
+                    {!samplePreview && (isQueueFilteredEmpty || displayProjects.length > 0) ? <Button size="S" variant={isQueueFilteredEmpty ? "secondary" : "primary"}
                       type="button"
                       onClick={isQueueFilteredEmpty ? clearQueueControls : startVideo}
                     >
                       {isQueueFilteredEmpty ? "Show all videos" : "Start Video"}
-                    </Button>
+                    </Button> : null}
                   </div>
                 ) : null}
               </div>
             </section>
-              </>
-            )}
           </div>
 
         </div>
@@ -951,12 +1001,14 @@ export function CustomerDashboard({
 }
 
 function ActivityPanel({
+  projectName,
   activity,
   clientName,
   empty,
   onClose,
 }: {
   activity: CustomerDashboardActivity[];
+  projectName?: string;
   clientName: string;
   empty: boolean;
   onClose: () => void;
@@ -966,7 +1018,7 @@ function ActivityPanel({
       <div className="customer-activity-heading">
         <div>
           <h2 className="headings-2xs-bold" id="customer-activity-title">Latest activity</h2>
-          <span className="label-xs">Across all {clientName} videos</span>
+          <span className="label-xs">{projectName ? `Activity for ${projectName}` : `Across all ${clientName} videos`}</span>
         </div>
         <span className="customer-activity-filter label-xs-semibold">All</span>
       </div>
@@ -978,7 +1030,7 @@ function ActivityPanel({
             <p className="paragraph-s">Approvals, uploads, messages and status changes will appear here.</p>
             <Button size="S" variant="secondary" className="customer-dashboard-secondary-button" type="button" onClick={onClose}>View videos</Button>
           </div>
-        ) : activity.slice(0, 10).map((activity) => {
+        ) : (projectName ? activity : activity.slice(0, 10)).map((activity) => {
           const activityContent = (
             <>
               <span className="customer-activity-icon"><DsIcon name={activity.icon} size={16} /></span>
@@ -986,7 +1038,7 @@ function ActivityPanel({
                 <span>
                   <strong>{activity.actor}</strong> {activity.action} {activity.object}
                 </span>
-                <span>{activity.projectLabel} · {formatRelativeTime(activity.timestamp)}</span>
+                <span>{activity.projectLabel} · {projectName ? new Date(activity.timestamp).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" }) : formatRelativeTime(activity.timestamp)}</span>
               </span>
               <DsIcon name="caret-right" size={13} />
             </>
@@ -1010,7 +1062,6 @@ function ProductionCard({
   needsReview = false,
   series,
   onOpenChat,
-  onCopyProjectLink,
   onChangeStatus,
   statusOptions,
   isMenuOpen,
@@ -1025,7 +1076,6 @@ function ProductionCard({
   needsReview?: boolean;
   series?: CustomerDashboardSeries;
   onOpenChat: () => void;
-  onCopyProjectLink: () => void;
   onChangeStatus?: (status: CustomerDashboardStatus) => void;
   statusOptions?: CustomerDashboardStatus[];
   isMenuOpen: boolean;
@@ -1097,7 +1147,6 @@ function ProductionCard({
                   onToggle={onToggleMenu}
                   project={project}
                   canManageTeam={canManageTeam}
-                  onCopyProjectLink={onCopyProjectLink}
                   onOpenChat={onOpenChat}
                   onChangeStatus={onChangeStatus}
                   statusOptions={statusOptions}
@@ -1124,6 +1173,7 @@ function ProductionCard({
 function QueueProjectRow({
   readOnly = false,
   canManageStatus,
+  canStartProduction,
   canManageTeam,
   clientName,
   project,
@@ -1137,7 +1187,8 @@ function QueueProjectRow({
   onDropTopLevel,
   onSetDropTarget,
   onOpenChat,
-  onCopyProjectLink,
+  onMoveUp,
+  onMoveDown,
   onStart,
   isStatusMenuOpen,
   statusOptions,
@@ -1149,6 +1200,7 @@ function QueueProjectRow({
 }: {
   readOnly?: boolean;
   canManageStatus: boolean;
+  canStartProduction: boolean;
   canManageTeam: boolean;
   clientName: string;
   project: CustomerDashboardProject;
@@ -1162,7 +1214,8 @@ function QueueProjectRow({
   onDropTopLevel: () => void;
   onSetDropTarget: () => void;
   onOpenChat: () => void;
-  onCopyProjectLink: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
   onStart: () => void;
   isStatusMenuOpen: boolean;
   statusOptions: CustomerDashboardStatus[];
@@ -1205,11 +1258,37 @@ function QueueProjectRow({
       ) : null}
       {interactive ? <span className="customer-queue-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={18} /></span> : null}
       <div className="customer-queue-project" role="cell">
-        <span className="customer-project-code label-xs-semibold">{project.code}</span>
-        <CustomerProjectDestination className="heading-3xs" project={project} />
-        <span className="customer-latest-action label-xs">
-          {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
-        </span>
+        <span className="client-badge label-xs-semibold">{project.code}</span>
+        <ProjectTitleRow
+          label={`Quick actions for ${project.name}`}
+          title={<CustomerProjectDestination className="project-title heading-3xs" project={project} />}
+          actions={!readOnly ? <>
+            <button className="project-quick-action" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
+              <DsIcon name="chats" size={20} />
+              <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
+            </button>
+            {(project.status === "Queued" || project.status === "In Production") && canStartProduction
+              ? <StartProductionAction projectName={project.name} onStart={onStart}
+                  inProduction={project.status === "In Production"} /> : null}
+            <div className="customer-project-menu-wrap">
+                <ProjectActionsMenu
+                  compactTrigger
+                  isOpen={isMenuOpen}
+                  onToggle={onToggleMenu}
+                  project={project}
+                  canManageTeam={canManageTeam}
+                  onChangeStatus={canManageStatus ? onChangeStatus : undefined}
+                  onOpenStatus={canManageStatus ? onToggleStatusMenu : undefined}
+                  onMoveUp={onMoveUp}
+                  onMoveDown={onMoveDown}
+                  onOpenChat={onOpenChat}
+                  onStart={canManageStatus && interactive ? onStart : undefined}
+                  statusOptions={canManageStatus ? statusOptions : undefined}
+                />
+            </div>
+          </> : null}
+        />
+        {!readOnly ? <ClientVideoTags projectId={project.id} projectName={project.name} /> : null}
       </div>
       <div className="customer-queue-progress" role="cell">
         <div className="customer-client-stage-progress" inert={interactive ? undefined : true}>
@@ -1225,7 +1304,7 @@ function QueueProjectRow({
         </div>
       </div>
       <div className="customer-queue-status" role="cell">
-        {child ? null : canManageStatus ? <ProjectStatusControl
+        {canManageStatus ? <ProjectStatusControl
           project={project}
           isOpen={isStatusMenuOpen}
           onToggle={onToggleStatusMenu}
@@ -1236,29 +1315,7 @@ function QueueProjectRow({
       <time className="customer-queue-created label-xs" dateTime={project.createdAt} role="cell">
         {formatCreatedDate(project.createdAt)}
       </time>
-      <div className="customer-queue-actions" role="cell">
-        {!readOnly ? (
-          <>
-            <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
-              <DsIcon name="chats" size={18} />
-              <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
-            </button>
-            <div className="customer-project-menu-wrap">
-                <ProjectActionsMenu
-                  isOpen={isMenuOpen}
-                  onToggle={onToggleMenu}
-                  project={project}
-                  canManageTeam={canManageTeam}
-                  onChangeStatus={canManageStatus ? onChangeStatus : undefined}
-                  onCopyProjectLink={onCopyProjectLink}
-                  onOpenChat={onOpenChat}
-                  onStart={canManageStatus && interactive ? onStart : undefined}
-                  statusOptions={canManageStatus ? statusOptions : undefined}
-                />
-            </div>
-          </>
-        ) : null}
-      </div>
+
     </div>
   );
 }
@@ -1276,77 +1333,107 @@ function ProjectStatusControl({
   onChange: (status: CustomerDashboardStatus) => void;
   statusOptions: CustomerDashboardStatus[];
 }) {
-  return (
-    <div className="customer-status-control">
-      <button
-        className={`status-pill status-${toStatusClass(project.status)} customer-status-trigger customer-dashboard-menu-trigger label-xs-semibold`}
-        type="button"
-        aria-label={`Change status for ${project.name}. Current status: ${project.status}`}
-        aria-haspopup="menu"
-        aria-expanded={isOpen}
-        onClick={onToggle}
-      >
-        {project.status}
-        <DsIcon name="caret-down" size={12} />
-      </button>
-      {isOpen ? (
-        <div className="customer-dashboard-menu customer-status-menu" role="menu" aria-label={`Status for ${project.name}`}>
-          {statusOptions.map((status) => (
-            <button
-              className={`label-s ${project.status === status ? "selected" : ""}`}
-              type="button"
-              role="menuitemradio"
-              aria-checked={project.status === status}
-              key={status}
-              onClick={() => onChange(status)}
-            >
-              <span>{status}</span>
-              {project.status === status ? <DsIcon name="check" size={15} /> : null}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <div className="customer-status-control"><BriskSelect<string>
+    mode="action"
+    value=""
+    clearable={false}
+    ariaLabel={`Change status for ${project.name}. Current status: ${project.status}`}
+    placeholder="Change video status"
+    open={isOpen}
+    onOpenChange={(nextOpen) => { if (nextOpen !== isOpen) onToggle(); }}
+    options={statusOptions.filter((status) => status !== project.status).map((status) => ({
+      value: status, label: projectStatusActions[status].label, icon: projectStatusActions[status].icon,
+    }))}
+    onChange={(status) => onChange(status as CustomerDashboardStatus)}
+    actionTrigger={(props) => <button {...props}
+      className={`status-pill status-${toStatusClass(project.status)} customer-status-trigger customer-dashboard-menu-trigger label-xs-semibold`}
+      type="button">
+      {project.status}<DsIcon name="caret-down" size={12} />
+    </button>}
+  /></div>;
 }
 
 function ProjectActionsMenu({
+  compactTrigger = false,
   project,
   isOpen,
   onToggle,
   onStart,
   onChangeStatus,
+  onOpenStatus,
   statusOptions,
   onOpenChat,
-  onCopyProjectLink,
+  onMoveUp,
+  onMoveDown,
   canManageTeam = false,
 }: {
+  compactTrigger?: boolean;
   project: CustomerDashboardProject;
   isOpen: boolean;
   onToggle: () => void;
   onStart?: () => void;
   onChangeStatus?: (status: CustomerDashboardStatus) => void;
+  onOpenStatus?: () => void;
   statusOptions?: CustomerDashboardStatus[];
   onOpenChat?: () => void;
-  onCopyProjectLink?: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
   canManageTeam?: boolean;
 }) {
+  const { state } = usePrototypeState();
+  const viewer = usePrototypeViewer();
+  const { canManageClientAccount, selectedRole } = usePrototypeRole();
+  const isPreview = useSearchParams().get("studio-preview") === "1";
+  const { openInvitePerson } = useInvitations();
+  const [history, setHistory] = useState<CustomerDashboardActivity[] | null>(null);
+  const [sharePanelSignal, setSharePanelSignal] = useState(0);
+  const scopedProject = state.projects.find((candidate) => candidate.id === project.id
+    && candidate.workspaceId === state.session.activeWorkspaceId);
+  const client = state.clients.find((candidate) => candidate.id === scopedProject?.clientId
+    && candidate.workspaceId === state.session.activeWorkspaceId);
+  const canInvite = Boolean(!isPreview && scopedProject && client && canViewProject(viewer, scopedProject, state)
+    && (canManageClientAccount || (selectedRole === "Studio Staff" && canManageTeam)));
+
+  function showHistory() {
+    if (!scopedProject || !canViewProject(viewer, scopedProject, state)) return;
+    const reviews: CustomerDashboardActivity[] = readSharedReviewActivity(
+      sharedReviewActivityStorageKey(scopedProject.workspaceId, project.id),
+    ).filter((entry) => entry.company === client?.name).map((entry) => ({
+      id: entry.id, actor: entry.actor, action: entry.message, object: "",
+      projectId: project.id, projectLabel: project.name, timestamp: entry.occurredAt,
+      icon: "clock-clockwise", href: entry.href,
+    }));
+    setHistory([
+      ...customerDashboardActivity.filter((entry) => entry.projectId === project.id),
+      ...readClientVideoHistory(scopedProject.workspaceId, project.id),
+      ...reviews,
+    ].sort((left, right) => Date.parse(right.timestamp) - Date.parse(left.timestamp)));
+  }
+
   const commands: Array<BriskSelectOption<string> & { run?: () => void }> = [
-    ...(project.status === "Queued" && onStart ? [{ value: "start", label: "Start this video", run: onStart }] : []),
-    ...(onOpenChat ? [{ value: "chat", label: "View comments and history", run: onOpenChat }] : []),
-    { value: "open", label: "Open project", href: getProjectEntryHref(project) },
-    { value: "delivery", label: "Final delivery", href: `/projects/${encodeURIComponent(project.id)}/delivery` },
-    ...(onCopyProjectLink ? [{ value: "copy", label: "Copy project link", run: onCopyProjectLink }] : []),
+    ...(project.status === "Queued" && onStart && !onChangeStatus ? [{ value: "start", label: "Move to In Production", icon: "play" as const, run: onStart }] : []),
+    ...(onOpenChat ? [{ value: "chat", label: "Go to chat", icon: "chats" as const, run: onOpenChat }] : []),
+    { value: "history", label: "See history", icon: "clock-clockwise", run: showHistory },
+    { value: "open", label: "Open project", icon: "folder", href: getProjectEntryHref(project) },
+    ...(onOpenStatus ? [{ value: "status", label: "Change status", icon: "arrows-clockwise" as const, run: onOpenStatus }] : []),
+    ...(scopedProject && canViewProject(viewer, scopedProject, state)
+      ? [{ value: "share", label: "Share", icon: "share-network" as const, run: () => setSharePanelSignal((signal) => signal + 1) }] : []),
+    ...(canInvite && client ? [{ value: "invite", label: "Invite teammate", icon: "user-plus" as const,
+      run: () => openInvitePerson({ role: "Customer", clientId: client.id, projectIds: [project.id] }),
+    }] : []),
     ...(canManageTeam ? [{ value: "team", label: "Manage teammates", href: `/projects/${encodeURIComponent(project.id)}` }] : []),
-    ...(onChangeStatus && statusOptions ? statusOptions.filter((status) => status !== project.status).map((status) => ({
+    ...(onMoveUp ? [{ value: "up", label: "Move up in queue", run: onMoveUp }] : []),
+    ...(onMoveDown ? [{ value: "down", label: "Move down in queue", run: onMoveDown }] : []),
+    ...(onChangeStatus && statusOptions && !onOpenStatus ? statusOptions.filter((status) => status !== project.status).map((status) => ({
       value: `status-${status}`,
       label: projectStatusActions[status].label,
-      group: "Change status",
+      icon: projectStatusActions[status].icon,
       run: () => onChangeStatus(status),
     })) : []),
   ];
 
-  return <BriskSelect
+  return <>
+  <BriskSelect
     mode="action"
     value=""
     clearable={false}
@@ -1356,8 +1443,34 @@ function ProjectActionsMenu({
     onOpenChange={(nextOpen) => { if (nextOpen !== isOpen) onToggle(); }}
     options={commands}
     onChange={(value) => commands.find((command) => command.value === value)?.run?.()}
-    actionTrigger={(props) => <IconButton {...props} className="customer-dashboard-menu-trigger" aria-label={`Open actions for ${project.name}`} tooltipAlign="end"><DsIcon name="dots-three" size={18} /></IconButton>}
-  />;
+    actionTrigger={(props) => compactTrigger
+      ? <button {...props} type="button" className="project-quick-action customer-dashboard-menu-trigger"
+          aria-label={`Open actions for ${project.name}`}><DsIcon name="dots-three" size={20} /></button>
+      : <IconButton {...props} className="customer-dashboard-menu-trigger" aria-label={`Open actions for ${project.name}`} tooltipAlign="end"><DsIcon name="dots-three" size={18} /></IconButton>}
+  />
+  {sharePanelSignal > 0 && scopedProject ? <ShareActionRow
+    context="project"
+    scopeType="project"
+    projectId={scopedProject.id}
+    projectName={project.name}
+    shareTitle={project.name}
+    studioName={state.workspaces.find((workspace) => workspace.id === scopedProject.workspaceId)?.name}
+    customerName={client?.name}
+    userRole={selectedRole}
+    shareUrl={`/projects/${encodeURIComponent(project.id)}`}
+    sharePanelPresentation="dialog"
+    openPanelSignal={sharePanelSignal}
+    showCopyLink={false}
+    showSend={false}
+    showApprove={false}
+    canConfigureLink={selectedRole === "Studio Staff" || canManageClientAccount}
+  /> : null}
+  {history !== null ? <EditingDialog title={`History - ${project.name}`} onCancel={() => setHistory(null)}
+    actions={<Button size="S" variant="secondary" onClick={() => setHistory(null)}>Close</Button>}>
+    <ActivityPanel activity={history} clientName={client?.name ?? "Client"} projectName={project.name}
+      empty={history.length === 0} onClose={() => setHistory(null)} />
+  </EditingDialog> : null}
+  </>;
 }
 
 function CustomerProjectDestination({

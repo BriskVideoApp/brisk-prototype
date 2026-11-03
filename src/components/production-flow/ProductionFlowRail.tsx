@@ -4,6 +4,7 @@ import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/Confirm
 
 import { useId, useState, type DragEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
@@ -156,8 +157,10 @@ export function ProductionFlowAdjuster({
   onPostProductionTermChange,
   onReset,
   triggerIconSize = 18,
+  quietTrigger = false,
 }: Pick<ProductionFlowRailProps, "stages" | "postProductionTerm" | "onAddStage" | "onHideStage" | "onReorderStage" | "onPostProductionTermChange" | "onReset"> & {
   triggerIconSize?: number;
+  quietTrigger?: boolean;
 }) {
   const panelId = useId();
   const [isOpen, setIsOpen] = useState(false);
@@ -189,22 +192,28 @@ export function ProductionFlowAdjuster({
     setIsPostProductionTermOpen(false);
   };
 
+  const triggerProps = {
+    "aria-expanded": isOpen,
+    "aria-controls": panelId,
+    "aria-label": "Adjust project flow",
+    onClick: () => {
+      if (isOpen) closeAdjuster();
+      else setIsOpen(true);
+    },
+  };
+
   return (
     <div className="production-flow-adjuster">
-      <button
+      {quietTrigger ? <IconButton {...triggerProps} size="S" variant="quiet" tooltipAlign="end">
+        <DsIcon name="faders-horizontal" size={16} />
+      </IconButton> : <button
+        {...triggerProps}
         className="production-flow-adjuster-trigger"
         type="button"
-        aria-expanded={isOpen}
-        aria-controls={panelId}
-        aria-label="Adjust project flow"
         data-tooltip="Adjust project flow"
-        onClick={() => {
-          if (isOpen) closeAdjuster();
-          else setIsOpen(true);
-        }}
       >
         <DsIcon name="faders-horizontal" size={triggerIconSize} />
-      </button>
+      </button>}
 
       {isOpen ? (
         <>

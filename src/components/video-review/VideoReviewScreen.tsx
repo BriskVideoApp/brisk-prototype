@@ -13,13 +13,15 @@ import type { RecutBrief } from "@/data/masters";
 import type { Project } from "@/components/active-videos/types";
 
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
+import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus, type EditReadinessItem } from "@/components/project/ProjectStageStatusContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { canActOnProject } from "@/data/prototype-access";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl, type ShareActionRowProps } from "@/components/share/ShareActionRow";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import { DsIcon } from "./DsIcon";
 import { ReviewCommentComposer } from "./ReviewCommentComposer";
@@ -75,6 +77,8 @@ export function VideoReviewScreen({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
+  const { getProjectFlow } = useProjectFlow();
+  const editStageLabel = getProjectFlow(project).postProductionTerm === "animation" ? "Animation" : "Edit";
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
   const legacyReviewStorageKey = `brisk-edit-review-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
@@ -85,14 +89,16 @@ export function VideoReviewScreen({
   const studioCompanyName = useStudioCompanyName();
   const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
   const editReadiness = getEditReadiness(project);
+  const { assetViews } = useMediaLibrary();
+  const hasAvailableMedia = assetViews.some((asset) => asset.projectId === project.id
+    && asset.collection === "media" && !asset.archivedAt && asset.status === "ready");
   const editStageStatus = getProjectStages(project).edit;
   const outstandingEditPrerequisites = editReadiness.items.filter((item) => !item.approved);
-  const canMarkReadyToEdit = viewer?.role === "Studio Staff"
-    && canActOnProject(viewer, project, prototypeState, "status", "edit")
+  const canMarkReadyToEdit = canActOnProject(viewer, project, prototypeState, "mark-ready-to-edit", "edit")
     && !outstandingEditPrerequisites.some((item) => item.key === "storyboard");
-  const editReadinessBlockedReason = viewer?.role !== "Studio Staff"
-    ? "Only Studio Staff can mark Edit ready."
-    : !canActOnProject(viewer, project, prototypeState, "status", "edit")
+  const editReadinessBlockedReason = viewer?.role === "Studio Freelancer"
+    ? "Only Studio Staff or Clients can mark Edit ready."
+    : !canActOnProject(viewer, project, prototypeState, "mark-ready-to-edit", "edit")
       ? "You don’t have permission to mark Edit ready for this project."
       : "Approve the Storyboard before marking Edit ready.";
   const canUploadVersions = canActOnProject(viewer, project, prototypeState, "upload", "edit");
@@ -1058,6 +1064,19 @@ export function VideoReviewScreen({
     setToastMessage("Overall comment added");
   };
 
+  const editShareProps = {
+    context: "edit",
+    stageLabelOverride: editStageLabel,
+    userRole: selectedRole,
+    projectId: project.id,
+    scopeType: selectedReviewVersion ? "version" : "stage",
+    shareTitle: selectedReviewVersion ? `V${selectedReviewVersion.number}` : editStageLabel,
+    projectName: project.name,
+    studioName: studioCompanyName,
+    customerName: project.clientName,
+    shareUrl: selectedReviewVersion ? `/projects/${project.id}/stages/edit?version=${encodeURIComponent(selectedReviewVersion.label)}` : `/projects/${project.id}/stages/edit`,
+  } satisfies ShareActionRowProps;
+
   return (
     <>
       <main className="video-review-shell">
@@ -1065,7 +1084,8 @@ export function VideoReviewScreen({
         <ProjectStageHeader
           activeStage="edit"
           project={project}
-          showProjectShare={!editReadiness.ready || isEditEmpty}
+          showProjectShare={false}
+          actions={<StageShareControl {...editShareProps} allowProjectScope initialLinkOpens="videoOnly" />}
         />
         {canUploadVersions ? (
           <input
@@ -1083,6 +1103,7 @@ export function VideoReviewScreen({
               blockedReason={editReadinessBlockedReason}
               canMarkReady={canMarkReadyToEdit}
               items={editReadiness.items}
+              hasAvailableMedia={hasAvailableMedia}
               onMarkReady={() => setIsReadyConfirmationOpen(true)}
               projectId={project.id}
             />
@@ -1254,25 +1275,17 @@ export function VideoReviewScreen({
               />
             ) : null}
             <ShareActionRow
-              context="edit"
-              userRole={selectedRole}
-              projectId={project.id}
+              {...editShareProps}
+              stageDecisionActions
+              showCopyLink={false}
               reviewScopeKey={selectedReviewVersion?.label}
               reviewFingerprint={selectedReviewVersion ? JSON.stringify(selectedReviewVersion) : undefined}
-              scopeType={selectedReviewVersion ? "version" : "stage"}
               allowProjectScope
-              shareTitle={selectedReviewVersion ? `V${selectedReviewVersion.number}` : "Edit"}
               initialLinkOpens="videoOnly"
-              projectName={project.name}
-              studioName={studioCompanyName}
-              customerName={project.clientName}
               isWaitingOnReview={editStageStatus.state === "waiting" && editStageStatus.reviewVersion === selectedReviewVersion?.label}
               waitingOnCompany={editStageStatus.assignedTo}
-              shareUrl={selectedReviewVersion ? `/projects/${project.id}/stages/edit?version=${encodeURIComponent(selectedReviewVersion.label)}` : `/projects/${project.id}/stages/edit`}
-              copyLinkIconOnly
-              copyLinkLabel="Copy link"
               sendLabel={selectedReviewVersion ? `Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review V${selectedReviewVersion.number}` : undefined}
-              approveLabel={selectedReviewVersion ? `Approve V${selectedReviewVersion.number}` : "Approve Edit"}
+              approveLabel={selectedReviewVersion ? `Approve V${selectedReviewVersion.number}` : `Approve ${editShareProps.stageLabelOverride}`}
               approveDisabled={selectedRole === "Studio Freelancer"}
               approvedAt={editStageStatus.approvedAt}
               approvedBy={editStageStatus.approvedBy}
@@ -1313,8 +1326,8 @@ export function VideoReviewScreen({
           items={outstandingEditPrerequisites}
           onCancel={() => setIsReadyConfirmationOpen(false)}
           onConfirm={() => {
-            if (!canMarkReadyToEdit) return;
-            markReadyToEdit(project);
+            if (!canMarkReadyToEdit || !viewer) return;
+            markReadyToEdit(project, viewer.name);
             setIsReadyConfirmationOpen(false);
           }}
         />
@@ -1373,12 +1386,14 @@ function EditReadinessEmptyState({
   blockedReason,
   canMarkReady,
   items,
+  hasAvailableMedia,
   onMarkReady,
   projectId,
 }: {
   blockedReason: string;
   canMarkReady: boolean;
   items: EditReadinessItem[];
+  hasAvailableMedia: boolean;
   onMarkReady: () => void;
   projectId: string;
 }) {
@@ -1389,36 +1404,21 @@ function EditReadinessEmptyState({
           <DsIcon name="stage-edit" size={28} />
         </span>
         <h2 className="headings-xs-bold">Edit isn’t ready yet</h2>
-        <p className="paragraph-s">Approve the previous stages and Media before editing begins.</p>
+        <p className="paragraph-s">Approve the previous stages, then confirm that everything needed for editing is ready.</p>
         <ul className="review-edit-readiness-list" aria-label="Edit prerequisites">
-          {items.map((item) => {
-            const content = <>
-              <span
-                className={`review-edit-readiness-state ${item.approved ? "is-approved" : "is-outstanding"}`}
-                aria-hidden="true"
-              >
-                {item.approved ? <DsIcon name="check" size={14} /> : null}
-              </span>
-              <span>
-                {item.label} {getReadinessStatusLabel(item.status)}
-              </span>
-            </>;
-
-            return (
-              <li className="review-edit-readiness-item label-s" key={item.key}>
-                {item.approved ? content : (
-                  <Link
-                    className="review-edit-readiness-link"
-                    href={getProjectStageHref(projectId, item.key)}
-                    aria-label={`Open ${item.label} - ${getReadinessStatusLabel(item.status)}`}
-                  >
-                    {content}
-                    <DsIcon name="arrow-right" size={16} />
-                  </Link>
-                )}
-              </li>
-            );
-          })}
+          {items.map((item) => <EditReadinessRow
+            key={item.key}
+            label={item.label}
+            statusLabel={getReadinessStatusLabel(item.status)}
+            satisfied={item.approved}
+            href={getProjectStageHref(projectId, item.key)}
+          />)}
+          <EditReadinessRow
+            label="Media"
+            statusLabel={hasAvailableMedia ? "available" : "not available yet"}
+            satisfied={hasAvailableMedia}
+            href={getProjectStageHref(projectId, "media")}
+          />
         </ul>
         {canMarkReady ? (
           <Button className="review-edit-empty-action" size="M" onClick={onMarkReady}>
@@ -1434,11 +1434,28 @@ function EditReadinessEmptyState({
   );
 }
 
+function EditReadinessRow({ label, statusLabel, satisfied, href }: { label: string; statusLabel: string; satisfied: boolean; href: string }) {
+  const content = <>
+    <span className={`review-edit-readiness-state ${satisfied ? "is-approved" : "is-outstanding"}`} aria-hidden="true">
+      {satisfied ? <DsIcon name="check" size={14} /> : null}
+    </span>
+    <span>{label} {statusLabel}</span>
+  </>;
+  return <li className="review-edit-readiness-item label-s">
+    {satisfied ? content : <Link className="review-edit-readiness-link" href={href} aria-label={`Open ${label} - ${statusLabel}`}>
+      {content}<DsIcon name="arrow-right" size={16} />
+    </Link>}
+  </li>;
+}
+
 function EditReadinessConfirmation({ items, onCancel, onConfirm }: { items: EditReadinessItem[]; onCancel: () => void; onConfirm: () => void }) {
-  return <ConfirmationDialog title="Mark ready to edit?" description="This will approve the outstanding work below and set Edit to Waiting on Brisk." expanded confirmLabel="Approve and mark ready" onCancel={onCancel} onConfirm={onConfirm}>
-    <ul className="edit-readiness-confirmation-list" aria-label="Work that will be approved">
+  return <ConfirmationDialog title="Mark ready to edit?" description={items.length
+    ? "This approves the outstanding stages below and confirms the project is ready for editing. Check that all required Media is available."
+    : "Confirm that all required Media is available and the project is ready for editing."}
+    expanded={items.length > 0} confirmLabel={items.length ? "Approve and mark ready" : "Mark ready to edit"} onCancel={onCancel} onConfirm={onConfirm}>
+    {items.length ? <ul className="edit-readiness-confirmation-list" aria-label="Stages that will be approved">
       {items.map((item) => <li className="label-s" key={item.key}><span>{item.label}</span><span>{getReadinessStatusLabel(item.status)}</span></li>)}
-    </ul>
+    </ul> : null}
   </ConfirmationDialog>;
 }
 
@@ -1465,11 +1482,11 @@ function EditEmptyState({
           <DsIcon name={isCustomer ? "chats" : "upload-simple"} size={28} />
         </span>
         <h2 className="headings-xs-bold">
-          {isCustomer ? "No version is ready to review yet" : "No edit versions yet"}
+          {isCustomer ? "No edit shared yet" : "No edit versions yet"}
         </h2>
         <p className="paragraph-s">
           {isCustomer
-            ? "The studio will upload the first cut here when it’s ready."
+            ? "The Studio will share the first version here when it’s ready."
             : "Upload the first cut to start feedback and approvals."}
         </p>
         <Button
@@ -1478,7 +1495,7 @@ function EditEmptyState({
           onClick={isCustomer ? onMessageStudio : onUpload}
         >
           <DsIcon name={isCustomer ? "chats" : "upload-simple"} size={16} />
-          {isCustomer ? "Message the studio" : "Upload V1"}
+          {isCustomer ? "Message the Studio" : "Upload V1"}
         </Button>
       </div>
     </div>

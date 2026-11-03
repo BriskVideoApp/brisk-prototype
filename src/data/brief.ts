@@ -11,6 +11,17 @@ export type BriefStepId =
 
 export type ConfidenceState = "confident" | "guess" | "missing";
 
+export const briefAudienceOptions = [
+  "Prospective customers",
+  "Existing customers",
+  "Staff",
+  "Potential employees",
+  "Partners",
+  "Investors",
+  "Community",
+  "General public",
+] as const;
+
 export type BriefFieldId =
   | "workingTitle"
   | "videoType"

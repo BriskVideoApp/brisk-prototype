@@ -7,7 +7,7 @@ import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { RowDragHandle } from "@/components/script/RowDragHandle";
-import { StudioReviewDialog, StudioVideoTypeEditor } from "@/components/studio-onboard/StudioReviewEditors";
+import { StudioEditor, StudioReviewDialog, StudioVideoTypeEditor } from "@/components/studio-onboard/StudioReviewEditors";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   cloneStudioBriefConfiguration,
@@ -49,6 +49,7 @@ export function StudioSetupOverviewPage() {
   const { studio, updateBranding, updateDetails } = useStudioSettings();
   const { state, updateStudioTemplate } = usePrototypeState();
   const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingLogo, setIsEditingLogo] = useState(false);
   const [isEditingServices, setIsEditingServices] = useState(false);
   const [isEditingBrief, setIsEditingBrief] = useState(false);
@@ -116,6 +117,13 @@ export function StudioSetupOverviewPage() {
             </div>
             <div className="studio-setup-settings-row">
               <div className="studio-setup-settings-row-copy">
+                <h3 className="label-s">About Studio</h3>
+                <p className="paragraph-s">{studio.details.description || "No description added."}</p>
+              </div>
+              <Button size="S" variant="secondary" disabled={!serviceDraft} onClick={() => setIsEditingDetails(true)}>Edit details</Button>
+            </div>
+            <div className="studio-setup-settings-row">
+              <div className="studio-setup-settings-row-copy">
                 <h3 className="label-s">Studio logo</h3>
                 <span className="studio-setup-logo-summary studio-setup-logo-summary-row studio-client-accent-purple" aria-label={`${studio.details.name} logo`}>
                   {studio.branding.logoPreviewUrl
@@ -165,6 +173,15 @@ export function StudioSetupOverviewPage() {
             setToast("Studio name updated.");
           }}
         />
+      ) : null}
+
+      {isEditingDetails && serviceDraft ? (
+        <StudioEditor profileOnly profileSection="details" draft={serviceDraft} onCancel={() => setIsEditingDetails(false)}
+          onSave={(nextDraft) => {
+            updateDetails({ ...studio.details, name: nextDraft.studioName, description: nextDraft.studioDescription });
+            setIsEditingDetails(false);
+            setToast("Studio details updated.");
+          }} />
       ) : null}
 
       {isEditingLogo ? (

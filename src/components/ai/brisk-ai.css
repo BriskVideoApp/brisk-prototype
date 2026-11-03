@@ -1532,7 +1532,9 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
 }
 
 .ask-brisk-insights h2,
+.ask-brisk-insight h2,
 .ask-brisk-insight h3,
+.ask-brisk-insight p,
 .ask-brisk-brief-thread h2,
 .ask-brisk-reminder h2,
 .ask-brisk-panel p {
@@ -1548,12 +1550,39 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   border-bottom: none;
 }
 
-.ask-brisk-panel a {
+.ask-brisk-insight.is-dashboard-briefing {
+  display: flex;
+  align-items: baseline;
+  gap: var(--brisk-space-s);
+  max-width: calc(var(--brisk-space-3xl) * 18);
+  border: none;
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-none);
+}
+
+.ask-brisk-insight.is-dashboard-briefing > .ds-icon {
+  color: inherit;
+}
+
+.ask-brisk-panel a,
+.ask-brisk-inline-action {
   color: var(--brisk-brand-primary-click);
   text-underline-offset: var(--brisk-space-xxs);
 }
 
-.ask-brisk-panel a:focus-visible {
+.ask-brisk-inline-action {
+  text-decoration: none;
+}
+
+button.ask-brisk-inline-action {
+  border: none;
+  background: transparent;
+  padding: var(--brisk-space-none);
+  text-align: inherit;
+}
+
+.ask-brisk-panel a:focus-visible,
+.ask-brisk-inline-action:focus-visible {
   outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
   outline-offset: var(--brisk-space-xxs);
 }

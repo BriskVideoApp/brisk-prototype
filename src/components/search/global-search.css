@@ -13,4 +13,4 @@
 .app-global-search-button { max-width: 100%; }
 .global-search-trigger-label { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .search-match-target { outline: var(--brisk-space-xxs) solid var(--brisk-border-focus); outline-offset: var(--brisk-space-xxs); }
-@media (max-width: 1133px) { .global-search-trigger-label { display: none; } }
+@media (max-width: 900px) { .global-search-trigger-label { display: none; } }

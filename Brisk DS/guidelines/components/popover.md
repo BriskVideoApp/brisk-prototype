@@ -22,3 +22,7 @@ The trigger opens a labelled non-modal dialog, not a menu/listbox with decorativ
 The portal mounts inside the nearest native dialog, otherwise the document body. It aligns to the trigger's trailing edge, shrinks to the visual viewport and opens above when that offers more room. Constrained lists scroll while header/footer remain visible. Resize, scroll and visual viewport changes update its position.
 
 No other menus or specialised pickers are migrated by this addition.
+
+## Scoped Project tags reuse - 2 November 2026
+
+Tom requested repairing the displaced video-row tag picker. `ProjectTags` now uses this actual `Popover` export for its existing tag choices and short creation form, replacing its custom positioning and portal. This extends the original Columns pilot to this named composition only. Keep the DS surface, trigger attributes, viewport placement and keyboard behaviour; do not override its appearance. The empty tag catalogue opens creation directly, while existing catalogues retain selection and Create new tag. Studio and Client catalogues remain separately scoped. See the Client video row menu repair in the desktop baseline; implementation and Tom's visual sign-off remain distinct.

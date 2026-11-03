@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { useBriskAi } from "./BriskAiContext";
+import { AskBriskInsight } from "./AskBriskInsight";
 import type { AskInsight } from "@/data/ask-brisk";
 
 export function AskBriskInsights({ insights, compact, onAsk, onRemind }: {
@@ -19,9 +20,7 @@ export function AskBriskInsights({ insights, compact, onAsk, onRemind }: {
   return <section className="ask-brisk-insights" aria-label="Your briefing">
     <h2 className="headings-2xs-bold">{compact ? "Worth a look" : "Your briefing"}</h2>
     {!insights.length ? <p className="paragraph-s">No new insights in this scope. You can still ask about the work you have access to.</p> : null}
-    {insights.slice(0, compact ? 1 : 6).map((insight) => <article className="ask-brisk-insight" key={insight.id}>
-      <span className="label-xs">{insight.projectName}</span>
-      <h3 className="label-s-semibold">{insight.title}</h3>
+    {insights.slice(0, compact ? 1 : 6).map((insight) => <AskBriskInsight key={insight.id} eyebrow={insight.projectName} title={insight.title}>
       {insight.priority ? <p className="paragraph-s">{insight.priority}</p> : null}
       <p className="paragraph-s">{insight.body}</p>
       <Link className="label-xs-semibold" href={insight.href}>Source: {insight.sourceLabel}</Link>
@@ -38,7 +37,7 @@ export function AskBriskInsights({ insights, compact, onAsk, onRemind }: {
           <Button size="S" onClick={() => { setPriority(insight.projectId, instruction); setEditingId(null); }}>Save priority</Button>
         </div>
       </div> : null}
-    </article>)}
+    </AskBriskInsight>)}
     {!compact && insights.length > 6 ? <p className="paragraph-s">Showing the first six insights. Narrow the scope or ask about a project for more detail.</p> : null}
   </section>;
 }

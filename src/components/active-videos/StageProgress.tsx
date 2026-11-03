@@ -8,6 +8,7 @@ import { useProjectStageStatus } from "@/components/project/ProjectStageStatusCo
 import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { getProjectStageHref } from "@/data/project-fixtures";
+import { getStagePresentationState } from "@/data/stage-presentation";
 import {
   getProductionFlowStageDefinition,
   type ProductionFlowStageKey,
@@ -104,10 +105,12 @@ export function StageChip({
   mediaCount?: number;
 }) {
   const isMedia = stage.key === "media";
+  const presentationState = getStagePresentationState(status, studioName, customerName);
+  const chipClass = isMedia ? "stage-media" : `stage-${presentationState}${stage.key === "brief" && presentationState === "in_progress" ? " stage-brief-with-studio" : ""}`;
   const displayLabel = isMedia ? `${stage.label} (${mediaCount ?? 0})` : stage.label;
   const tooltip = isMedia
     ? `${mediaCount ?? 0} media ${(mediaCount ?? 0) === 1 ? "file" : "files"}`
-    : getStageTooltip(stage.label, status.state, studioName, customerName);
+    : getStageTooltip(stage.label, presentationState, studioName, customerName);
   const stageHref = getProjectStageHref(projectId, stage.key);
   const stageLabel = getProjectStageLinkLabel(stage.key, stage.label);
   const chipContent = (
@@ -120,7 +123,7 @@ export function StageChip({
     <div className={`stage-step ${isMedia ? "is-media-pinned" : ""}`.trim()}>
       {stageHref ? (
         <Link
-          className={`stage-chip ${isMedia ? "stage-media" : `stage-${status.state}`}`}
+          className={`stage-chip ${chipClass}`}
           href={stageHref}
           aria-label={isMedia ? `Open ${displayLabel}. ${tooltip}` : `Open ${stageLabel}`}
           data-tooltip={tooltip}
@@ -130,7 +133,7 @@ export function StageChip({
         </Link>
       ) : (
         <span
-          className={`stage-chip ${isMedia ? "stage-media" : `stage-${status.state}`} is-static`}
+          className={`stage-chip ${chipClass} is-static`}
           aria-label={isMedia ? displayLabel : `${stage.label} stage`}
           data-tooltip={tooltip}
           onClick={(event) => event.stopPropagation()}

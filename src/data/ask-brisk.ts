@@ -51,7 +51,8 @@ export function getAskInsights(projects: AskProject[], isClient: boolean, priori
         : `${current.label} is waiting. Open the Stage to check what is needed; no responsible party is recorded.`
       : `${current.label} is waiting on ${current.status.assignedTo ?? "the Studio"}.`);
     const href = getProjectStageHref(project.id, current.key);
-    const reviewStage = clientTurn && ["brief", "script", "storyboard", "edit", "masters"].includes(current.key) ? current.key : undefined;
+    const reviewStage = clientTurn && !current.status.inputRequired
+      && ["brief", "script", "storyboard", "edit", "masters"].includes(current.key) ? current.key : undefined;
     return [{ id: `${project.id}:${current.key}`, fingerprint: JSON.stringify([current.status, priority, project.status]),
       projectId: project.id, projectName: project.name, title, body, href, sourceLabel: `${current.label} status`, reviewStage, priority }];
   }).sort((a, b) => Number(Boolean(b.priority)) - Number(Boolean(a.priority))

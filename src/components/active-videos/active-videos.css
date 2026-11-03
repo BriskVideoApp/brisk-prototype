@@ -378,7 +378,8 @@
   border-left: 1px solid var(--brisk-border-secondary);
 }
 
-.active-videos-table td.project-cell {
+.active-videos-table td.project-cell,
+.customer-all-videos-section .customer-queue-project {
   position: sticky;
   left: 0;
   z-index: 4;
@@ -560,7 +561,8 @@
   }
 }
 
-.active-videos-table td {
+.active-videos-table td,
+.customer-all-videos-section .customer-queue-project {
   height: 156px;
   border-bottom: 1px solid var(--brisk-border-secondary);
   background: var(--brisk-bg-block-primary);
@@ -695,10 +697,15 @@
   text-decoration: none;
 }
 
-.project-quick-action:hover {
+.project-quick-action:not(:disabled):hover {
   border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
   color: var(--brisk-brand-primary-click);
+}
+
+.project-quick-action:disabled {
+  color: var(--brisk-button-disabled-text);
+  cursor: default;
 }
 
 .project-quick-action[data-tooltip] {
@@ -858,7 +865,8 @@
 
 .active-project-row:hover .project-plus-action,
 .project-cell:focus-within .project-plus-action,
-.project-cell-tag-menu-open .project-plus-action {
+.project-cell-tag-menu-open .project-plus-action,
+.project-plus-action.is-visible {
   opacity: 1;
   pointer-events: auto;
 }
@@ -880,24 +888,9 @@
   color: var(--brisk-brand-primary-click);
 }
 
-.project-tag-menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 45;
+.project-tag-options {
   display: grid;
-  width: 300px;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-bg-elevated-primary);
-  box-shadow: var(--brisk-shadow-m);
-  gap: 8px;
-  padding: 16px;
-}
-
-.project-tag-menu-title {
-  color: var(--brisk-text-secondary);
-  padding: 0 8px 4px;
+  gap: var(--brisk-space-s);
 }
 
 .project-tag-menu-option,
@@ -935,10 +928,7 @@
 
 .project-tag-create-form {
   display: grid;
-  border-top: 1px solid var(--brisk-border-secondary);
   gap: 12px;
-  margin-top: 4px;
-  padding-top: 12px;
 }
 
 .project-tag-input {
@@ -1138,6 +1128,7 @@
   width: 100%;
   min-height: 96px;
   padding-left: 16px;
+  gap: var(--brisk-space-xs);
 }
 
 .active-videos-table td.deadline-column-open {
@@ -1149,16 +1140,34 @@
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  border: 0;
+  border: var(--brisk-space-none);
   background: transparent;
   cursor: pointer;
-  gap: 4px;
-  padding: 0;
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-none);
   text-align: left;
 }
 
-.deadline-chip,
-.deadline-stage-chip {
+.deadline-stage-text {
+  color: var(--brisk-text-primary);
+}
+
+.deadline-stage-text.is-overdue {
+  color: var(--brisk-pink-70);
+}
+
+.deadline-display:hover .deadline-stage-text {
+  text-decoration: underline;
+  text-underline-offset: var(--brisk-space-xxs);
+}
+
+.deadline-display:focus-visible {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xs);
+  border-radius: var(--brisk-radius-xs);
+}
+
+.deadline-chip {
   display: inline-flex;
   min-height: 32px;
   align-items: center;
@@ -1175,15 +1184,12 @@
   color: var(--brisk-text-secondary);
 }
 
-.deadline-chip:hover,
-.deadline-display:hover .deadline-stage-chip {
+.deadline-chip:hover {
   box-shadow: var(--brisk-shadow-s);
 }
 
 .deadline-final-text {
   color: var(--brisk-text-secondary);
-  font-size: 13px;
-  line-height: 1.35;
 }
 
 .deadline-on-track {
@@ -1482,6 +1488,17 @@
   opacity: 1;
 }
 
+.stage-brief-with-studio .stage-icon-surface,
+.project-stage-step.is-in_progress.is-brief-with-studio .project-stage-icon-surface {
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-text-white);
+}
+
+.stage-brief-with-studio::before,
+.project-stage-step.is-in_progress.is-brief-with-studio .project-stage-chip::before {
+  background: var(--brisk-brand-primary-click);
+}
+
 .stage-done .stage-icon-surface {
   background: var(--brisk-stage-approved-fill);
   box-shadow: none;
@@ -1565,12 +1582,6 @@
 
 .hours-button:hover {
   background: var(--brisk-brand-secondary);
-}
-
-.hours-button.add {
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-xs);
-  background: var(--brisk-white);
 }
 
 .project-costs-cell {
@@ -2282,7 +2293,6 @@
   text-align: left;
 }
 
-.project-panel-deadline-trigger:hover .deadline-stage-chip,
 .project-panel-deadline-trigger:hover .deadline-chip {
   box-shadow: var(--brisk-shadow-s);
 }

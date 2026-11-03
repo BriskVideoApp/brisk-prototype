@@ -3,35 +3,49 @@
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { FormEvent, useState } from "react";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import type { StudioOnboardingAnswer } from "@/data/studio-onboard";
+import { normaliseStudioWebsite } from "@/data/studio-website-profiles";
 
 type StudioAiQuestionProps = {
   initialAnswer?: StudioOnboardingAnswer | null;
   onAnalyse: (answer: StudioOnboardingAnswer) => void;
   onBack: () => void;
   onDraftChange: (answer: StudioOnboardingAnswer) => void;
+  manual?: boolean;
+  onManual?: () => void;
 };
 
-export function StudioAiQuestion({ initialAnswer, onAnalyse, onBack, onDraftChange }: StudioAiQuestionProps) {
+export function StudioAiQuestion({ initialAnswer, onAnalyse, onBack, onDraftChange, manual = false, onManual }: StudioAiQuestionProps) {
   const [studioName, setStudioName] = useState(() => initialAnswer?.studioName ?? "");
-  const canContinue = studioName.trim().length > 0;
+  const [description, setDescription] = useState(initialAnswer?.studioDescription ?? "");
+  const [website, setWebsite] = useState(initialAnswer?.sources.find((source) => source.type === "website")?.label ?? "");
+  const canContinue = manual ? Boolean(studioName.trim() && description.trim()) : Boolean(normaliseStudioWebsite(website));
 
-  function submitStudioName(event: FormEvent<HTMLFormElement>) {
+  function draft(name: string, blurb: string, site: string): StudioOnboardingAnswer {
+    return {
+      studioName: name.trim(),
+      studioDescription: blurb,
+      sources: site.trim() ? [{ id: "studio-website", type: "website", label: site }] : [],
+    };
+  }
+
+  function submitStudioDetails(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canContinue) return;
 
-    const answer: StudioOnboardingAnswer = {
-      studioName: studioName.trim(),
-      studioDescription: "",
-      sources: [],
-    };
-    onDraftChange(answer);
+    const normalisedWebsite = normaliseStudioWebsite(website) ?? "";
+    const previousWebsite = initialAnswer?.sources.find((source) => source.type === "website")?.label;
+    const answer = manual ? draft(studioName, description.trim(), website)
+      : initialAnswer?.studioName && normalisedWebsite === normaliseStudioWebsite(previousWebsite ?? "")
+        ? initialAnswer : draft("", "", normalisedWebsite);
     onAnalyse(answer);
   }
 
   return (
-    <form className="studio-ai-question" onSubmit={submitStudioName}>
+    <form className="studio-ai-question" onSubmit={submitStudioDetails}>
       <div className="studio-ai-field">
+        {manual ? <>
         <Input
           label="Studio name"
           autoComplete="organisation"
@@ -39,9 +53,17 @@ export function StudioAiQuestion({ initialAnswer, onAnalyse, onBack, onDraftChan
           value={studioName}
           onChange={(event) => {
             setStudioName(event.target.value);
-            onDraftChange({ studioName: event.target.value.trim(), studioDescription: "", sources: [] });
+            onDraftChange(draft(event.target.value, description, website));
           }}
         />
+        <Textarea label="About Studio" rows={3} value={description}
+          placeholder="Tell us briefly what your Studio does."
+          onChange={(event) => { setDescription(event.target.value); onDraftChange(draft(studioName, event.target.value, website)); }} />
+        </> : <Input label="Website" autoComplete="url" inputMode="url" placeholder="yourstudio.com"
+          value={website} onChange={(event) => {
+            setWebsite(event.target.value);
+            onDraftChange(draft("", "", event.target.value));
+          }} />}
       </div>
 
       <footer className="studio-follow-up-footer">
@@ -52,6 +74,7 @@ export function StudioAiQuestion({ initialAnswer, onAnalyse, onBack, onDraftChan
           </Button>
         </div>
       </footer>
+      {!manual && onManual ? <Button size="S" variant="ghost" className="studio-onboarding-manual-action" onClick={onManual}>I don&apos;t have a website</Button> : null}
     </form>
   );
 }

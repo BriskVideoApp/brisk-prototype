@@ -21,7 +21,7 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl, type ShareActionRowProps } from "@/components/share/ShareActionRow";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import {
   ScriptMediaPicker,
@@ -290,9 +290,21 @@ export function StoryboardPage({ project }: { project: Project }) {
     ? allStoryboardComments.filter((comment) => comment.visibility === "external")
     : allStoryboardComments;
 
+  const storyboardShareProps = {
+    context: "storyboard",
+    userRole: selectedRole,
+    scopeType: currentVersion ? "version" : "stage",
+    shareTitle: currentVersion ? `${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard` : "Storyboard",
+    projectId: project.id,
+    projectName: project.name,
+    customerName: project.clientName,
+    studioName: studioCompanyName,
+    shareUrl: currentVersion ? `/projects/${project.id}/stages/storyboard?version=${encodeURIComponent(currentVersion.id)}` : `/projects/${project.id}/stages/storyboard`,
+  } satisfies ShareActionRowProps;
+
   return (
     <main className={`storyboard-shell ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
-      <ProjectStageHeader activeStage="storyboard" project={project} showProjectShare={!record || !currentVersion} />
+      <ProjectStageHeader activeStage="storyboard" project={project} showProjectShare={false} actions={<StageShareControl {...storyboardShareProps} allowProjectScope />} />
       <input ref={uploadInputRef} type="file" accept="image/*" hidden onChange={uploadImage} />
 
       {record && currentVersion ? (
@@ -499,22 +511,14 @@ export function StoryboardPage({ project }: { project: Project }) {
             </div>
             <div className="storyboard-footer-actions" aria-label="Storyboard review actions">
               <ShareActionRow
-                context="storyboard"
-                userRole={selectedRole}
-                scopeType="version"
-                shareTitle={`${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
-                projectId={project.id}
+                {...storyboardShareProps}
+                stageDecisionActions
+                showCopyLink={false}
                 reviewScopeKey={currentVersion.id}
                 reviewFingerprint={JSON.stringify(currentVersion)}
                 allowProjectScope
-                projectName={project.name}
-                customerName={project.clientName}
-                studioName={studioCompanyName}
                 isWaitingOnReview={record.status.state === "waiting" && record.status.reviewVersion === currentVersion.id}
                 waitingOnCompany={record.status.assignedTo}
-                shareUrl={`/projects/${project.id}/stages/storyboard?version=${encodeURIComponent(currentVersion.id)}`}
-                copyLinkIconOnly
-                copyLinkLabel="Copy link"
                 sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review ${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
                 approveLabel={`Approve ${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
                 approveDisabled={selectedRole === "Studio Freelancer"}

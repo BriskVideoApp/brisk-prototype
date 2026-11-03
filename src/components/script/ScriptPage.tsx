@@ -27,7 +27,7 @@ import { canActOnProject } from "@/data/prototype-access";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl, type ShareActionRowProps } from "@/components/share/ShareActionRow";
 import type {
   ScriptAiInsertRequest,
   ScriptAiPanelPreset,
@@ -2102,26 +2102,30 @@ export function ScriptPage({
     </header>
   );
 
+  const scriptShareProps = {
+    context: "script",
+    userRole: selectedRole,
+    scopeType: "version",
+    shareTitle: `${getVersionShortLabel(dropdownVersion)} Script`,
+    projectId: project.id,
+    projectName: project.name,
+    studioName: studioCompanyName,
+    customerName: project.clientName,
+    shareUrl: `/projects/${project.id}/script?version=${encodeURIComponent(dropdownVersion.id)}`,
+  } satisfies ShareActionRowProps;
+
   const scriptDecisionActions = (
     <div className="script-word-footer-actions" aria-label="Script review actions">
       <ShareActionRow
-        context="script"
-        userRole={selectedRole}
-        scopeType="version"
-        shareTitle={`${getVersionShortLabel(dropdownVersion)} Script`}
-        projectId={project.id}
+        {...scriptShareProps}
+        stageDecisionActions
+        showCopyLink={false}
         reviewScopeKey={dropdownVersion.id}
         reviewFingerprint={JSON.stringify(dropdownVersion)}
         allowProjectScope
         initialLinkOpens="stageOnly"
-        projectName={project.name}
-        studioName={studioCompanyName}
-        customerName={project.clientName}
         isWaitingOnReview={scriptStageStatus.state === "waiting" && scriptStageStatus.reviewVersion === dropdownVersion.id}
         waitingOnCompany={scriptStageStatus.assignedTo}
-        shareUrl={`/projects/${project.id}/script?version=${encodeURIComponent(dropdownVersion.id)}`}
-        copyLinkIconOnly
-        copyLinkLabel="Copy link"
         sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review the ${getVersionShortLabel(dropdownVersion)} Script`}
         approveLabel={`Approve ${getVersionShortLabel(dropdownVersion)} Script`}
         approveDisabled={selectedRole === "Studio Freelancer" || !dropdownVersion.rows.some((row) => !row.deletedMeta && (row.words.trim() || row.visuals.trim() || row.media.length > 0))}
@@ -2144,6 +2148,7 @@ export function ScriptPage({
         activeUtility={activeSubtabId === "transcripts" ? "media" : undefined}
         project={project}
         showProjectShare={false}
+        actions={activeSubtabId === "script" ? <StageShareControl {...scriptShareProps} allowProjectScope initialLinkOpens="stageOnly" /> : undefined}
       />
 
       {activeSubtabId === "script" ? renderDocumentHeader() : null}

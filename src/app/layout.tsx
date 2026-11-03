@@ -66,6 +66,7 @@ import { BriskAiProvider } from "@/components/ai/BriskAiContext";
 import { StoryboardProvider } from "@/components/storyboard/StoryboardContext";
 import { TurnaroundProvider } from "@/components/project-timing/TurnaroundContext";
 import { ProjectTimingProvider } from "@/components/project-timing/ProjectTimingContext";
+import { DeadlineDialogProvider } from "@/components/project-timing/DeadlineDialogContext";
 import "@/components/project-timing/project-timing.css";
 
 export const metadata: Metadata = {
@@ -110,7 +111,7 @@ export default function RootLayout({
                                     <BriskAiProvider>
                                       <TurnaroundProvider><ProjectTimingProvider>
                                         <Suspense fallback={null}>
-                                          <SearchProvider><AppShell>{children}</AppShell></SearchProvider>
+                                          <DeadlineDialogProvider><SearchProvider><AppShell>{children}</AppShell></SearchProvider></DeadlineDialogProvider>
                                         </Suspense>
                                       </ProjectTimingProvider></TurnaroundProvider>
                                     </BriskAiProvider>

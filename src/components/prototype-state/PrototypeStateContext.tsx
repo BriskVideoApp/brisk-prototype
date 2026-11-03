@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import type { TagClass } from "@/data/project-tags";
 import type { BriefFields } from "@/data/brief";
 import type { RoleSlot } from "@/components/active-videos/types";
 import type { Client, NewClientInput } from "@/data/clients";
@@ -59,7 +60,7 @@ type PrototypeStateContextValue = {
   createProject: (input: CreateProjectInput) => ScopedProject | null;
   createClientVideo: (input: { clientId: string; userId: string; name: string; fields?: BriefFields }) => ScopedProject | null;
   inviteClientTeammate: (input: { clientId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => void;
-  inviteClient: (input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => void;
+  inviteClient: (input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member"; sendBrief?: boolean }) => void;
   setClientMemberProjects: (input: { clientId: string; memberId: string; projectIds: string[]; role?: "Client Admin" | "Client Member" }) => void;
   markClientPreviewed: () => void;
   completeOnboarding: () => void;
@@ -68,6 +69,7 @@ type PrototypeStateContextValue = {
   updateProjectBrief: (projectId: string, fields: BriefFields) => void;
   updateProjectStatus: (projectId: string, status: ScopedProject["status"]) => void;
   updateProjectTags: (projectId: string, tags: string[]) => void;
+  updateClientVideoTag: (clientId: string, projectId: string, tag: string, colour?: TagClass, remove?: boolean) => void;
   updateProjectTeam: (projectId: string, team: RoleSlot[]) => void;
   updateStudioTemplate: (update: Pick<StudioBriefTemplate, "configuration" | "videoTypeIds" | "customVideoTypes" | "customVideoType">) => void;
   updateWorkspaceBranding: (branding: StudioBranding) => void;
@@ -157,7 +159,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     return result.project;
   }, [persistState]);
 
-  const inviteClient = useCallback((input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => {
+  const inviteClient = useCallback((input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member"; sendBrief?: boolean }) => {
     commitState((current) => inviteClientToProjectState(current, input));
   }, [commitState]);
 
@@ -241,6 +243,23 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     updateProjectBrief: (projectId, fields) => commitState((current) => updateProjectBriefState(current, projectId, fields)),
     updateProjectStatus: (projectId, status) => commitState((current) => updateProjectStatusState(current, projectId, status)),
     updateProjectTags: (projectId, tags) => commitState((current) => updateProjectTagsState(current, projectId, tags)),
+    updateClientVideoTag: (clientId, projectId, tag, colour, remove = false) => commitState((current) => {
+      const workspaceId = current.session.activeWorkspaceId;
+      const name = tag.trim();
+      if (!name || !current.projects.some((project) => project.id === projectId
+        && project.clientId === clientId && project.workspaceId === workspaceId)) return current;
+      const collections = current.clientVideoTags ?? [];
+      const existing = collections.find((item) => item.workspaceId === workspaceId && item.clientId === clientId)
+        ?? { workspaceId, clientId, colours: {}, projectTags: {} };
+      const currentTags = existing.projectTags[projectId] ?? [];
+      const tags = remove ? currentTags.filter((value) => value !== name) : [...new Set([...currentTags, name])];
+      const updated = { ...existing,
+        colours: { ...existing.colours, ...(!remove ? { [name]: colour ?? existing.colours[name] ?? "critical" as TagClass } : {}) },
+        projectTags: { ...existing.projectTags, [projectId]: tags },
+      };
+      return { ...current, clientVideoTags: [...collections.filter((item) => item.workspaceId !== workspaceId
+        || item.clientId !== clientId), updated] };
+    }),
     updateProjectTeam: (projectId, team) => commitState((current) => updateProjectTeamState(current, projectId, team)),
     updateStudioTemplate: (update) => commitState((current) => updateStudioBriefTemplateState(current, update)),
     updateWorkspaceBranding: (branding) => commitState((current) => updateWorkspaceBrandingState(current, branding)),

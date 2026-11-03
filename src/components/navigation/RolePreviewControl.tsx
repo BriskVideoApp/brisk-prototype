@@ -27,6 +27,7 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
     setSelectedAccessLevel,
     allPages,
     setAllPages,
+    setProjectRolePreview,
   } = usePrototypeRole();
   const { state } = usePrototypeState();
   const viewer = usePrototypeViewer();
@@ -42,6 +43,12 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
   const currentItem = getNavigationItem(pathname, searchParams.toString());
 
   function selectRole(level: PrototypeAccessLevel) {
+    // Explicit Test mode previews do not create invitations or saved memberships.
+    setProjectRolePreview(compact && contextualProject ? {
+      projectId: contextualProject.id,
+      workspaceId: contextualProject.workspaceId,
+      clientId: contextualProject.clientId,
+    } : null);
     setSelectedAccessLevel(level);
     const role = getAccessLevelRole(level);
 

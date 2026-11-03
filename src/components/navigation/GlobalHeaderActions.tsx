@@ -6,8 +6,6 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { useShootGlobalActions, type ShootGlobalActions } from "@/components/navigation/ShootGlobalActionsContext";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { chatProjects } from "@/data/chat";
 import { canViewProject, type PrototypeViewer } from "@/data/prototype-access";
@@ -27,7 +25,6 @@ export function GlobalHeaderActions() {
   const { state } = usePrototypeState();
   const viewer = usePrototypeViewer();
   const { messages: timingMessages } = useProjectTiming();
-  const { actions: shootActions } = useShootGlobalActions();
   const usesCustomerDashboardDrawers = selectedRole !== "Studio Freelancer" && pathname === "/customer-dashboard";
   const isScenarioEmpty = activeScenario?.state === "new";
   const timingUnreadCount = viewer ? timingMessages.filter((message) => !message.readBy.includes(viewer.chatUserId)).length : 0;
@@ -54,45 +51,11 @@ export function GlobalHeaderActions() {
 
   return (
     <nav className="app-global-header-actions" aria-label="Global actions">
-      {shootActions ? <ShootActionsMenu actions={shootActions} /> : null}
-      <div className="app-global-brief-actions-slot" data-brief-global-actions-slot />
       <GlobalSearch />
       {chatControl}
       <NotificationBell />
     </nav>
   );
-}
-
-function ShootActionsMenu({ actions }: { actions: ShootGlobalActions }) {
-  return <ShareActionRow
-    context="shoot"
-    userRole={actions.userRole}
-    presentation="overflow"
-    allowProjectScope
-    initialAccess={actions.initialAccess}
-    initialLinkOpens="stageOnly"
-    projectId={actions.projectId}
-    projectName={actions.projectName}
-    reviewScopeKey="shoot"
-    reviewFingerprint={actions.reviewFingerprint}
-    studioName={actions.studioName}
-    customerName={actions.customerName}
-    shareUrl={actions.shareUrl}
-    sendLabel={`Ask ${actions.userRole === "Customer" || actions.userRole === "Studio Freelancer" ? actions.studioName : actions.customerName} to review the Shoot`}
-    approveLabel="Approve Shoot"
-    approveDisabled={!actions.canApprove}
-    approveDisabledTooltip="Only Studio Staff or Clients can approve the Shoot"
-    sendDisabled={!actions.canEdit}
-    sendDisabledTooltip="You need edit access to send the Shoot"
-    isApproved={actions.isApproved}
-    isWaitingOnReview={actions.isWaitingOnReview}
-    waitingOnCompany={actions.waitingOnCompany}
-    beforeAction={actions.beforeAction}
-    onApprove={actions.onApprove}
-    onRequestReview={actions.onRequestReview}
-    onSendToStudio={actions.onSendToStudio}
-    onUnapprove={actions.onUnapprove}
-  />;
 }
 
 function getChatUnreadCount(viewer: PrototypeViewer | null, state: PrototypeState) {

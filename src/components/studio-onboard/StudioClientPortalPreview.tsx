@@ -1,4 +1,5 @@
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
+import type { ReactNode } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { briefVideoTypeDetails } from "@/data/brief";
@@ -62,15 +63,32 @@ export function StudioClientPortalPreview({
   );
 }
 
-export function StudioPreviewLogo({ draft }: { draft: StudioReviewDraft }) {
+export function StudioPreviewLogo({ draft, neutral = false, emptyLabel, emptyContent, onClick }: {
+  draft: StudioReviewDraft;
+  neutral?: boolean;
+  emptyLabel?: string;
+  emptyContent?: ReactNode;
+  onClick?: () => void;
+}) {
+  const content = draft.logoPreviewUrl ? (
+    // A local data URL is used only for the shallow prototype preview.
+    <img src={draft.logoPreviewUrl} alt="" />
+  ) : emptyContent ?? (emptyLabel ? <span className="label-xs">{emptyLabel}</span> : (
+    <span className="headings-2xs-bold">{getStudioInitials(draft.studioName)}</span>
+  ));
+  const className = `studio-client-logo${neutral ? " is-neutral" : ""}`;
+
+  if (onClick) {
+    return <button className={`${className} studio-profile-logo-upload`} type="button" onClick={onClick}
+      aria-label={draft.logoPreviewUrl ? `Change ${draft.studioName} logo` : "Add logo"}
+      data-tooltip={draft.logoPreviewUrl ? "Change logo" : undefined}>
+      {content}
+    </button>;
+  }
+
   return (
-    <span className="studio-client-logo" aria-label={`${draft.studioName} logo`}>
-      {draft.logoPreviewUrl ? (
-        // A local data URL is used only for the shallow prototype preview.
-        <img src={draft.logoPreviewUrl} alt="" />
-      ) : (
-        <span className="headings-2xs-bold">{getStudioInitials(draft.studioName)}</span>
-      )}
+    <span className={className} aria-label={draft.logoPreviewUrl ? `${draft.studioName} logo` : emptyLabel ?? `${draft.studioName} logo`}>
+      {content}
     </span>
   );
 }

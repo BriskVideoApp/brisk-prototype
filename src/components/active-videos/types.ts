@@ -40,6 +40,8 @@ export type StageStatus = {
   approvedBy?: string;
   assignedTo?: string;
   reviewVersion?: string;
+  // A newly created Brief needs input before it can be sent for review.
+  inputRequired?: boolean;
 };
 
 export type ProjectDeadline = {

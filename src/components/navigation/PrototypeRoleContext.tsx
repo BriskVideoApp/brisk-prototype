@@ -6,6 +6,8 @@ import { usePrototypeScenario } from "@/components/prototype-scenarios/Prototype
 import { getAccessLevelRole, getDefaultAccessLevel, getPrototypePermissions, prototypeAccessLevels, type PrototypeAccessLevel, type PrototypeRole } from "@/data/prototype-permissions";
 export type { PrototypeRole } from "@/data/prototype-permissions";
 
+export type ProjectRolePreview = { projectId: string; workspaceId: string; clientId: string };
+
 type PrototypeRoleContextValue = {
   selectedRole: PrototypeRole;
   selectedAccessLevel: PrototypeAccessLevel;
@@ -16,6 +18,8 @@ type PrototypeRoleContextValue = {
   allPages: boolean;
   setSelectedRole: (role: PrototypeRole) => void;
   setAllPages: (allPages: boolean) => void;
+  projectRolePreview: ProjectRolePreview | null;
+  setProjectRolePreview: (project: ProjectRolePreview | null) => void;
 };
 
 const PrototypeRoleContext = createContext<PrototypeRoleContextValue | null>(null);
@@ -40,6 +44,7 @@ export function PrototypeRoleProvider({ children }: { children: React.ReactNode 
   const [selectedAccessLevel, setSelectedLevelState] = useState<PrototypeAccessLevel>("studio-admin");
   const selectedRole = getAccessLevelRole(selectedAccessLevel);
   const [allPages, setAllPages] = useState(false);
+  const [projectRolePreview, setProjectRolePreview] = useState<ProjectRolePreview | null>(null);
 
   const setSelectedAccessLevel = useCallback((level: PrototypeAccessLevel) => {
     window.sessionStorage.setItem(selectedLevelStorageKey, level);
@@ -68,6 +73,7 @@ export function PrototypeRoleProvider({ children }: { children: React.ReactNode 
     if (getAccessLevelRole(level) === "Studio Staff") window.sessionStorage.setItem(studioLevelStorageKey, level);
     setSelectedLevelState(level);
     setAllPages(false);
+    setProjectRolePreview(null);
   }, [activeScenario, hasLoadedScenario]);
 
   const value = useMemo(
@@ -80,8 +86,10 @@ export function PrototypeRoleProvider({ children }: { children: React.ReactNode 
       allPages,
       setSelectedRole,
       setAllPages,
+      projectRolePreview,
+      setProjectRolePreview,
     }),
-    [allPages, hasLoadedScenario, selectedRole, selectedAccessLevel, setSelectedAccessLevel, setSelectedRole],
+    [allPages, hasLoadedScenario, selectedRole, selectedAccessLevel, setSelectedAccessLevel, setSelectedRole, projectRolePreview],
   );
 
   return (

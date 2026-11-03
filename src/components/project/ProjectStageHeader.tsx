@@ -14,12 +14,13 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { ShareActionRow, StageShareControl, type ShareActionRowProps } from "@/components/share/ShareActionRow";
 import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getProjectStageHref } from "@/data/project-fixtures";
+import { getStagePresentationState } from "@/data/stage-presentation";
 import {
   getProductionFlowStageDefinition,
   type ProductionFlowStageKey,
@@ -59,12 +60,27 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const projectClient = state.clients.find((client) => client.workspaceId === state.session.activeWorkspaceId && client.id === project.clientId) ?? null;
   const clientPortalHref = getActiveClientPortalDestination(state, viewer);
   const homeHref = getScopedRoleHome(selectedRole, clientPortalHref);
+  const dashboardHref = selectedRole === "Customer" ? homeHref
+    : selectedRole === "Studio Staff" && projectClient
+      ? `/workspaces/${encodeURIComponent(projectClient.workspaceId)}/clients/${encodeURIComponent(projectClient.id)}/portal?studio-preview=1`
+      : "/active-videos";
   const projectMediaCount = mediaCount ?? assetViews.filter((asset) => asset.projectId === project.id && !asset.archivedAt && asset.collection === "media").length;
   const mediaTooltip = projectMediaCount > 0
     ? `${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`
     : "0 media files";
   const mediaLabel = "Media";
   const mediaHref = getProjectStageHref(project.id, "media");
+  const projectShareProps = {
+    context: "project",
+    scopeType: "project",
+    shareTitle: project.name,
+    userRole: selectedRole,
+    projectName: project.name,
+    studioName,
+    customerName: project.clientName,
+    copyLinkLabel: "Share project",
+    shareUrl: `/projects/${project.id}/stages/brief`,
+  } satisfies ShareActionRowProps;
 
   useEffect(() => {
     const navigation = navigationRef.current;
@@ -96,7 +112,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
           <div className="project-stage-identity">
             <Link
               className="project-stage-dashboard-link"
-              href={selectedRole === "Customer" ? homeHref : "/active-videos"}
+              href={dashboardHref}
               aria-label="Back to dashboard"
               aria-describedby={dashboardTooltipId}
             >
@@ -117,19 +133,10 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
             <span className="project-stage-project-title">{project.name}</span>
           </div>
           <div className="project-stage-header-actions">
-            {showProjectShare ? <ShareActionRow
-              context="project"
-              scopeType="project"
-              shareTitle={project.name}
-              userRole={selectedRole}
-              projectName={project.name}
-              studioName={studioName}
-              customerName={project.clientName}
-              copyLinkLabel="Share project"
-              shareUrl={`/projects/${project.id}/stages/brief`}
-              showSend={false}
-              showApprove={false}
-            /> : null}
+            {showProjectShare ? activeUtility === "media"
+              ? <StageShareControl {...projectShareProps} context="media" scopeType="stage" shareTitle="Media" shareUrl={mediaHref} allowProjectScope />
+              : <ShareActionRow {...projectShareProps} showSend={false} showApprove={false} />
+              : null}
             {actions}
           </div>
         </div>
@@ -143,9 +150,10 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
               {projectHeaderStages.map((stage, index) => {
                 const storedStatus = stage.key === "storyboard" ? storyboardStatus : projectStages[stage.key];
                 const status: StageStatus = isProjectDelivered ? { state: "done" } : storedStatus;
+                const presentationState = getStagePresentationState(status, studioName, project.clientName);
                 const href = getProjectStageHref(project.id, stage.key);
                 const isCurrentStage = stage.key === currentStageKey;
-                const statusLabel = getProjectStageStatusLabel(status.state, project.clientName, studioName);
+                const statusLabel = getProjectStageStatusLabel(presentationState, project.clientName, studioName);
                 const chipContent = (
                   <span className="project-stage-icon-surface" aria-hidden="true">
                     <DsIcon name={stage.icon} size={24} />
@@ -154,7 +162,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
 
                 return (
                   <li
-                    className={`project-stage-step is-${status.state} ${isCurrentStage ? "is-current" : ""}`}
+                    className={`project-stage-step is-${presentationState} ${stage.key === "brief" && presentationState === "in_progress" ? "is-brief-with-studio" : ""} ${isCurrentStage ? "is-current" : ""}`}
                     key={stage.key}
                   >
                     {href ? (

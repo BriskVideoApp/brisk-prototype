@@ -79,9 +79,9 @@ export function createTimingMessage(issue: ProjectTimingIssue, channel: ChatChan
     projectUpdate: {
       kind: "event", eventKey: issue.kind === "brief" ? "project.timing.review_required"
         : channel === "internal" ? "project.timing.production_risk" : "project.timing.client_update",
-      canonicalEventId: timingMessageId(issue.id, channel), presentation: "actionable", state: issue.resolvedAt ? "success" : "warning", label: issue.resolvedAt ? "Approved" : "Needs attention",
+      canonicalEventId: timingMessageId(issue.id, channel), presentation: issue.resolvedAt ? "passive" : "actionable", state: issue.resolvedAt ? "success" : "warning", label: issue.resolvedAt ? "Update" : "Needs attention",
       title: issue.resolvedAt ? "Earlier timing review resolved" : "Delivery date needs review", copy,
-      href: issue.resolvedAt ? deliveryHref(issue.projectId) : timingChatHref(issue, channel, true), ctaLabel: issue.resolvedAt ? "View delivery" : "Review date",
+      href: deliveryHref(issue.projectId), ctaLabel: issue.resolvedAt ? "View deadline" : "Review date",
       timingIssueId: issue.id,
     },
   };

@@ -36,7 +36,7 @@ export function ProjectFlowAdjuster({ project }: ProjectFlowAdjusterProps) {
       onReorderStage={(stage, beforeStage) => reorderProjectStage(project, stage, beforeStage)}
       onPostProductionTermChange={(term) => setProjectPostProductionTerm(project, term)}
       onReset={() => resetProjectFlow(project)}
-      triggerIconSize={14.4}
+      quietTrigger
     />
   );
 }

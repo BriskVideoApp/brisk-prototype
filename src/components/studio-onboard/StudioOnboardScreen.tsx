@@ -7,16 +7,18 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
-import { ClientAvatar } from "@/components/clients/ClientPrimitives";
 import {
   StudioAiFollowUp,
 } from "@/components/studio-onboard/StudioAiFollowUp";
 import { StudioAiQuestion } from "@/components/studio-onboard/StudioAiQuestion";
+import { StudioProfileReview } from "@/components/studio-onboard/StudioProfileReview";
+import { getStudioWebsiteProfile } from "@/data/studio-website-profiles";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { prototypeStudioPersonId } from "@/data/people";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import type { PrototypeOnboardingAiPhase, PrototypeOnboardingProgress } from "@/data/prototype-state";
 import {
   createStudioReviewDraft,
@@ -24,6 +26,7 @@ import {
   type StudioFollowUpAnswers,
   type StudioFollowUpStepId,
   type StudioOnboardingAnswer,
+  type StudioReviewDraft,
 } from "@/data/studio-onboard";
 
 type StudioSignInMethod = "google" | "magic-link";
@@ -39,36 +42,38 @@ const studioOnboardStages: readonly StudioOnboardStage[] = [
   { id: "first-client", label: "Add first Client" },
 ];
 
-type OnboardingHistoryStep = "sign-in" | "inbox" | "your-name" | "studio-name" | "contextual"
+type OnboardingHistoryStep = "sign-in" | "inbox" | "your-name" | "studio-name" | "studio-website" | "studio-manual" | "studio-review" | "contextual"
   | "production-model" | "production-scale" | "video-types" | "first-client";
 
 const onboardingHistorySteps: readonly OnboardingHistoryStep[] = [
-  "sign-in", "inbox", "your-name", "studio-name", "contextual", "production-model",
+  "sign-in", "inbox", "your-name", "studio-name", "studio-website", "studio-manual", "studio-review", "contextual", "production-model",
   "production-scale", "video-types", "first-client",
 ];
 const onboardingStepQuery = "onboarding-step";
 
 function readOnboardingHistoryStep(): OnboardingHistoryStep {
   const step = new URLSearchParams(window.location.search).get(onboardingStepQuery);
-  if (step === "studio-description") return "studio-name";
+  if (step === "contextual") return "production-model";
+  if (step === "studio-name" || step === "studio-description") return "studio-website";
   if (step === "brand-review") return "first-client";
   return onboardingHistorySteps.find((candidate) => candidate === step) ?? "sign-in";
 }
 
 function progressForHistoryStep(step: OnboardingHistoryStep): Partial<PrototypeOnboardingProgress> {
   if (step === "sign-in" || step === "inbox") return { view: "sign-in", step: "studio-setup" };
-  if (step === "your-name" || step === "studio-name") return { view: "ai-setup", aiPhase: "question", step: "studio-setup" };
+  if (["your-name", "studio-name", "studio-website", "studio-manual", "studio-review"].includes(step)) return { view: "ai-setup", aiPhase: "question", step: "studio-setup" };
   if (step === "first-client") return { view: "first-project", step: "first-client" };
   return {
     view: "ai-setup",
     aiPhase: "follow-up",
     step: "studio-setup",
-    followUpStepId: step === "production-scale" ? "production-model" : step,
+    followUpStepId: step === "video-types" ? "video-types" : "production-model",
   };
 }
 
 export function StudioOnboardScreen() {
-  const { applyOnboardingSetup } = useStudioSettings();
+  const { applyOnboardingSetup, studio, updateDetails, updateBranding } = useStudioSettings();
+  const { canManageStudio } = usePrototypeRole();
   const { updatePersonIdentity } = usePeople();
   const { state, hasHydrated, updateOnboardingOwner, updateOnboardingProgress } = usePrototypeState();
   const {
@@ -105,6 +110,11 @@ export function StudioOnboardScreen() {
         updateProgressRef.current({ view: "first-project", step: "first-client" });
       }
       const step = readOnboardingHistoryStep();
+      if (["contextual", "studio-name", "studio-description"].includes(requestedStep ?? "")) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set(onboardingStepQuery, step);
+        window.history.replaceState(window.history.state, "", currentUrl);
+      }
       const historyState: unknown = window.history.state;
       const email = historyState && typeof historyState === "object"
         ? (historyState as Record<string, unknown>).briskOnboardingEmail : null;
@@ -151,7 +161,7 @@ export function StudioOnboardScreen() {
     updateOnboardingOwner(name, workEmail.trim());
     updatePersonIdentity(prototypeStudioPersonId, { name, ...(workEmail.trim() ? { email: workEmail.trim() } : {}) });
     updateOnboardingProgress({ view: "ai-setup", aiPhase: "question", step: "studio-setup" });
-    advanceToStep("studio-name");
+    advanceToStep("studio-website");
   }
 
   function requestMagicLink(event: FormEvent<HTMLFormElement>) {
@@ -167,25 +177,74 @@ export function StudioOnboardScreen() {
   }
 
   function analyseStudio(answer: StudioOnboardingAnswer) {
-    const scenario = selectStudioOnboardingScenario(answer);
-
+    const website = answer.sources.find((source) => source.type === "website")?.label;
+    const profile = website ? getStudioWebsiteProfile(website) : undefined;
+    const resolvedAnswer = answer.studioName?.trim() ? answer : {
+      ...answer,
+      studioName: profile?.name ?? "",
+      studioDescription: profile?.description ?? "",
+    };
+    if (!resolvedAnswer.studioName?.trim() || !resolvedAnswer.studioDescription.trim()) {
+      updateStudioDraft(resolvedAnswer);
+      advanceToStep("studio-manual");
+      return;
+    }
+    const scenario = selectStudioOnboardingScenario(resolvedAnswer);
+    const previousProfile = reviewDraft?.studioName === resolvedAnswer.studioName
+      && reviewDraft.studioWebsite === (website ?? "") ? reviewDraft : null;
     updateOnboardingProgress({
-      aiPhase: "follow-up",
+      aiPhase: "question",
       followUpAnswers: null,
-      followUpStepId: "contextual",
+      followUpStepId: "production-model",
       hasCompletedFollowUps: false,
       hasAnalysedStudio: true,
-      reviewDraft: createStudioReviewDraft(answer, scenario),
-      studioAnswer: answer,
+      reviewDraft: {
+        ...createStudioReviewDraft(resolvedAnswer, scenario),
+        videoTypeIds: previousProfile?.videoTypeIds ?? (profile ? [...profile.videoTypeIds] : []),
+        logoPreviewUrl: previousProfile ? previousProfile.logoPreviewUrl : profile?.logoUrl ?? null,
+        logoOptions: previousProfile?.logoOptions ?? [],
+        brandAccentId: "purple",
+        brandColours: undefined,
+        brandSuggestionSource: "default",
+      },
+      studioAnswer: resolvedAnswer,
     });
-    advanceToStep("contextual");
+    advanceToStep("studio-review");
+  }
+
+  function updateProfileDraft(draft: StudioReviewDraft) {
+    updateOnboardingProgress({
+      reviewDraft: draft,
+      studioAnswer: studioAnswer ? { ...studioAnswer, studioName: draft.studioName, studioDescription: draft.studioDescription } : null,
+    });
+  }
+
+  function confirmStudioProfile() {
+    if (!reviewDraft) return;
+    updateOnboardingProgress({
+      aiPhase: "follow-up",
+      followUpAnswers: followUpAnswers ?? {
+        contextualAnswer: "", productionModel: null, productionScale: null,
+        videoTypeIds: [...reviewDraft.videoTypeIds], customVideoTypes: [], customVideoType: null,
+      },
+    });
+    advanceToStep("production-model");
+  }
+
+  function openProfileSettings() {
+    if (!reviewDraft || !canManageStudio) return;
+    // Save the identity for editing without completing setup or replacing the production defaults.
+    updateDetails({ ...studio.details, name: reviewDraft.studioName,
+      description: reviewDraft.studioDescription, website: reviewDraft.studioWebsite ?? "" });
+    updateBranding({ ...studio.branding, logoPreviewUrl: reviewDraft.logoPreviewUrl,
+      logoOptions: [...reviewDraft.logoOptions] });
   }
 
   function updateStudioDraft(answer: StudioOnboardingAnswer) {
     updateOnboardingProgress({
       studioAnswer: answer,
       followUpAnswers: null,
-      followUpStepId: "contextual",
+      followUpStepId: "production-model",
       hasCompletedFollowUps: false,
       hasAnalysedStudio: false,
       reviewDraft: null,
@@ -210,6 +269,16 @@ export function StudioOnboardScreen() {
 
       nextReviewDraft = {
         ...generatedDraft,
+        ...(reviewDraft ? {
+          studioName: reviewDraft.studioName,
+          studioDescription: reviewDraft.studioDescription,
+          studioWebsite: reviewDraft.studioWebsite,
+          logoPreviewUrl: reviewDraft.logoPreviewUrl,
+          logoOptions: reviewDraft.logoOptions,
+        } : {}),
+        brandAccentId: "purple",
+        brandColours: undefined,
+        brandSuggestionSource: "default",
         studioType: answers.productionModel === "post-production-only"
           ? "Post-production studio"
           : generatedDraft.studioType,
@@ -241,7 +310,7 @@ export function StudioOnboardScreen() {
         step: "studio-setup",
         aiPhase: "question",
       });
-      advanceToStep("studio-name");
+      advanceToStep("studio-website");
       return;
     }
 
@@ -295,6 +364,10 @@ export function StudioOnboardScreen() {
             </div>
           </section>
         </main>
+      ) : historyStep === "studio-review" && reviewDraft ? (
+        <StudioProfileReview draft={reviewDraft} onChange={updateProfileDraft}
+          onBack={() => window.history.back()} onContinue={confirmStudioProfile}
+          canOpenSettings={canManageStudio} onOpenSettings={openProfileSettings} />
       ) : view === "first-project" ? (
         <>
           <StudioFirstClientHandoff />
@@ -306,10 +379,15 @@ export function StudioOnboardScreen() {
         </>
       ) : (
         <StudioAiSetupShell
+          key={historyStep}
           answer={studioAnswer}
           followUpAnswers={followUpAnswers}
           phase={aiPhase}
           onAnalyse={analyseStudio}
+          onManual={() => {
+            updateStudioDraft({ studioName: "", studioDescription: "", sources: [] });
+            advanceToStep("studio-manual");
+          }}
           historyStep={historyStep}
           onBackToSignIn={() => window.history.back()}
           onBackToStudioQuestion={() => window.history.back()}
@@ -442,6 +520,7 @@ function StudioAiSetupShell({
   historyStep,
   phase,
   onAnalyse,
+  onManual,
   onBackToSignIn,
   onBackToStudioQuestion,
   onStudioDraftChange,
@@ -455,6 +534,7 @@ function StudioAiSetupShell({
   historyStep: OnboardingHistoryStep;
   phase: PrototypeOnboardingAiPhase;
   onAnalyse: (answer: StudioOnboardingAnswer) => void;
+  onManual: () => void;
   onBackToSignIn: () => void;
   onBackToStudioQuestion: () => void;
   onStudioDraftChange: (answer: StudioOnboardingAnswer) => void;
@@ -470,9 +550,12 @@ function StudioAiSetupShell({
         <section className="studio-onboard-stage" aria-labelledby="studio-ai-setup-heading">
           <div className="studio-ai-question-centre">
             <h1 className="headings-m-bold" id="studio-ai-setup-heading">
-              What&apos;s your studio called?
+              {historyStep === "studio-manual" ? "Tell us about your Studio" : "What’s your Studio’s website?"}
             </h1>
+            {historyStep !== "studio-manual" ? <p className="paragraph-s studio-review-dialog-note">We’ll suggest your Studio details and the kinds of videos you make.</p> : null}
             <StudioAiQuestion
+              manual={historyStep === "studio-manual"}
+              onManual={onManual}
               initialAnswer={answer}
               onAnalyse={onAnalyse}
               onBack={onBackToSignIn}
@@ -501,6 +584,7 @@ function StudioFirstClientHandoff() {
   const router = useRouter();
   const {
     state,
+    hasHydrated,
     completeOnboarding,
     createClient,
   } = usePrototypeState();
@@ -508,29 +592,24 @@ function StudioFirstClientHandoff() {
     && client.id === state.onboarding.clientId) ?? null;
   const [clientName, setClientName] = useState(onboardingClient?.name ?? "");
   const [showSkipConfirmation, setShowSkipConfirmation] = useState(false);
-  const [isOpeningClientDashboard, setIsOpeningClientDashboard] = useState(false);
+  const dashboardDestinationRef = useRef<string | null>(null);
 
   useEffect(() => {
     document.querySelector<HTMLElement>(".prototype-test-content")?.scrollTo({ top: 0, left: 0 });
   }, [state.onboarding.step]);
 
   useEffect(() => {
-    if (!onboardingClient || !isOpeningClientDashboard) return;
+    if (!hasHydrated || !onboardingClient) return;
+    const destination = `/workspaces/${encodeURIComponent(state.session.activeWorkspaceId)}/clients/${encodeURIComponent(onboardingClient.id)}/portal?studio-preview=1&client-added=1`;
+    if (dashboardDestinationRef.current === destination) return;
+    dashboardDestinationRef.current = destination;
     if (state.onboarding.step !== "complete") completeOnboarding();
-    const timeout = window.setTimeout(() => {
-      router.push(`/customer-dashboard/start-video?client=${encodeURIComponent(onboardingClient.id)}`);
-    }, 900);
-    return () => window.clearTimeout(timeout);
-  }, [completeOnboarding, isOpeningClientDashboard, onboardingClient, router, state.onboarding.step, state.session.activeWorkspaceId]);
+    router.replace(destination);
+  }, [completeOnboarding, hasHydrated, onboardingClient, router, state.onboarding.step, state.session.activeWorkspaceId]);
 
   function addFirstClient() {
     if (!clientName.trim()) return;
     createClient({ name: clientName.trim() });
-  }
-
-  function finishFirstClientSetupLater() {
-    completeOnboarding();
-    router.push("/active-videos");
   }
 
   function skipClientSetup() {
@@ -538,49 +617,28 @@ function StudioFirstClientHandoff() {
     router.push("/active-videos");
   }
 
-  if (!onboardingClient) {
-    return (
-      <section className="studio-first-project studio-first-client-step" aria-labelledby="studio-first-client-heading">
-        <header className="studio-first-project-heading">
-          <h1 className="headings-m-bold" id="studio-first-client-heading">Add your first Client</h1>
-          <p className="paragraph-s">Add their company name to start a video together. They won&apos;t be notified until you invite them.</p>
-        </header>
-        <div className="studio-onboarding-step-card">
-          <Input
-            label="Client name"
-            value={clientName}
-            onChange={(event) => setClientName(event.target.value)}
-          />
-          {showSkipConfirmation ? (
-            <ConfirmationDialog title="Skip adding a Client?" description="You can add your first Client from the Studio dashboard whenever you are ready." cancelLabel="Back" confirmLabel="Skip for now" onCancel={() => setShowSkipConfirmation(false)} onConfirm={skipClientSetup} />
-          ) : (
-            <div className="studio-onboarding-step-actions">
-              <Button size="M" variant="secondary" onClick={() => setShowSkipConfirmation(true)}>I don&apos;t have a Client yet</Button>
-              <Button size="M" variant="primary" disabled={!clientName.trim()} onClick={addFirstClient}>Add a Client</Button>
-            </div>
-          )}
-        </div>
-      </section>
-    );
-  }
+  if (!hasHydrated || onboardingClient) return null;
 
   return (
-    <section className="studio-first-project studio-first-client-step studio-first-client-complete" aria-labelledby="studio-first-client-created-heading" role="status">
-      <div className="studio-first-client-confirmation">
-        <div className="studio-first-client-identity">
-          <ClientAvatar client={onboardingClient} size="L" />
-          <div className="studio-first-client-confirmation-copy">
-            <span className="label-xs-semibold">Client added</span>
-            <h1 className="headings-m-bold" id="studio-first-client-created-heading">{onboardingClient.name}</h1>
-            <p className="paragraph-s">{isOpeningClientDashboard ? "Opening video setup..." : "They won’t be notified unless you invite them."}</p>
+    <section className="studio-first-project studio-first-client-step" aria-labelledby="studio-first-client-heading">
+      <header className="studio-first-project-heading">
+        <h1 className="headings-m-bold" id="studio-first-client-heading">Add your first Client</h1>
+        <p className="paragraph-s">Add their company name to start a video together. They won&apos;t be notified until you invite them.</p>
+      </header>
+      <div className="studio-onboarding-step-card">
+        <Input
+          label="Client name"
+          value={clientName}
+          onChange={(event) => setClientName(event.target.value)}
+        />
+        {showSkipConfirmation ? (
+          <ConfirmationDialog title="Skip adding a Client?" description="You can add your first Client from the Studio dashboard whenever you are ready." cancelLabel="Back" confirmLabel="Skip for now" onCancel={() => setShowSkipConfirmation(false)} onConfirm={skipClientSetup} />
+        ) : (
+          <div className="studio-onboarding-step-actions">
+            <Button size="M" variant="secondary" onClick={() => setShowSkipConfirmation(true)}>I don&apos;t have a Client yet</Button>
+            <Button size="M" variant="primary" disabled={!clientName.trim()} onClick={addFirstClient}>Add a Client</Button>
           </div>
-        </div>
-        {!isOpeningClientDashboard ? (
-          <div className="studio-first-client-ready-actions">
-            <Button size="M" variant="secondary" onClick={finishFirstClientSetupLater}>Do this later</Button>
-            <Button size="M" variant="primary" onClick={() => setIsOpeningClientDashboard(true)}>Start a video</Button>
-          </div>
-        ) : null}
+        )}
       </div>
     </section>
   );

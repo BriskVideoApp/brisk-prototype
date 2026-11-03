@@ -103,6 +103,21 @@ If a question spans multiple topics (most do), read all relevant guidance files.
 
 Preserve the approved design. A feature request is not permission to redesign its surrounding screens or repair unrelated historical mismatches.
 
+### Mandatory existing-screen-first preflight
+
+Before designing or changing any UI, including small fixes:
+
+1. **Find the closest existing example in this app.** Search the code and approval baseline, then inspect the running desktop screen. Inspect the user's named reference first. Read the relevant component guidance and screen references. A screenshot alone is not enough to identify the implementation.
+2. **Identify the exact implementation to reuse.** Name its file and actual React export or approved app composition. Compare the requested area with that example: layout, typography, spacing, icon treatment, actions, menus and interaction states. Do not choose a different arrangement merely because it also uses DS tokens.
+3. **State the reuse decision before coding.** Give Tom one short sentence identifying the existing screen/pattern and what will be reused. Routine reuse within the requested scope does not require confirmation. If the user asks only for advice, explain the reuse recommendation without treating that as permission to implement.
+4. **Reuse rather than imitate.** Import the existing component or use its approved composition and shared classes. If a private consumer contains the needed composition, extract the smallest shared composition and use it in both places, preserving the reference screen. Do not copy its markup/styles into a parallel implementation or create a near-duplicate component. Do not make a new primitive under the guise of extraction.
+5. **Pause only the genuinely new part.** If no suitable approved pattern exists, or reuse needs a material visual/behavioural departure, describe the gap and propose the smallest change for Tom to approve before coding that part. Follow the DS missing-asset protocol when applicable. An incomplete search is not evidence that a new pattern is necessary.
+6. **Compare before handoff.** Inspect the changed screen alongside the reference at comparable desktop widths. Check that the reused appearance and interactions match, review the diff for forks/overrides, and report any deliberate differences or unavailable verification. Do not claim a match from TypeScript or an HTTP response alone.
+
+The existing app pattern and the DS contract must both be checked. Existing code does not override later approvals or Client/Studio visibility boundaries. Copying the appearance never grants another role's actions or exposes internal content. Where a new explicit request changes a pattern, record its exact scope in the desktop baseline.
+
+Example: before changing Client video row actions, inspect `ProjectCell` on the main Videos page. Reuse its shared title/action composition and approved quick-action treatment, adapting only the permitted Client actions. Do not invent a separate Actions column or a different set of button styles unless Tom explicitly requests that departure.
+
 Before changing UI:
 1. Read the current [desktop baseline](Docs/desktop-design-baseline.md), [visual guidance](brisk-design-system.md) and relevant component-specific guide in `Brisk DS/guidelines/components/`.
 2. Identify the actual reusable React export or approved app composition and inspect an existing consumer. The Figma `d-` catalogue describes design instances, not importable React components. Do not recreate a primitive, copy a consumer into a new fork or invent an export because a catalogue entry exists.

@@ -14,7 +14,7 @@ const projectStageStatusStorageKey = "brisk-project-stage-status-v1";
 
 type ProjectStageSource = Pick<Project, "id" | "stages">;
 type EditReadinessSource = Pick<Project, "id" | "stages" | "videoType">;
-type EditPrerequisiteKey = Exclude<ProductionFlowStageKey, "edit" | "masters"> | "media";
+type EditPrerequisiteKey = Exclude<ProductionFlowStageKey, "edit" | "masters">;
 
 export type EditReadinessItem = {
   key: EditPrerequisiteKey;
@@ -29,7 +29,7 @@ type ProjectStageStatusContextValue = {
   hasHydrated: boolean;
   getEditReadiness: (project: EditReadinessSource) => { ready: boolean; items: EditReadinessItem[] };
   getProjectStages: (project: ProjectStageSource) => Record<StageKey, StageStatus>;
-  markReadyToEdit: (project: ProjectStageSource) => void;
+  markReadyToEdit: (project: EditReadinessSource, actorName: string) => void;
   setProjectStageStatus: (projectId: string, stage: StageKey, status: StageStatus) => void;
 };
 
@@ -38,7 +38,6 @@ const prerequisiteLabels: Record<EditPrerequisiteKey, string> = {
   script: "Script",
   shoot: "Shoot",
   storyboard: "Storyboard",
-  media: "Media",
 };
 
 const ProjectStageStatusContext = createContext<ProjectStageStatusContextValue | null>(null);
@@ -100,7 +99,6 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
         ...flowPrerequisites.filter((key): key is Exclude<ProductionFlowStageKey, "edit" | "masters"> => (
           key !== "edit" && key !== "masters"
         )),
-        "media",
       ];
       const items = prerequisiteKeys.map((key) => ({
         key,
@@ -110,26 +108,31 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
       }));
 
       return {
-        ready: items.every((item) => item.approved),
+        ready: (overrides[project.id]?.edit ?? project.stages.edit).state !== "not_started"
+          && items.every((item) => item.approved),
         items,
       };
     },
-    [getProjectFlow, getProjectStages, getStoryboardStatus],
+    [getProjectFlow, getProjectStages, getStoryboardStatus, overrides],
   );
 
-  const markReadyToEdit = useCallback((project: ProjectStageSource) => {
+  const markReadyToEdit = useCallback((project: EditReadinessSource, actorName: string) => {
+    const stageApprovals: Partial<Record<StageKey, StageStatus>> = {};
+    const approvedAt = new Date().toLocaleDateString("en-AU", { day: "numeric", month: "short", timeZone: "Australia/Sydney" });
+    for (const item of getEditReadiness(project).items) {
+      if (item.key !== "storyboard" && !item.approved) {
+        stageApprovals[item.key] = { ...item.status, state: "done", daysAgo: 0, approvedBy: actorName, approvedAt };
+      }
+    }
     commitOverrides((current) => ({
       ...current,
       [project.id]: {
         ...current[project.id],
-        brief: { state: "done", daysAgo: 0 },
-        script: { state: "done", daysAgo: 0 },
-        shoot: { state: "done", daysAgo: 0 },
-        media: { state: "done", daysAgo: 0 },
+        ...stageApprovals,
         edit: { state: "in_progress", daysAgo: 0 },
       },
     }));
-  }, [commitOverrides]);
+  }, [commitOverrides, getEditReadiness]);
 
   const setProjectStageStatus = useCallback((projectId: string, stage: StageKey, status: StageStatus) => {
     if (status.state !== "done" && completionRecords[projectId]) {

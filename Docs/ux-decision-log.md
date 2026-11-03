@@ -56,6 +56,11 @@
 - **Reason:** Reduce first-run effort while still capturing the Studio identity, production model and video types needed to configure the workspace. The first Client is created without an invitation, and the next action is starting a video.
 - **Scope:** Studio onboarding, Studio profile identity and first video entry. Website analysis and client-facing Studio descriptions can be added later if they prove valuable.
 
+## 2 November 2026 - Website-first Studio profile review
+
+- **Decision:** Start Studio setup with a website, then offer a compact name, logo and short description review. Provide manual name/description entry for Studios without a website or without a recognised prototype profile. Keep production-model confirmation and suggested, editable video-type selections before the first Client step.
+- **Scope:** Front-end mock suggestions and existing upload/edit controls only. Save the confirmed identity into Studio settings. Custom portal colours and the old full branding/configuration review remain excluded. This supersedes the earlier exclusion of website input and a profile review; see the [current baseline](desktop-design-baseline.md#website-first-studio-onboarding---approved-2-november-2026) for implementation and verification limits.
+
 ## 29 September 2026 - V1 Studio setup completion
 
 - **Decision:** After the three production questions, set up the Studio and continue directly to adding the first Client. Do not show a separate Studio review or collect branding in V1. Use the Studio name's initials until a logo is added later in settings.

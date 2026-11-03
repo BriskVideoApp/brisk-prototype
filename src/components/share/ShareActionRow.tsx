@@ -1,13 +1,15 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
 import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 
 
 import Link from "next/link";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -52,6 +54,7 @@ export type StageApprovalControlProps = {
   onUnapprove: () => void;
   approveLabel?: string;
   approveButtonVariant?: "primary" | "secondary";
+  showApproveIcon?: boolean;
   approvedLabel?: string;
   approvedClassName?: string;
   approvedTextClassName?: string;
@@ -70,10 +73,14 @@ export type ShareActionRowProps = {
   density?: ShareDensity;
   presentation?: SharePresentation;
   briefControls?: boolean;
+  /** Persistent Stage decisions with a role-specific handover destination. */
+  stageDecisionActions?: boolean;
   allowProjectScope?: boolean;
   scopeType?: "project" | "stage" | "version" | "item" | "selection";
   shareTitle?: string;
   openPanelSignal?: number;
+  /** Row menus reuse the link settings in a DS dialog to avoid table clipping. */
+  sharePanelPresentation?: "popover" | "dialog";
   sendLabel?: string;
   sendButtonVariant?: "primary" | "secondary";
   sendCompanyName?: string;
@@ -116,6 +123,8 @@ export type ShareActionRowProps = {
   sendDisabledTooltip?: string;
   copyLinkIconOnly?: boolean;
   copyLinkLabel?: string;
+  /** Optional row trigger; link settings and permissions stay in this composition. */
+  shareTrigger?: (props: { onClick: () => void; disabled: boolean; "aria-expanded": boolean }) => ReactNode;
   disabled?: boolean;
   disabledTooltip?: string;
   approveLabel?: string;
@@ -173,10 +182,12 @@ export function ShareActionRow({
   density = "comfortable",
   presentation = "row",
   briefControls = false,
+  stageDecisionActions = false,
   allowProjectScope = false,
   scopeType,
   shareTitle,
   openPanelSignal = 0,
+  sharePanelPresentation = "popover",
   sendLabel,
   sendButtonVariant,
   sendCompanyName,
@@ -209,6 +220,7 @@ export function ShareActionRow({
   sendDisabledTooltip,
   copyLinkIconOnly = false,
   copyLinkLabel = "Share",
+  shareTrigger,
   disabled = false,
   disabledTooltip,
   approveLabel = "Approve",
@@ -228,6 +240,7 @@ export function ShareActionRow({
   const sendMessageId = useId();
   const mentionPickerId = useId();
   const sendMessageRef = useRef<HTMLDivElement>(null);
+  const plainMessageRef = useRef<HTMLTextAreaElement>(null);
   const savedMentionRangeRef = useRef<Range | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
@@ -240,6 +253,7 @@ export function ShareActionRow({
   const [selectedDestination, setSelectedDestination] = useState<SubmitDestination>(userRole === "Customer" ? "studio" : "customer");
   const [mentionCursor, setMentionCursor] = useState<number | null>(null);
   const [mentionPickerMode, setMentionPickerMode] = useState<"helper" | "typing" | null>(null);
+  const [activeMentionIndex, setActiveMentionIndex] = useState(0);
   const [reviewClock, setReviewClock] = useState(() => Date.now());
   const [expandedSections, setExpandedSections] = useState<ExpandedSection[]>(["access"]);
   const [access, setAccess] = useState<ShareAccess>(initialAccess);
@@ -277,6 +291,7 @@ export function ShareActionRow({
   const submitMembers = membersForDestination(selectedDestination);
   const mentionedMembers = mentionedProjectMembers(sendMessage, submitMembers);
   const notifiedMembers = mentionedMembers.length ? mentionedMembers : submitMembers;
+  const isSimpleStageSend = stageDecisionActions && !followUpKind;
   const mentionMatch = mentionPickerMode === "typing" ? sendMessage.slice(0, mentionCursor ?? sendMessage.length).match(/@([\p{L}\p{N}'-]*(?: [\p{L}\p{N}'-]*)*)$/u) : null;
   const mentionSuggestions = mentionPickerMode ? submitMembers.filter((name) => (mentionPickerMode === "helper" || Boolean(mentionMatch && name.toLowerCase().includes(mentionMatch[1].toLowerCase()))) && !mentionedMembers.includes(name)) : [];
 
@@ -367,6 +382,7 @@ export function ShareActionRow({
   const waitingTooltip = canOpenReviewDetails ? `${lastSentLabel}. Send reminder to ${currentReviewCompanyName}.` : undefined;
   const submitTooltip = isStudioFreelancer
     ? `Send to ${studioName} for review.`
+    : stageDecisionActions ? `Send the ${stageLabel} to ${isCustomerView ? studioName : customerName}.`
     : `Send to ${isCustomerView ? studioName : customerName} or your team.`;
   const sendTooltip = isWaitingOnReview ? waitingTooltip : sendsStageForReview ? submitTooltip : undefined;
 
@@ -404,6 +420,7 @@ export function ShareActionRow({
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
+      if (sharePanelPresentation === "dialog") return;
       const target = event.target;
       const menuId = rootRef.current?.querySelector('[aria-haspopup="menu"]')?.getAttribute("aria-controls");
       const portalMenu = target instanceof Element ? target.closest('.brisk-select-menu[data-brisk-select-mode="action"]')?.querySelector('[role="menu"]') : null;
@@ -419,7 +436,7 @@ export function ShareActionRow({
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
     };
-  }, []);
+  }, [sharePanelPresentation]);
 
   useEffect(() => {
     if (!canOpenReviewDetails) return;
@@ -485,7 +502,6 @@ export function ShareActionRow({
       setHasCopied(false);
     }, 2200);
 
-    showActionToast("Copied");
   };
 
   const runAction = (action: "copy" | "send" | "approve", proceed: () => void) => {
@@ -531,7 +547,7 @@ export function ShareActionRow({
     if (sendsStageForReview) {
       if (onSubmit) onSubmit(selectedDestination, sendMessage.trim(), notifiedMembers);
       else if (onRequestReview) onRequestReview(selectedDestination, sendMessage.trim());
-      else if (selectedDestination === "studio") onSendToStudio?.(sendMessage.trim());
+      else if (selectedDestination === "studio" && onSendToStudio) onSendToStudio(sendMessage.trim());
       else onSend?.(sendMessage.trim());
       if (!providedPendingReviewDetails && context !== "brief") appendReviewActivity("sent", sendMessage.trim(), undefined, submitCompanyName, notifiedMembers);
       showActionToast(`Sent ${reviewSubject} to ${submitCompanyName}`);
@@ -582,7 +598,8 @@ export function ShareActionRow({
     closeOverflowMenu();
     setIsPopoverOpen(false);
     setMentionPickerMode(null);
-    if (canOpenReviewDetails) {
+    setActiveMentionIndex(0);
+    if (canOpenReviewDetails && (!stageDecisionActions || currentReviewCompanyName === (isCustomerView || isStudioFreelancer ? studioName : customerName))) {
       setReviewClock(Date.now());
       setFollowUpKind(pendingReviewDetails?.hasChanged ? "updated" : "reminder");
       setSendMessage(pendingReviewDetails?.hasChanged
@@ -621,6 +638,15 @@ export function ShareActionRow({
     return range;
   };
 
+  const updateMentionQuery = (value: string, cursor: number) => {
+    setMentionCursor(cursor);
+    const match = value.slice(0, cursor).match(/@([\p{L}\p{N}'-]*(?: [\p{L}\p{N}'-]*)*)$/u);
+    const query = match?.[1];
+    const completed = query !== undefined && submitMembers.some((name) => query === name || query.startsWith(`${name} `));
+    setMentionPickerMode(match && !completed ? "typing" : null);
+    setActiveMentionIndex(0);
+  };
+
   const updateSubmitMessage = () => {
     const editor = sendMessageRef.current;
     const range = currentEditorRange();
@@ -632,11 +658,7 @@ export function ShareActionRow({
     beforeRange.setEnd(range.startContainer, range.startOffset);
     const cursor = beforeRange.toString().length;
     setSendMessage(value);
-    setMentionCursor(cursor);
-    const match = value.slice(0, cursor).match(/@([\p{L}\p{N}'-]*(?: [\p{L}\p{N}'-]*)*)$/u);
-    const query = match?.[1];
-    const completed = query !== undefined && submitMembers.some((name) => query === name || query.startsWith(`${name} `));
-    setMentionPickerMode(match && !completed ? "typing" : null);
+    updateMentionQuery(value, cursor);
   };
 
   const insertPlainText = (text: string) => {
@@ -661,7 +683,7 @@ export function ShareActionRow({
   const insertMention = (name: string) => {
     const editor = sendMessageRef.current;
     const range = currentEditorRange();
-    if (!editor || !range) return;
+    if (!isSimpleStageSend && (!editor || !range)) return;
     const cursor = mentionCursor ?? sendMessage.length;
     const match = mentionPickerMode === "typing" ? sendMessage.slice(0, cursor).match(/@([\p{L}\p{N}'-]*(?: [\p{L}\p{N}'-]*)*)$/u) : null;
     const start = cursor - (match?.[0].length ?? 0);
@@ -672,6 +694,18 @@ export function ShareActionRow({
     const inserted = `${prefix}@${name}${suffix}`;
     const nextMessage = `${before}${inserted}${after}`;
     if (nextMessage.length > 240) return;
+
+    if (isSimpleStageSend) {
+      setSendMessage(nextMessage);
+      setMentionCursor(before.length + inserted.length);
+      setMentionPickerMode(null);
+      requestAnimationFrame(() => {
+        plainMessageRef.current?.focus();
+        plainMessageRef.current?.setSelectionRange(before.length + inserted.length, before.length + inserted.length);
+      });
+      return;
+    }
+    if (!editor || !range) return;
 
     if (match) {
       const startPoint = textPointAtOffset(editor, start);
@@ -702,6 +736,27 @@ export function ShareActionRow({
     editor.focus();
   };
 
+  const handleMentionKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (isSimpleStageSend && mentionPickerMode && mentionSuggestions.length) {
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveMentionIndex((index) => (index + (event.key === "ArrowDown" ? 1 : -1) + mentionSuggestions.length) % mentionSuggestions.length);
+        return;
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        insertMention(mentionSuggestions[Math.min(activeMentionIndex, mentionSuggestions.length - 1)]);
+        return;
+      }
+    }
+    if (event.key === "Escape" && mentionPickerMode) {
+      event.preventDefault();
+      event.stopPropagation();
+      setMentionPickerMode(null);
+    }
+    if (!isSimpleStageSend && event.key === "Enter") { event.preventDefault(); insertPlainText("\n"); }
+  };
+
   const changeApproval = () => {
     closeOverflowMenu();
     setIsPopoverOpen(false);
@@ -730,9 +785,74 @@ export function ShareActionRow({
     onAccessChange?.(nextAccess);
   };
 
+  const shareCopyAction = <Button size="S" variant="primary"
+    className={sharePanelPresentation === "popover" ? "share-copy-primary" : undefined}
+    aria-live="polite"
+    type="button" onClick={() => runAction("copy", copyLink)}>
+    <DsIcon name={hasCopied ? "check" : "link"} size={16} />{hasCopied ? "Copied" : copyLinkActionLabel}
+  </Button>;
+
+  const shareLinkOptions = <>
+    {canConfigureLink ? <ShareOptionSection
+      title="Link access"
+      value={accessLabels[linkAccess]}
+      isExpanded={expandedSections.includes("access")}
+      onToggle={() => toggleSection("access")}
+    >
+      {(["viewOnly", "canComment", "canEdit"] satisfies ShareAccess[]).map((option) => (
+        <ShareRadioOption key={option} label={accessLabels[option]} selected={linkAccess === option} onSelect={() => selectAccess(option)} />
+      ))}
+    </ShareOptionSection> : <p className="share-link-access-static label-xs">Link access: {accessLabels[linkAccess]}</p>}
+
+    <p className="share-link-explanation label-xs">Anyone with this link can {linkAccessVerb} {linkScopeSubject}. No password required.</p>
+
+    {sharePanelPresentation === "popover" ? shareCopyAction : null}
+    {clientTeamWithAccess.length > 0 ? <section className="share-client-team" aria-label={`${account.company.name} team with access: ${clientTeamWithAccess.map((member) => member.name).join(", ")}`}>
+      <div className="share-client-team-members">
+        <div className="share-client-team-avatars" aria-hidden="true">
+          {clientTeamWithAccess.map((member) => <span className="share-person-avatar label-xs-semibold" key={member.id} title={member.name}>{member.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("")}</span>)}
+        </div>
+        <span className="label-xs">{clientTeamWithAccess.length} {account.company.name} {clientTeamWithAccess.length === 1 ? "teammate" : "teammates"}</span>
+      </div>
+      {canManageClientTeam ? <Link className="label-xs" href={buildHref("/settings/client/team")} onClick={() => setIsPopoverOpen(false)}>Manage</Link> : null}
+    </section> : null}
+  </>;
+
+  const stageSendLabel = isCustomerView || isStudioFreelancer ? "Send to Studio" : "Send to Client";
+  const stageSendAction = showSend && userRole !== "Share Link Viewer" ? (
+    <Button
+      size="S"
+      variant={isCustomerView ? "secondary" : "primary"}
+      disabled={disabled || sendDisabled}
+      tooltip={disabled ? disabledTooltip : sendDisabled ? sendDisabledTooltip : sendTooltip}
+      onClick={requestSend}
+    >{stageSendLabel}</Button>
+  ) : null;
+  const stageApprovalAction = showApprove ? (
+    <StageApprovalControl
+      stageLabel={stageLabel}
+      userRole={userRole}
+      isApproved={isApproved}
+      approveLabel={approveLabel}
+      showApproveIcon={false}
+      allowRoleApproval={allowRoleApproval}
+      approveButtonVariant={isCustomerView ? "primary" : "secondary"}
+      approvedClassName="brief-approved-action"
+      approvedAt={approvedAt}
+      approvedBy={approvedBy}
+      customerName={customerName}
+      disabled={disabled || approveDisabled}
+      disabledTooltip={disabled ? disabledTooltip : approveDisabledTooltip}
+      onApprove={() => runAction("approve", approveProject)}
+      onUnapprove={unapproveProject}
+    />
+  ) : null;
+
   return (
     <div className={`share-action-row share-density-${density} ${presentation === "overflow" ? "is-overflow" : ""} ${briefControls ? "is-brief-controls" : ""} ${presentation === "brief-summary" ? "is-brief-summary" : ""}`} ref={rootRef}>
-      {presentation === "overflow" ? (
+      {stageDecisionActions ? <div className="share-action-buttons" aria-label={`${stageLabel} review actions`}>
+        {isCustomerView ? <>{stageSendAction}{stageApprovalAction}</> : <>{stageApprovalAction}{stageSendAction}</>}
+      </div> : presentation === "overflow" ? (
         <BriskSelect mode="action" value="" clearable={false} ariaLabel={briefControls ? "Brief actions" : `${stageLabel} actions`} placeholder="Actions"
           open={isOverflowOpen} onOpenChange={(open) => { setIsOverflowOpen(open); if (open) setIsPopoverOpen(false); }}
           options={[
@@ -802,7 +922,7 @@ export function ShareActionRow({
           {approveLabel}
         </button> : null}
       </div> : <div className="share-action-buttons" aria-label={`${stageLabel} share actions`}>
-        {showCopyLink ? (
+        {showCopyLink ? shareTrigger ? shareTrigger({ onClick: toggleCopyLinkSettings, disabled, "aria-expanded": isPopoverOpen }) : (
           <button
             className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
             type="button"
@@ -853,7 +973,12 @@ export function ShareActionRow({
         </span>
       ) : null}
 
-      {isPopoverOpen ? (
+      {isPopoverOpen ? sharePanelPresentation === "dialog" ? <EditingDialog
+        title={`${linkScopeTitle} link access`}
+        description={resolvedScopeType === "project" ? "Whole project" : resolvedShareTitle}
+        onCancel={() => setIsPopoverOpen(false)}
+        actions={<><Button size="S" variant="secondary" onClick={() => setIsPopoverOpen(false)}>Close</Button>{shareCopyAction}</>}
+      ><div className="share-link-dialog-content">{shareLinkOptions}</div></EditingDialog> : (
         <aside className="share-popover" aria-label={`${linkScopeTitle} link access`} onPointerDown={(event) => event.stopPropagation()}>
           <header className="share-panel-heading">
             <div>
@@ -866,36 +991,13 @@ export function ShareActionRow({
             <button className="share-panel-close" type="button" aria-label="Close share panel" onClick={() => setIsPopoverOpen(false)}><DsIcon name="x-close-cross" size={16} /></button>
           </header>
 
-          {canConfigureLink ? <ShareOptionSection
-            title="Link access"
-            value={accessLabels[linkAccess]}
-            isExpanded={expandedSections.includes("access")}
-            onToggle={() => toggleSection("access")}
-          >
-            {(["viewOnly", "canComment", "canEdit"] satisfies ShareAccess[]).map((option) => (
-              <ShareRadioOption key={option} label={accessLabels[option]} selected={linkAccess === option} onSelect={() => selectAccess(option)} />
-            ))}
-          </ShareOptionSection> : <p className="share-link-access-static label-xs">Link access: {accessLabels[linkAccess]}</p>}
-
-          <p className="share-link-explanation label-xs">Anyone with this link can {linkAccessVerb} {linkScopeSubject}. No password required.</p>
-
-          <Button size="S" variant="primary" className="share-copy-primary" type="button" onClick={() => runAction("copy", copyLink)}>
-            <DsIcon name={hasCopied ? "check" : "link"} size={16} />{hasCopied ? "Copied" : copyLinkActionLabel}
-          </Button>
-          {clientTeamWithAccess.length > 0 ? <section className="share-client-team" aria-label={`${account.company.name} team with access: ${clientTeamWithAccess.map((member) => member.name).join(", ")}`}>
-            <div className="share-client-team-members">
-              <div className="share-client-team-avatars" aria-hidden="true">
-                {clientTeamWithAccess.map((member) => <span className="share-person-avatar label-xs-semibold" key={member.id} title={member.name}>{member.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("")}</span>)}
-              </div>
-              <span className="label-xs">{clientTeamWithAccess.length} {account.company.name} {clientTeamWithAccess.length === 1 ? "teammate" : "teammates"}</span>
-            </div>
-            {canManageClientTeam ? <Link className="label-xs" href={buildHref("/settings/client/team")} onClick={() => setIsPopoverOpen(false)}>Manage</Link> : null}
-          </section> : null}
-          {hasCopied ? <span className="share-copy-toast label-xs-semibold" role="status">Copied ✓</span> : null}
+          {shareLinkOptions}
         </aside>
       ) : null}
 
-      {isSendConfirmationOpen && typeof document !== "undefined" ? <ConfirmationDialog title={<>{followUpKind === "reminder" ? `Remind ${currentReviewCompanyName} to review the ${reviewSubjectTitle}?` : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle} to ${currentReviewCompanyName}?` : sendsStageForReview ? `Send ${reviewSubjectTitle} to ${submitCompanyName}?` : `Send ${resolvedShareTitle} to ${resolvedSendCompanyName}?`}</>} description={<>{followUpKind
+      {isSendConfirmationOpen && typeof document !== "undefined" ? <ConfirmationDialog title={<>{followUpKind === "reminder" ? `Remind ${currentReviewCompanyName} to review the ${reviewSubjectTitle}?` : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle} to ${currentReviewCompanyName}?` : isSimpleStageSend ? `Send ${reviewSubjectTitle} to ${submitCompanyName}` : sendsStageForReview ? `Send ${reviewSubjectTitle} to ${submitCompanyName}?` : `Send ${resolvedShareTitle} to ${resolvedSendCompanyName}?`}</>} description={isSimpleStageSend ? <span aria-live="polite">{mentionedMembers.length
+            ? `Only ${formatMentionedPeople(mentionedMembers)} will be notified.`
+            : "Their project team will be notified and take it from here."}</span> : <>{followUpKind
             ? `This will send ${currentReviewCompanyName} another notification. The project will remain Waiting on ${currentReviewCompanyName}.`
             : sendsStageForReview
             ? isStudioFreelancer || userRole === "Studio Staff"
@@ -903,8 +1005,8 @@ export function ShareActionRow({
               : `This will notify ${submitCompanyName} and set the project status to Waiting on ${submitCompanyName}.`
             : `This records the selected item as sent. The project status will not change.`}</>} expanded onCancel={() => setIsSendConfirmationOpen(false)} actions={<>
             <Button size="S" variant="secondary"  type="button" onClick={() => setIsSendConfirmationOpen(false)}>Cancel</Button>
-            <Button size="S" variant="primary"  type="button" disabled={!followUpKind && sendsStageForReview && !sendMessage.trim()} onClick={performSend}>{followUpKind === "reminder" ? "Send reminder" : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle}` : sendsStageForReview ? isStudioFreelancer || userRole === "Studio Staff" ? `Send ${reviewSubjectTitle}` : `Send to ${submitCompanyName}` : resolvedSendLabel}</Button>
-          </>}>   {sendsStageForReview && !followUpKind && !isStudioFreelancer ? <div className={`share-submit-destinations ${userRole === "Studio Staff" ? "is-compact" : ""}`} role="radiogroup" aria-label="Send to">
+            <Button size="S" variant="primary"  type="button" disabled={!(stageDecisionActions && context === "brief") && !followUpKind && sendsStageForReview && !sendMessage.trim()} onClick={performSend}>{followUpKind === "reminder" ? "Send reminder" : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle}` : isSimpleStageSend ? `Send ${stageLabel}` : stageDecisionActions ? stageSendLabel : sendsStageForReview ? isStudioFreelancer || userRole === "Studio Staff" ? `Send ${reviewSubjectTitle}` : `Send to ${submitCompanyName}` : resolvedSendLabel}</Button>
+          </>}>   {sendsStageForReview && !followUpKind && !isStudioFreelancer && !stageDecisionActions ? <div className={`share-submit-destinations ${userRole === "Studio Staff" ? "is-compact" : ""}`} role="radiogroup" aria-label="Send to">
             {userRole === "Studio Staff" ? <span className="label-s-semibold">To</span> : null}
             {([defaultDestination, defaultDestination === "customer" ? "studio" : "customer"] as SubmitDestination[]).map((destination) => (
               <button className={`share-submit-destination ${selectedDestination === destination ? "is-selected" : ""}`} type="button" role="radio" aria-label={`${destination === "studio" ? "Studio" : "Client"}: ${destination === "studio" ? studioName : customerName}`} aria-checked={selectedDestination === destination} key={destination} onClick={() => {
@@ -922,29 +1024,51 @@ export function ShareActionRow({
           </div> : null}  {followUpKind === "reminder" && pendingReviewDetails ? <div className="share-review-request-details label-xs">
             <span>Requested by {pendingReviewDetails.requestedBy} · {formatReviewRequestDate(pendingReviewDetails.requestedAt)}</span>
             <span>Sent to: {pendingReviewDetails.recipients.join(", ")}</span>
-          </div> : null}  {(followUpKind || (sendsStageForReview && (sendMessageEnabled || context !== "brief"))) ? <div className="share-send-message">
-            <div className="share-send-message-heading">
+          </div> : null}  {(followUpKind || (sendsStageForReview && (sendMessageEnabled || stageDecisionActions || context !== "brief"))) ? <div className="share-send-message">
+            {!isSimpleStageSend ? <div className="share-send-message-heading">
               <label className="label-s-semibold" id={`${sendMessageId}-label`} htmlFor={sendMessageId} onClick={() => sendMessageRef.current?.focus()}>{!followUpKind && sendsStageForReview && (isStudioFreelancer || userRole === "Studio Staff") ? "Message" : `Message to ${followUpKind ? currentReviewCompanyName : sendsStageForReview ? submitCompanyName : resolvedSendCompanyName}`}</label>
               {userRole === "Studio Staff" && followUpKind !== "updated" ? <Link className="label-xs-semibold" href={context === "brief" && (followUpKind === "reminder" || selectedDestination === "customer") ? followUpKind === "reminder" ? reminderMessageSettingsHref : reviewMessageSettingsHref : `/settings/review-request-message?destination=${selectedDestination}&stage=${encodeURIComponent(reviewSubjectTitle)}&project=${encodeURIComponent(projectName)}&returnTo=${encodeURIComponent(shareUrl ?? "/active-videos")}`}>Edit default in settings</Link> : null}
-            </div>
-            <div className="share-submit-message-editor">
-              {sendsStageForReview && !followUpKind ? <>
-                <div className="share-submit-rich-text label-s" id={sendMessageId} ref={sendMessageRef} role="textbox" aria-multiline="true" aria-labelledby={`${sendMessageId}-label`} contentEditable suppressContentEditableWarning onInput={updateSubmitMessage} onKeyUp={updateSubmitMessage} onMouseUp={updateSubmitMessage} onBeforeInput={(event) => {
+            </div> : null}
+            <div className={`share-submit-message-editor${isSimpleStageSend ? " is-simple" : ""}`}>
+              {isSimpleStageSend ? <Textarea
+                ref={plainMessageRef}
+                id={sendMessageId}
+                rows={3}
+                maxLength={240}
+                value={sendMessage}
+                aria-label="Message"
+                placeholder={context === "brief" ? "Add a message (optional)" : "Add a message"}
+                aria-description="Type @ to notify specific project members."
+                aria-autocomplete="list"
+                aria-controls={mentionPickerMode ? mentionPickerId : undefined}
+                aria-expanded={Boolean(mentionPickerMode)}
+                aria-activedescendant={mentionPickerMode && mentionSuggestions.length ? `${mentionPickerId}-${Math.min(activeMentionIndex, mentionSuggestions.length - 1)}` : undefined}
+                onChange={(event) => {
+                  setSendMessage(event.currentTarget.value);
+                  updateMentionQuery(event.currentTarget.value, event.currentTarget.selectionStart);
+                }}
+                onClick={(event) => updateMentionQuery(event.currentTarget.value, event.currentTarget.selectionStart)}
+                onKeyUp={(event) => {
+                  if (["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key)) return;
+                  updateMentionQuery(event.currentTarget.value, event.currentTarget.selectionStart);
+                }}
+                onKeyDown={handleMentionKeyDown}
+              /> : sendsStageForReview && !followUpKind ? <>
+                <div className="share-submit-rich-text label-s" id={sendMessageId} ref={sendMessageRef} role="textbox" aria-multiline="true"
+                  aria-labelledby={`${sendMessageId}-label`}
+                  contentEditable suppressContentEditableWarning onInput={updateSubmitMessage} onKeyUp={updateSubmitMessage} onMouseUp={updateSubmitMessage} onBeforeInput={(event) => {
                   const input = event.nativeEvent as InputEvent;
                   if (input.data && (sendMessageRef.current?.textContent?.length ?? 0) - (currentEditorRange()?.toString().length ?? 0) + input.data.length > 240) event.preventDefault();
-                }} onPaste={(event) => { event.preventDefault(); insertPlainText(event.clipboardData.getData("text/plain")); }} onKeyDown={(event) => {
-                  if (event.key === "Escape" && mentionPickerMode) { event.preventDefault(); event.stopPropagation(); setMentionPickerMode(null); }
-                  if (event.key === "Enter") { event.preventDefault(); insertPlainText("\n"); }
-                }} />
+                }} onPaste={(event) => { event.preventDefault(); insertPlainText(event.clipboardData.getData("text/plain")); }} onKeyDown={handleMentionKeyDown} />
                 <button className="share-submit-mention-button label-s-semibold" type="button" aria-label="Mention someone" aria-controls={mentionPickerId} aria-expanded={mentionPickerMode !== null} data-tooltip="Mention someone" onMouseDown={(event) => event.preventDefault()} onClick={() => {
                   setMentionPickerMode(mentionPickerMode === "helper" ? null : "helper");
                 }}><DsIcon name="user-plus" size={16} /></button>
               </> : <textarea className="label-s" id={sendMessageId} rows={4} maxLength={240} value={sendMessage} onChange={(event) => setSendMessage(event.target.value)} />}
               {sendsStageForReview && !followUpKind && mentionPickerMode ? <div className="share-submit-mention-suggestions" id={mentionPickerId} role="listbox" aria-label={`${submitCompanyName} project members`}>
-                {mentionSuggestions.length ? mentionSuggestions.map((name) => <button type="button" role="option" aria-selected={false} className="label-s" key={name} onMouseDown={(event) => event.preventDefault()} onClick={() => insertMention(name)}>{name}</button>) : <span className="label-xs">No matching project members</span>}
+                {mentionSuggestions.length ? mentionSuggestions.map((name, index) => <button type="button" role="option" id={isSimpleStageSend ? `${mentionPickerId}-${index}` : undefined} aria-selected={isSimpleStageSend && index === activeMentionIndex} className={`label-s${isSimpleStageSend && index === activeMentionIndex ? " is-active" : ""}`} key={name} onMouseDown={(event) => event.preventDefault()} onClick={() => insertMention(name)}>{name}</button>) : <span className="label-xs">No matching project members</span>}
               </div> : null}
             </div>
-            {sendsStageForReview && !followUpKind ? <>
+            {sendsStageForReview && !followUpKind && !isSimpleStageSend ? <>
               {(!isStudioFreelancer && userRole !== "Studio Staff") || mentionedMembers.length ? <p className="share-submit-notice label-xs">{mentionedMembers.length
                 ? `Only ${formatMentionedPeople(mentionedMembers)} will be notified. Other ${submitCompanyName} project members can still view this.`
                 : `Everyone from ${submitCompanyName} on this project will be notified.`}</p> : null}
@@ -952,6 +1076,15 @@ export function ShareActionRow({
           </div> : null}  </ConfirmationDialog> : null}
     </div>
   );
+}
+
+/** Header-only sharing reuses the same link/access panel as the review footer. */
+export function StageShareControl(props: Omit<ShareActionRowProps, "showSend" | "showApprove" | "showCopyLink" | "stageDecisionActions" | "presentation" | "shareTrigger">) {
+  return <ShareActionRow {...props} density="compact" showSend={false} showApprove={false}
+    shareTrigger={(triggerProps) => <Button {...triggerProps} size="S" variant="ghost" aria-label={`Share ${props.stageLabelOverride ?? stageLabels[props.context]}`}>
+      <DsIcon name="share-network" size={16} />Share
+    </Button>}
+  />;
 }
 
 export function StageApprovalControl({
@@ -962,6 +1095,7 @@ export function StageApprovalControl({
   onUnapprove,
   approveLabel = "Approve",
   approveButtonVariant = "primary",
+  showApproveIcon = true,
   approvedLabel,
   approvedClassName,
   approvedTextClassName = "label-s-semibold",
@@ -1002,7 +1136,7 @@ export function StageApprovalControl({
     return (
       <span className="share-approved-status-wrap" ref={rootRef} data-tooltip={isDisabled ? (disabledTooltip ?? roleTooltip) : undefined}>
         <button className={`share-button share-button-${approveButtonVariant} label-s-semibold`} type="button" disabled={isDisabled} data-tooltip={isDisabled ? undefined : tooltip} onClick={onApprove}>
-          <DsIcon name="thumbs-up-like-fill" size={20} />
+          {showApproveIcon ? <DsIcon name="thumbs-up-like-fill" size={20} /> : null}
           {approveLabel}
         </button>
       </span>

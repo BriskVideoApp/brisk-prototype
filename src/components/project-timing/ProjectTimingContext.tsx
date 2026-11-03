@@ -5,12 +5,15 @@ import { deadlineInput } from "@/data/turnaround";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { selectProjectBrief } from "@/data/prototype-state";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { canActOnProject, canViewProject } from "@/data/prototype-access";
 import { createTimingMessage, timingMessageId, type ProjectTimingAssessment, type ProjectTimingIssue } from "@/data/project-timing";
 import type { ChatChannel, ChatMessage } from "@/components/chat/types";
 import type { Project } from "@/components/active-videos/types";
-import { createDeliveryMessages, getPendingDeliveryProposal, initialDeliveryAgreement, type ProjectDeliveryAgreement } from "@/data/project-delivery";
+import { briefDeliveryDate, createDeliveryMessages, deliveryAgreementSide, deliveryDateParts, deliveryInstant, getPendingDeliveryProposal, initialDeliveryAgreement, type ProjectDeliveryAgreement, type DeliveryDateChange } from "@/data/project-delivery";
 
 type TimingState = { issues: ProjectTimingIssue[]; readBy: Record<string, string[]>; deliveries: ProjectDeliveryAgreement[] };
 type TimingContextValue = {
@@ -20,6 +23,7 @@ type TimingContextValue = {
   getDeliveryAgreement: (project: Project) => ProjectDeliveryAgreement;
   proposeDeliveryDate: (projectId: string, date: string, reason: string) => boolean;
   agreeDeliveryDate: (projectId: string, proposalId: string) => boolean;
+  saveDeliveryDate: (projectId: string, date: string, reason: string, expectedDate: string | null) => boolean;
   getBriefAssessment: (projectId: string, requestedDate: string) => ProjectTimingAssessment | null;
   submitBriefTiming: (projectId: string, requestedDate: string, occurredAt: string) => void;
   shareClientUpdate: (issueId: string, reason: string) => boolean;
@@ -54,6 +58,8 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
   const { state: prototypeState, hasHydrated } = usePrototypeState();
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
   const viewer = usePrototypeViewer();
+  const { completionRecords } = useProjectCompletion();
+  const { getProjectStages, hasHydrated: stagesReady } = useProjectStageStatus();
   const turnaround = useTurnaround();
   const [sessionStartedAt] = useState(() => new Date().toISOString());
   const storageKey = `brisk-timing-warnings-v1:${prototypeState.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}`;
@@ -93,26 +99,75 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
     return true;
   }, [loadedKey, storageKey]);
 
+  // Adopt the date from already-submitted legacy Briefs without changing any
+  // existing deadline, proposal date, author or agreement history.
+  useEffect(() => {
+    if (loadedKey !== storageKey || !stagesReady) return;
+    const initialDates = prototypeState.projects.flatMap((project) => {
+      const existing = saved.deliveries.find((entry) => entry.projectId === project.id) ?? initialDeliveryAgreement(project);
+      if (project.workspaceId !== prototypeState.session.activeWorkspaceId || existing.agreedDate || project.status === "Completed"
+        || project.status === "Archived" || completionRecords[project.id]) return [];
+      const submitted = saved.issues.filter((issue) => issue.projectId === project.id && issue.kind === "brief")
+        .sort((a, b) => a.createdAt.localeCompare(b.createdAt))[0];
+      const brief = selectProjectBrief(prototypeState, project.id);
+      const date = deliveryInstant(submitted?.requestedDate ?? (brief && getProjectStages(project).brief.state === "done" ? briefDeliveryDate(brief.fields) : ""), "17:00");
+      return date ? [{ project, date }] : [];
+    });
+    if (!initialDates.length) return;
+    commit((current) => {
+      const deliveries = [...current.deliveries];
+      for (const { project, date } of initialDates) {
+        const index = deliveries.findIndex((entry) => entry.projectId === project.id);
+        const previous = deliveries[index] ?? initialDeliveryAgreement(project);
+        if (previous.agreedDate) continue;
+        const next = { ...previous, originalDate: date, agreedDate: date,
+          proposals: previous.proposals.map((proposal) => proposal.status === "pending" && proposal.previousDate === null ? { ...proposal, previousDate: date } : proposal) };
+        if (index < 0) deliveries.push(next); else deliveries[index] = next;
+      }
+      return { ...current, deliveries };
+    });
+  }, [commit, completionRecords, getProjectStages, loadedKey, prototypeState, saved.deliveries, saved.issues, stagesReady, storageKey]);
+
   const allIssues = useMemo(() => {
     if (loadedKey !== storageKey || !turnaround.hasHydrated) return [];
-    const dynamic: ProjectTimingIssue[] = [];
+    const byId = new Map(saved.issues.map((issue) => [issue.id, issue]));
     for (const project of prototypeState.projects.filter((entry) => entry.workspaceId === prototypeState.session.activeWorkspaceId)) {
       const forecast = turnaround.getForecast(project);
       const agreement = saved.deliveries.find((entry) => entry.projectId === project.id) ?? initialDeliveryAgreement(project);
       const requested = deadlineInput(agreement.agreedDate, turnaround.timezone).slice(0, 10);
-      if (!forecast || !requested || forecast.suggestedDate <= requested && Date.parse(agreement.agreedDate!) >= turnaround.now) continue;
+      const complete = project.status === "Completed" || project.status === "Archived" || Boolean(completionRecords[project.id]);
+      const atRisk = Boolean(!complete && forecast && requested
+        && (forecast.suggestedDate > requested || Date.parse(agreement.agreedDate!) < turnaround.now));
+      const previous = saved.issues.filter((issue) => issue.projectId === project.id);
+      for (const issue of previous) {
+        // A missing forecast (for example while paused) is not evidence of recovery.
+        if (!issue.resolvedAt && (complete || issue.kind === "production" && forecast && !atRisk)) {
+          byId.set(issue.id, { ...issue, resolvedAt: new Date(turnaround.now).toISOString() });
+        }
+      }
+      if (!atRisk || !forecast) continue;
+      // Keep the reviewed message unchanged while this incident remains active.
+      if (previous.some((issue) => !issue.resolvedAt && issue.requestedDate === requested)) continue;
       const active = turnaround.getActiveDeadlines(project);
       const cycleKey = active.map((entry) => entry.cycle?.id ?? entry.stage).join("-");
-      dynamic.push({ id: `risk-live-${project.id}-${requested}-${cycleKey}`, projectId: project.id, kind: "production",
+      const resolutions = previous.filter((issue) => issue.kind === "production").map((issue) => issue.resolvedAt).filter((value): value is string => Boolean(value)).sort();
+      const lastResolution = resolutions.at(-1);
+      const id = `risk-live-${project.id}-${requested}-${cycleKey}${lastResolution ? `-after-${resolutions.length}-${lastResolution}` : ""}`;
+      byId.set(id, { id, projectId: project.id, kind: "production",
         requestedDate: requested, suggestedDate: forecast.suggestedDate, reason: forecast.reason, internalReason: forecast.internalReason,
-        createdAt: active.map((entry) => entry.cycle?.startedAt).filter((value): value is string => Boolean(value)).sort().at(-1) ?? sessionStartedAt,
+        createdAt: [...active.map((entry) => entry.cycle?.startedAt), lastResolution].filter((value): value is string => Boolean(value)).sort().at(-1) ?? sessionStartedAt,
         clientUpdate: null, resolvedAt: null });
     }
-    const byId = new Map(dynamic.map((issue) => [issue.id, issue]));
-    // Producer-reviewed external updates are saved snapshots, not silently rewritten forecasts.
-    saved.issues.forEach((issue) => byId.set(issue.id, issue));
     return [...byId.values()];
-  }, [loadedKey, prototypeState, saved.deliveries, saved.issues, sessionStartedAt, storageKey, turnaround]);
+  }, [completionRecords, loadedKey, prototypeState, saved.deliveries, saved.issues, sessionStartedAt, storageKey, turnaround]);
+
+  useEffect(() => {
+    const resolved = new Map(allIssues.filter((issue) => issue.resolvedAt
+      && saved.issues.some((entry) => entry.id === issue.id && !entry.resolvedAt)).map((issue) => [issue.id, issue.resolvedAt]));
+    if (!resolved.size) return;
+    commit((current) => ({ ...current, issues: current.issues.map((issue) => !issue.resolvedAt && resolved.has(issue.id)
+      ? { ...issue, resolvedAt: resolved.get(issue.id)! } : issue) }));
+  }, [allIssues, commit, saved.issues]);
 
   const issues = useMemo(() => allIssues.filter((issue) => {
     const project = prototypeState.projects.find((entry) => entry.id === issue.projectId);
@@ -131,48 +186,75 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
     return Boolean(project && canViewProject(viewer, project, prototypeState));
   }), [prototypeState, saved.deliveries, viewer]);
   const messages = useMemo(() => [...timingMessages,
-    ...visibleDeliveries.flatMap((agreement) => createDeliveryMessages(agreement, saved.readBy))],
-  [saved.readBy, timingMessages, visibleDeliveries]);
+    ...visibleDeliveries.flatMap((agreement) => {
+      const project = prototypeState.projects.find((entry) => entry.id === agreement.projectId);
+      const complete = project?.status === "Completed" || project?.status === "Archived" || Boolean(completionRecords[agreement.projectId]);
+      return createDeliveryMessages(agreement, saved.readBy, complete);
+    })],
+  [completionRecords, prototypeState.projects, saved.readBy, timingMessages, visibleDeliveries]);
 
   const getDeliveryAgreement = useCallback((project: Project) =>
     visibleDeliveries.find((entry) => entry.projectId === project.id) ?? initialDeliveryAgreement(project), [visibleDeliveries]);
 
   const proposeDeliveryDate = useCallback((projectId: string, date: string, reason: string) => {
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
-    if (viewer?.role !== "Studio Staff" || !project || project.status === "Completed" || project.status === "Archived" || !canViewProject(viewer, project, prototypeState)
+    if (!viewer || (viewer.role !== "Studio Staff" && viewer.role !== "Customer") || !project || project.status === "Completed" || project.status === "Archived" || completionRecords[projectId] || !canActOnProject(viewer, project, prototypeState, "approve")
       || !Number.isFinite(Date.parse(date)) || !reason.trim()) return false;
     const proposedAt = new Date().toISOString();
+    const proposedByRole = viewer.role;
     return commit((current) => {
       const agreement = current.deliveries.find((entry) => entry.projectId === projectId) ?? initialDeliveryAgreement(project);
       const pending = getPendingDeliveryProposal(agreement);
+      if (viewer.role === "Customer" && !agreement.agreedDate) return current;
       if (Date.parse(date) === Date.parse(agreement.agreedDate ?? "") || (pending && Date.parse(pending.date) === Date.parse(date) && pending.reason === reason.trim())) return current;
       const proposal = { id: crypto.randomUUID(), date, previousDate: agreement.agreedDate, reason: reason.trim(),
-        proposedAt, proposedBy: viewer.name, proposedById: viewer.id, status: "pending" as const,
+        proposedAt, proposedBy: viewer.name, proposedById: viewer.id, proposedByRole, status: "pending" as const,
         agreedAt: null, agreedBy: null, agreedById: null };
       return { ...current, deliveries: [...current.deliveries.filter((entry) => entry.projectId !== projectId), {
         ...agreement, proposals: [...agreement.proposals.map((entry) => entry.status === "pending"
           ? { ...entry, status: "superseded" as const } : entry), proposal],
       }] };
     });
-  }, [commit, prototypeState, viewer]);
+  }, [commit, completionRecords, prototypeState, viewer]);
 
   const agreeDeliveryDate = useCallback((projectId: string, proposalId: string) => {
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
-    if (viewer?.role !== "Customer" || !project || project.status === "Completed" || project.status === "Archived" || !canActOnProject(viewer, project, prototypeState, "approve")) return false;
+    if (!viewer || !project || project.status === "Completed" || project.status === "Archived" || completionRecords[projectId] || !canActOnProject(viewer, project, prototypeState, "approve")) return false;
     const agreedAt = new Date().toISOString();
     return commit((current) => {
       const agreement = current.deliveries.find((entry) => entry.projectId === projectId);
       const pending = agreement && getPendingDeliveryProposal(agreement);
-      if (!agreement || !pending || pending.id !== proposalId || pending.previousDate !== agreement.agreedDate) return current;
+      if (!agreement || !pending || pending.id !== proposalId || pending.previousDate !== agreement.agreedDate || viewer.role !== deliveryAgreementSide(pending)) return current;
       const resolved = new Map([...allIssues, ...current.issues].map((issue) => [issue.id, issue.projectId === projectId
-        ? { ...issue, resolvedAt: agreedAt } : issue]));
+        ? { ...issue, resolvedAt: issue.resolvedAt ?? agreedAt } : issue]));
       return { ...current, issues: [...resolved.values()], deliveries: current.deliveries.map((entry) => entry.projectId !== projectId ? entry : {
         ...entry, agreedDate: pending.date, proposals: entry.proposals.map((proposal) => proposal.id !== proposalId ? proposal : {
           ...proposal, status: "agreed" as const, agreedAt, agreedBy: viewer.name, agreedById: viewer.id,
         }),
       }) };
     });
-  }, [allIssues, commit, prototypeState, viewer]);
+  }, [allIssues, commit, completionRecords, prototypeState, viewer]);
+
+  const saveDeliveryDate = useCallback((projectId: string, date: string, reason: string, expectedDate: string | null) => {
+    const project = prototypeState.projects.find((entry) => entry.id === projectId);
+    if (viewer?.role !== "Studio Staff" || !project || project.status === "Completed" || project.status === "Archived"
+      || completionRecords[projectId] || !canActOnProject(viewer, project, prototypeState, "approve") || !Number.isFinite(Date.parse(date))) return false;
+    const changedAt = new Date().toISOString();
+    return commit((current) => {
+      const agreement = current.deliveries.find((entry) => entry.projectId === projectId) ?? initialDeliveryAgreement(project);
+      if (agreement.agreedDate !== expectedDate || Date.parse(date) === Date.parse(agreement.agreedDate ?? "") || agreement.agreedDate && !reason.trim()) return current;
+      const change: DeliveryDateChange = { id: crypto.randomUUID(), date, previousDate: agreement.agreedDate,
+        changedAt, changedBy: viewer.name, changedById: viewer.id, source: "studio", reason: reason.trim() };
+      return { ...current,
+        issues: [...new Map([...allIssues, ...current.issues].map((issue) => [issue.id, issue.projectId === projectId
+          ? { ...issue, resolvedAt: issue.resolvedAt ?? changedAt } : issue])).values()],
+        deliveries: [...current.deliveries.filter((entry) => entry.projectId !== projectId), {
+          ...agreement, originalDate: agreement.originalDate ?? date, agreedDate: date, changes: [...(agreement.changes ?? []), change],
+          proposals: agreement.proposals.map((proposal) => proposal.status === "pending" ? { ...proposal, status: "superseded" as const } : proposal),
+        }],
+      };
+    });
+  }, [allIssues, commit, completionRecords, prototypeState, viewer]);
 
   const getBriefAssessment = useCallback((projectId: string, requestedDate: string) => {
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
@@ -186,19 +268,41 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
   const submitBriefTiming = useCallback((projectId: string, requestedDate: string, occurredAt: string) => {
     const assessment = getBriefAssessment(projectId, requestedDate);
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
-    if (!assessment || !project || !canViewProject(viewer, project, prototypeState)) return;
-    const issue: ProjectTimingIssue = {
+    if (!project || project.status === "Completed" || project.status === "Archived" || completionRecords[projectId] || !canActOnProject(viewer, project, prototypeState, "send")) return;
+    const existingDate = (savedRef.current.deliveries.find((entry) => entry.projectId === projectId) ?? initialDeliveryAgreement(project)).agreedDate;
+    if (existingDate && deliveryDateParts(existingDate).date !== requestedDate) return;
+    const issue: ProjectTimingIssue | null = assessment ? {
       id: `brief-${projectId}-${requestedDate}-${assessment.suggestedDate}`, projectId, kind: "brief", requestedDate,
       suggestedDate: assessment.suggestedDate, reason: assessment.reason, internalReason: assessment.reason,
       createdAt: occurredAt, clientUpdate: null, resolvedAt: null,
-    };
-    commit((current) => current.issues.some((entry) => entry.id === issue.id) ? current
-      : { ...current, issues: [...current.issues, issue] });
-  }, [commit, getBriefAssessment, prototypeState, viewer]);
+    } : null;
+    commit((current) => {
+      const agreement = current.deliveries.find((entry) => entry.projectId === projectId) ?? initialDeliveryAgreement(project);
+      const date = deliveryInstant(requestedDate, "17:00");
+      if (agreement.agreedDate && deliveryDateParts(agreement.agreedDate).date !== requestedDate) return current;
+      // A sent/approved Brief establishes the first deadline, never a later override.
+      const initialDate = !agreement.agreedDate && date;
+      const change: DeliveryDateChange | null = initialDate && viewer ? {
+        id: crypto.randomUUID(), date: initialDate, previousDate: null, source: "brief", reason: "",
+        changedAt: occurredAt, changedBy: viewer.name, changedById: viewer.id,
+      } : null;
+      const existing = issue && current.issues.find((entry) => entry.projectId === projectId && entry.kind === "brief"
+        && entry.requestedDate === requestedDate && entry.suggestedDate === issue.suggestedDate && !entry.resolvedAt);
+      const updated = current.issues.map((entry) => entry.projectId === projectId && entry.kind === "brief" && !entry.resolvedAt && entry.id !== existing?.id
+        ? { ...entry, resolvedAt: occurredAt } : entry);
+      if (issue && !existing) updated.push(current.issues.some((entry) => entry.id === issue.id)
+        ? { ...issue, id: `${issue.id}-${crypto.randomUUID()}` } : issue);
+      return { ...current, issues: updated, deliveries: change ? [...current.deliveries.filter((entry) => entry.projectId !== projectId), {
+        ...agreement, originalDate: change.date, agreedDate: change.date, changes: [...(agreement.changes ?? []), change],
+        proposals: agreement.proposals.map((proposal) => proposal.status === "pending" && proposal.previousDate === null
+          ? { ...proposal, previousDate: change.date } : proposal),
+      }] : current.deliveries };
+    });
+  }, [commit, completionRecords, getBriefAssessment, prototypeState, viewer]);
 
   const shareClientUpdate = useCallback((issueId: string, reason: string) => {
     const issue = issues.find((entry) => entry.id === issueId);
-    if (viewer?.role !== "Studio Staff" || !issue || issue.kind !== "production" || issue.clientUpdate || !reason.trim()) return false;
+    if (viewer?.role !== "Studio Staff" || !issue || issue.resolvedAt || issue.kind !== "production" || issue.clientUpdate || !reason.trim()) return false;
     const updated = { ...issue, clientUpdate: { reason: reason.trim(), sharedAt: new Date().toISOString(), reviewedBy: viewer.name } };
     return commit((current) => current.issues.find((entry) => entry.id === issueId)?.clientUpdate ? current
       : { ...current, issues: [...current.issues.filter((entry) => entry.id !== issueId), updated] });
@@ -216,7 +320,7 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
 
   return <ProjectTimingContext.Provider value={{ hasHydrated: loadedKey === storageKey, issues, messages,
     getBriefAssessment, submitBriefTiming, shareClientUpdate, markChannelRead,
-    getDeliveryAgreement, proposeDeliveryDate, agreeDeliveryDate }}>{children}</ProjectTimingContext.Provider>;
+    getDeliveryAgreement, proposeDeliveryDate, agreeDeliveryDate, saveDeliveryDate }}>{children}</ProjectTimingContext.Provider>;
 }
 
 export function useProjectTiming() {

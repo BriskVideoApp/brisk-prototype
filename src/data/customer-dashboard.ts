@@ -425,3 +425,31 @@ function activity(
 ): CustomerDashboardActivity {
   return { id, actor, action, object, projectId, projectLabel, timestamp, icon, href };
 }
+
+
+function clientVideoHistoryKey(workspaceId: string, projectId: string) {
+  return `brisk-client-video-history-v1:${workspaceId}:${projectId}`;
+}
+
+export function readClientVideoHistory(workspaceId: string, projectId: string): CustomerDashboardActivity[] {
+  try {
+    const parsed: unknown = JSON.parse(window.localStorage.getItem(clientVideoHistoryKey(workspaceId, projectId)) ?? "[]");
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((value: unknown): value is CustomerDashboardActivity => {
+      if (!value || typeof value !== "object") return false;
+      const entry = value as Record<string, unknown>;
+      return entry.projectId === projectId && typeof entry.id === "string" && typeof entry.actor === "string"
+        && typeof entry.action === "string" && typeof entry.object === "string" && typeof entry.timestamp === "string"
+        && typeof entry.href === "string" && typeof entry.projectLabel === "string" && typeof entry.icon === "string"
+        && ["play", "pause", "queue", "check-circle", "folder"].includes(entry.icon);
+    });
+  } catch {
+    return [];
+  }
+}
+
+export function appendClientVideoHistory(workspaceId: string, projectId: string, entry: CustomerDashboardActivity) {
+  window.localStorage.setItem(clientVideoHistoryKey(workspaceId, projectId), JSON.stringify([
+    ...readClientVideoHistory(workspaceId, projectId), entry,
+  ]));
+}

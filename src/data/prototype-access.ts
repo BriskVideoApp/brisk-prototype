@@ -11,9 +11,11 @@ export type PrototypeViewer = {
   clientId: string | null;
   personId: string | null;
   chatUserId: string;
+  /** In-memory Test mode scope, set only by the explicit project role switcher. */
+  testPreviewProjectId?: string;
 };
 
-export type ProjectAction = "status" | "upload" | "send" | "approve" | "comment" | "edit";
+export type ProjectAction = "status" | "upload" | "send" | "approve" | "comment" | "edit" | "mark-ready-to-edit";
 
 export function getClientPortalAccess(viewer: PrototypeViewer | null): PortalAccess | null {
   if (viewer?.role === "Studio Staff") return { kind: "studio-preview", viewerId: viewer.id };
@@ -27,12 +29,15 @@ export function canViewProject(viewer: PrototypeViewer | null, project: Project,
   if (!scoped) return false;
   if (viewer.role === "Studio Staff") return true;
   if (viewer.role === "Studio Freelancer") {
+    if (viewer.testPreviewProjectId === project.id) return true;
     return scoped.team.some((slot) => slot.invitations.some((invitation) =>
       invitation.personId === viewer.personId && invitation.status === "accepted" && slot.acceptedInvitationId === invitation.id));
   }
-  if (scoped.clientId !== viewer.clientId || !scoped.clientMemberIds.includes(viewer.id)) return false;
+  if (scoped.clientId !== viewer.clientId) return false;
   const client = state.clients.find((candidate) => candidate.id === viewer.clientId && candidate.workspaceId === viewer.workspaceId);
-  if (!client || client.contacts.find((contact) => contact.id === viewer.id)?.portalAccess === "Paused") return false;
+  if (!client) return false;
+  if (viewer.testPreviewProjectId === project.id) return true;
+  if (!scoped.clientMemberIds.includes(viewer.id) || client.contacts.find((contact) => contact.id === viewer.id)?.portalAccess === "Paused") return false;
   return state.invitations.some((invitation) => invitation.workspaceId === viewer.workspaceId
     && invitation.clientId === viewer.clientId && invitation.userId === viewer.id
     && invitation.projectIds.includes(project.id) && invitation.status !== "Expired");
@@ -72,6 +77,8 @@ export function canActOnProject(
   stage?: StageKey,
 ): boolean {
   if (!canViewProject(viewer, project, state) || !viewer) return false;
+  if (action === "mark-ready-to-edit") return stage === "edit"
+    && (viewer.role === "Studio Staff" || viewer.role === "Customer");
   if (viewer.role === "Studio Staff") return true;
   if (viewer.role === "Customer") return action === "comment" || action === "approve" || action === "send"
     || (stage === "media" && (action === "upload" || action === "edit"));
