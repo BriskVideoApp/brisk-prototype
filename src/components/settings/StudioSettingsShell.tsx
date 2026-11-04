@@ -37,7 +37,6 @@ type StudioSettingsNavigationItem = {
   href: string;
   icon: DsIconName;
   description: string;
-  note?: string;
 };
 
 export const studioSettingsNavigation = [
@@ -60,7 +59,7 @@ export const studioSettingsNavigation = [
     label: "AI Playbook",
     href: "/settings/studio/ai-playbook",
     icon: "sparkle",
-    description: "Add Studio instructions and references for Brisk AI.",
+    description: "Start with a standard filmmaker, then tailor it to your Studio.",
   },
   {
     id: "integrations",
@@ -75,14 +74,13 @@ export const studioSettingsNavigation = [
     href: "/settings/studio/storage",
     icon: "weather-cloud",
     description: "Choose where files uploaded to Brisk are saved.",
-    note: "No matter which option you choose, your team will upload, watch and share files in Brisk the same way.",
   },
   {
     id: "notifications",
     label: "Notifications",
     href: "/settings/notifications",
     icon: "bell",
-    description: "Choose what Brisk sends and when.",
+    description: "Set Studio-wide messages and reminders. Personal preferences live in My notifications.",
   },
   {
     id: "plan-billing",
@@ -96,7 +94,7 @@ export const studioSettingsNavigation = [
     label: "Client billing",
     href: "/settings/client-billing",
     icon: "link",
-    description: "Choose how your Studio invoices and collects payments from Clients.",
+    description: "Choose how your Studio bills Clients. Your Brisk subscription is separate.",
   },
 ] as const satisfies readonly StudioSettingsNavigationItem[];
 
@@ -169,7 +167,6 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
   const restoringHistoryRef = useRef(false);
   const activeSection = studioSettingsNavigation.find((item) => item.id === sectionId) ?? studioSettingsNavigation[0];
   const title = activeSection.label;
-  const activeSectionNote = "note" in activeSection ? activeSection.note : undefined;
 
   const confirmNavigation = useCallback(async () => {
     if (!hasUnsavedChanges) return true;
@@ -271,7 +268,6 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
           <div className="studio-settings-header-copy">
             <h1 className="headings-m-bold">{title}</h1>
             {sectionId !== "overview" ? <p className="paragraph-s">{activeSection.description}</p> : null}
-            {activeSectionNote ? <div className="studio-settings-header-note label-s"><DsIcon name="info" size={16} /><span>{activeSectionNote}</span></div> : null}
           </div>
           {sectionId === "overview" ? (
             <Link className="client-secondary-button label-s-semibold" href="/settings/studio/portal-preview">

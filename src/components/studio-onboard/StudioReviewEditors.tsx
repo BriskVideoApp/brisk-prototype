@@ -1,5 +1,6 @@
 "use client";
 
+import { normaliseStudioWebsite } from "@/data/studio-website-profiles";
 import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
 
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
@@ -48,10 +49,15 @@ export function StudioEditor({
   const [brandAccentId, setBrandAccentId] = useState<StudioBrandAccentId>(draft.brandAccentId);
   const [studioType, setStudioType] = useState(draft.studioType);
   const [studioDescription, setStudioDescription] = useState(draft.studioDescription);
+  const [studioWebsite, setStudioWebsite] = useState(draft.studioWebsite ?? "");
+  const validWebsite = !studioWebsite.trim() || Boolean(normaliseStudioWebsite(studioWebsite));
   const showDetails = !profileOnly || profileSection !== "logo";
   const showLogo = !profileOnly || profileSection !== "details";
   const dialogTitle = !profileOnly ? "Edit Studio" : profileSection === "logo" ? "Edit Studio logo"
     : profileSection === "details" ? "Edit Studio details" : "Edit Studio profile";
+
+  const profileChanged = (showDetails && (studioName.trim() !== draft.studioName || studioDescription.trim() !== draft.studioDescription || (normaliseStudioWebsite(studioWebsite) ?? "") !== (draft.studioWebsite ?? "")))
+    || (showLogo && logoPreviewUrl !== draft.logoPreviewUrl);
 
   function updateLogo(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -73,7 +79,7 @@ export function StudioEditor({
 
   return (
     <StudioReviewDialog title={dialogTitle} onClose={onCancel} actions={<DialogActions
-        disabled={profileOnly && showDetails && (!studioName.trim() || !studioDescription.trim())}
+        disabled={profileOnly && (!profileChanged || (showDetails && (!studioName.trim() || !studioDescription.trim() || !validWebsite)))}
         onCancel={onCancel}
         onSave={() => onSave({
           ...draft,
@@ -82,7 +88,7 @@ export function StudioEditor({
           logoPreviewUrl,
           logoOptions,
           brandAccentId,
-          ...(profileOnly ? { studioDescription: studioDescription.trim() } : {}),
+          ...(profileOnly && showDetails ? { studioDescription: studioDescription.trim(), studioWebsite: normaliseStudioWebsite(studioWebsite) ?? "" } : {}),
         })}
         saveLabel={profileOnly && profileSection === "logo" ? "Save logo" : "Save Studio"}
       />}> <div className="studio-editor-fields">
@@ -105,8 +111,11 @@ export function StudioEditor({
             <input ref={logoInputRef} className="studio-hidden-file-input" type="file" accept="image/*" onChange={updateLogo} />
           </div>
         </div> : null}
-        {profileOnly ? showDetails ? <Textarea label="About Studio" rows={3} value={studioDescription}
-          onChange={(event) => setStudioDescription(event.target.value)} /> : null : <>
+        {profileOnly ? showDetails ? <><Textarea label="About Studio" rows={3} value={studioDescription}
+          onChange={(event) => setStudioDescription(event.target.value)} />
+          <Input label="Website" labelSuffix="Optional" inputMode="url" value={studioWebsite}
+            error={!validWebsite} hint={!validWebsite ? "Enter a website such as studio.com, or leave it blank." : undefined}
+            onChange={(event) => setStudioWebsite(event.target.value)} /></> : null : <>
           <StudioAccentPicker value={brandAccentId} onChange={setBrandAccentId} />
           <Input label="Studio type" value={studioType} onChange={(event) => setStudioType(event.target.value)} />
         </>}
@@ -137,7 +146,7 @@ export function StudioVideoTypeEditor({
       description="Choose the video types clients can request in your Brief."
       onClose={onCancel}
      actions={<DialogActions
-        disabled={selectedVideoTypeIds.length === 0}
+        disabled={selectedVideoTypeIds.length === 0 || JSON.stringify([...selectedVideoTypeIds].sort()) === JSON.stringify([...draft.videoTypeIds].sort())}
         onCancel={onCancel}
         onSave={() => onSave({ ...draft, videoTypeIds: selectedVideoTypeIds })}
         saveLabel="Save video types"

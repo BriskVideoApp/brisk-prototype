@@ -385,12 +385,12 @@ function BillingAccountCard({
 }) {
   return (
     <section className="billing-section-card billing-account-card" aria-labelledby="billing-account-heading">
-      <div className="billing-section-heading billing-section-heading-row">
+      <div className="billing-section-heading">
         <div>
           <h2 className="headings-xs-bold" id="billing-account-heading">Billing account</h2>
           <p className="paragraph-s">Payment methods, invoices and subscription settings are managed securely through Stripe.</p>
         </div>
-        {canManageBilling ? <Button size="M" onClick={onManageBilling}>Manage billing</Button> : null}
+        {canManageBilling ? <div><Button size="S" variant="secondary" onClick={onManageBilling}>Manage billing</Button></div> : null}
       </div>
     </section>
   );

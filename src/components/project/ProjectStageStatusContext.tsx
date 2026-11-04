@@ -73,6 +73,15 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
         (Object.keys(project.stages) as StageKey[]).map((key) => [key, projectOverrides[key] ?? project.stages[key]]),
       ) as Record<StageKey, StageStatus>;
 
+      // Completing a video closes production stages without inventing individual
+      // Client approvals. Original statuses remain available when reopened.
+      if (completionRecords[project.id]) {
+        for (const key of Object.keys(stages) as StageKey[]) {
+          if (key !== "media") stages[key] = { state: "done", daysAgo: 0 };
+        }
+        return stages;
+      }
+
       for (let index = 1; index < projectStageSequence.length; index += 1) {
         const stage = projectStageSequence[index];
         const allPreviousStagesApproved = projectStageSequence
@@ -86,7 +95,7 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
 
       return stages;
     },
-    [overrides],
+    [completionRecords, overrides],
   );
 
   const getEditReadiness = useCallback(

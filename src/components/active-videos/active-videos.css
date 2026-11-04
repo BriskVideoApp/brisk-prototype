@@ -1488,17 +1488,6 @@
   opacity: 1;
 }
 
-.stage-brief-with-studio .stage-icon-surface,
-.project-stage-step.is-in_progress.is-brief-with-studio .project-stage-icon-surface {
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
-}
-
-.stage-brief-with-studio::before,
-.project-stage-step.is-in_progress.is-brief-with-studio .project-stage-chip::before {
-  background: var(--brisk-brand-primary-click);
-}
-
 .stage-done .stage-icon-surface {
   background: var(--brisk-stage-approved-fill);
   box-shadow: none;

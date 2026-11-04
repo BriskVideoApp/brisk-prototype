@@ -1,8 +1,33 @@
 # Deadline flow review - 3 November 2026
 
-The four reproduced defects are fixed. The Client's initial Brief date establishes final delivery on send or approval; Brisk can suggest a later date without changing it. Later Client changes are proposals. Studio Admin/Staff can change the date directly or propose a change, with the other side agreeing proposals. All deadline entry points now reuse one dialog. Live desktop sign-off remains outstanding.
+The four reproduced defects are fixed. The Client's initial Brief date establishes final delivery on send or approval; Brisk can suggest a later date without changing it. Later Client changes are proposals. Studio Admin/Staff can change the date directly or propose a change, with the other side agreeing proposals. All deadline entry points now reuse one dialog. The desktop walkthrough below is now complete; Tom's visual sign-off remains separate.
 
-## Verification
+## Live desktop walkthrough - 3 November 2026
+
+Inspected the running app at 1440 x 1000. Started with Fluff ball, then created the clearly labelled mock project **Deadline review demo** for saved actions. Fluff ball retained its 1 August final date and 18 November pending proposal. The demo was completed and then archived after verification; its mock history remains available. Returned to Fluff ball in Studio Admin view.
+
+| Flow | Observed result |
+| --- | --- |
+| Initial Client Brief | Client Owner chose 4 November and sent the Brief. Final delivery became 4 November; the 16 November suggestion did not replace it. |
+| Later Brief edit | Clicking another calendar date opened the shared proposal dialog with the existing final date intact. Cancelling discarded the draft. |
+| Bilateral proposals | Client Owner proposed 20 November and Studio Staff agreed. Studio Staff proposed 23 November and Client Teammate agreed. Each proposing side lacked Agree date; final delivery changed only on agreement. |
+| Direct Studio save | Studio Admin saved 25 November over a pending 24 November proposal. History retained the initial date, both agreements, actor, reason and superseded proposal. Project Chat showed Changed, without claiming Client agreement. |
+| Stage timing | Specific dates saved independently with Stage deadline saved and Close. Dates survived navigation/reload. The panel retained internal and Client dates; Clients had no internal date or edit action, while Freelancer access was read-only. |
+| Production-risk sharing | An early final date created an internal warning. Client Owner saw neither its suggestion nor explanation until Studio Staff explicitly shared edited Client copy. Sharing retained the final date and excluded the internal stage-duration explanation. |
+| Entry points | Brief, Videos deadline cell, project-panel stage action and Chat update opened the same dialog. Discuss date reached project Chat. The delivery URL rendered the same dialog and Close returned to Videos. |
+| Completion and archive | With a pending proposal and shared warning, completion removed active warnings, stage deadlines and change/agreement controls. Archive remained read-only. Chat retained the reviewed Client copy and earlier proposal as resolved historical updates. |
+
+Calendar placement and selection worked inside the dialog, including the lower stage editor in a long scrolling form. The header/footer remained visible while the body scrolled. Keyboard activation, calendar-only Escape, dialog Escape and opener-focus restoration were exercised. The native modal kept background controls unavailable; backwards tabbing at the boundary could move to browser chrome, then return to the dialog.
+
+One in-scope focus defect was repaired: opening the Client proposal form focused the time input and immediately expanded its picker. `ProjectDeadlineDialog` now opts its existing `DeadlineDateTimePicker` date trigger into the DS dialog's documented `data-dialog-autofocus` mechanism, already used by `SearchDialog`. Studio radio focus and other date-picker consumers retain their defaults. No visual styles, new controls, icons or permission changes were added. Live recheck confirmed the Client date trigger receives focus with both pickers closed, including when opening from a later Brief date click.
+
+Validation: `npx tsc --noEmit` and `git diff --check` passed. Browser network observations returned HTTP 200 for Fluff ball's Brief, the demo delivery document, and Videos/Chat route responses. Shell curl still returned HTTP 000 / exit 7. No production build or new automated tests were run; the earlier 56-check result below was not rerun during this walkthrough.
+
+Evidence: [Client focus repair](../audits/deadlines-2026-11-03/client-deadline-focus.jpg), [completed deadline](../audits/deadlines-2026-11-03/completed-deadline.jpg), [Chat history](../audits/deadlines-2026-11-03/deadline-chat-history.jpg), [Fluff ball preserved](../audits/deadlines-2026-11-03/fluff-ball-preserved.jpg).
+
+Limits and separate finding: role checks used the prototype's Test mode, not independent authenticated accounts. Initial-date establishment through approval, stale-write races, schedule recovery and the zero-working-day weekend boundary retain their earlier automated evidence rather than a new live reproduction. Mobile remains deferred. From the Cats portal in Client Test mode, Start Video lost the contextual Client, showed Jess Taylor / Loom and Start Video unavailable, and logged duplicate `/prototype/scenarios` navigation keys. The demo was therefore created through the Studio naming form before switching to Client for the deadline flow. This separate preview/navigation issue was not changed.
+
+## Earlier automated verification
 
 Ran the existing Vitest/JSDOM tooling against the real TurnaroundProvider, ProjectTimingProvider, DeadlineDialogProvider, access checks, StageDeadlinePanel and ProjectDeadlineDialog. Used isolated fixture state and storage, fixed dates, mocked surrounding app providers/router and native-dialog shims. No live project data was changed. The five access levels were checked through their actual compatibility-role mapping; this does not verify the live Test mode switcher or distinct account sessions.
 
@@ -10,7 +35,7 @@ Command: `npx vitest run src/components/project-timing/deadline-flow.test.tsx sr
 
 Result after fixes: 56 passing checks, comprising 42 deadline-flow checks and 14 existing access checks. The original audit reproduced four failures before implementation. Their regression cases pass; the Brief case now follows the latest approval that later changes must use the deadline dialog. TypeScript and diff checks passed.
 
-The associated browser-control tool is unavailable. Shell HTTP requests to the delivery and Videos routes returned connection failure (curl exit 7, HTTP 000). No live desktop layout, focus trapping, calendar positioning or real navigation sign-off is claimed. No production build was run.
+At the time of the automated review, browser control was unavailable and shell HTTP requests to the delivery and Videos routes returned connection failure (curl exit 7, HTTP 000). The later desktop walkthrough above supplies live interaction evidence; it does not constitute Tom's visual sign-off. No production build was run.
 
 ## Verified behaviour
 

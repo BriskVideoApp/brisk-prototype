@@ -106,7 +106,7 @@ export function StageChip({
 }) {
   const isMedia = stage.key === "media";
   const presentationState = getStagePresentationState(status, studioName, customerName);
-  const chipClass = isMedia ? "stage-media" : `stage-${presentationState}${stage.key === "brief" && presentationState === "in_progress" ? " stage-brief-with-studio" : ""}`;
+  const chipClass = isMedia ? "stage-media" : `stage-${presentationState}`;
   const displayLabel = isMedia ? `${stage.label} (${mediaCount ?? 0})` : stage.label;
   const tooltip = isMedia
     ? `${mediaCount ?? 0} media ${(mediaCount ?? 0) === 1 ? "file" : "files"}`

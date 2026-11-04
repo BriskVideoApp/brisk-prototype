@@ -13,17 +13,21 @@ import { canActOnProject, canViewProject } from "@/data/prototype-access";
 import { createTimingMessage, timingMessageId, type ProjectTimingAssessment, type ProjectTimingIssue } from "@/data/project-timing";
 import type { ChatChannel, ChatMessage } from "@/components/chat/types";
 import type { Project } from "@/components/active-videos/types";
-import { briefDeliveryDate, createDeliveryMessages, deliveryAgreementSide, deliveryDateParts, deliveryInstant, getPendingDeliveryProposal, initialDeliveryAgreement, type ProjectDeliveryAgreement, type DeliveryDateChange } from "@/data/project-delivery";
+import { briefDeliveryDate, createDeliveryMessages, deliveryAgreementSide, deliveryDateParts, deliveryInstant, getPendingDeliveryProposal, initialDeliveryAgreement, initialVersionDeliveryAgreement, type ProjectDeliveryAgreement, type DeliveryDateChange } from "@/data/project-delivery";
 
-type TimingState = { issues: ProjectTimingIssue[]; readBy: Record<string, string[]>; deliveries: ProjectDeliveryAgreement[] };
+type TimingState = { issues: ProjectTimingIssue[]; readBy: Record<string, string[]>; deliveries: ProjectDeliveryAgreement[]; versionDeliveries: ProjectDeliveryAgreement[] };
 type TimingContextValue = {
   hasHydrated: boolean;
   issues: ProjectTimingIssue[];
   messages: ChatMessage[];
   getDeliveryAgreement: (project: Project) => ProjectDeliveryAgreement;
+  getVersionDeliveryAgreement: (project: Project, versionId: string, versionName: string, versionDate: string) => ProjectDeliveryAgreement;
   proposeDeliveryDate: (projectId: string, date: string, reason: string) => boolean;
   agreeDeliveryDate: (projectId: string, proposalId: string) => boolean;
   saveDeliveryDate: (projectId: string, date: string, reason: string, expectedDate: string | null) => boolean;
+  proposeVersionDeliveryDate: (projectId: string, versionId: string, versionName: string, versionDate: string, date: string, reason: string) => boolean;
+  agreeVersionDeliveryDate: (projectId: string, versionId: string, proposalId: string) => boolean;
+  saveVersionDeliveryDate: (projectId: string, versionId: string, versionName: string, versionDate: string, date: string, reason: string, expectedDate: string | null) => boolean;
   getBriefAssessment: (projectId: string, requestedDate: string) => ProjectTimingAssessment | null;
   submitBriefTiming: (projectId: string, requestedDate: string, occurredAt: string) => void;
   shareClientUpdate: (issueId: string, reason: string) => boolean;
@@ -35,7 +39,7 @@ const ProjectTimingContext = createContext<TimingContextValue | null>(null);
 function readTimingState(key: string): TimingState {
   try {
     const raw: unknown = JSON.parse(window.localStorage.getItem(key) ?? "null");
-    if (!raw || typeof raw !== "object") return { issues: [], readBy: {}, deliveries: [] };
+    if (!raw || typeof raw !== "object") return { issues: [], readBy: {}, deliveries: [], versionDeliveries: [] };
     const value = raw as Partial<TimingState>;
     return {
       ...value,
@@ -48,9 +52,12 @@ function readTimingState(key: string): TimingState {
       deliveries: Array.isArray(value.deliveries) ? value.deliveries.filter((entry) => entry && typeof entry.projectId === "string"
         && (entry.originalDate === null || typeof entry.originalDate === "string")
         && (entry.agreedDate === null || typeof entry.agreedDate === "string") && Array.isArray(entry.proposals)) : [],
+      versionDeliveries: Array.isArray(value.versionDeliveries) ? value.versionDeliveries.filter((entry) => entry
+        && typeof entry.projectId === "string" && typeof entry.deliverableId === "string"
+        && (entry.agreedDate === null || typeof entry.agreedDate === "string") && Array.isArray(entry.proposals)) : [],
     };
   } catch {
-    return { issues: [], readBy: {}, deliveries: [] };
+    return { issues: [], readBy: {}, deliveries: [], versionDeliveries: [] };
   }
 }
 
@@ -64,7 +71,7 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
   const [sessionStartedAt] = useState(() => new Date().toISOString());
   const storageKey = `brisk-timing-warnings-v1:${prototypeState.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}`;
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
-  const [saved, setSaved] = useState<TimingState>({ issues: [], readBy: {}, deliveries: [] });
+  const [saved, setSaved] = useState<TimingState>({ issues: [], readBy: {}, deliveries: [], versionDeliveries: [] });
   const savedRef = useRef(saved);
 
   useEffect(() => {
@@ -88,6 +95,7 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
       ...local,
       issues: [...new Map([...local.issues, ...latest.issues].map((issue) => [issue.id, issue])).values()],
       deliveries: [...new Map([...local.deliveries, ...latest.deliveries].map((entry) => [entry.projectId, entry])).values()],
+      versionDeliveries: [...new Map([...local.versionDeliveries, ...latest.versionDeliveries].map((entry) => [`${entry.projectId}:${entry.deliverableId}`, entry])).values()],
       readBy: Object.fromEntries([...new Set([...Object.keys(local.readBy), ...Object.keys(latest.readBy)])]
         .map((id) => [id, [...new Set([...(local.readBy[id] ?? []), ...(latest.readBy[id] ?? [])])]])),
     };
@@ -185,21 +193,32 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
     const project = prototypeState.projects.find((project) => project.id === entry.projectId);
     return Boolean(project && canViewProject(viewer, project, prototypeState));
   }), [prototypeState, saved.deliveries, viewer]);
+  const visibleVersionDeliveries = useMemo(() => saved.versionDeliveries.filter((entry) => {
+    const project = prototypeState.projects.find((project) => project.id === entry.projectId);
+    if (!project || !canViewProject(viewer, project, prototypeState)) return false;
+    const brief = selectProjectBrief(prototypeState, project.id);
+    try { return Boolean(brief && JSON.parse(brief.fields.deliverables.value || "[]").some((row: { id?: string }) => row.id === entry.deliverableId)); }
+    catch { return false; }
+  }), [prototypeState, saved.versionDeliveries, viewer]);
   const messages = useMemo(() => [...timingMessages,
-    ...visibleDeliveries.flatMap((agreement) => {
+    ...[...visibleDeliveries, ...visibleVersionDeliveries].flatMap((agreement) => {
       const project = prototypeState.projects.find((entry) => entry.id === agreement.projectId);
       const complete = project?.status === "Completed" || project?.status === "Archived" || Boolean(completionRecords[agreement.projectId]);
       return createDeliveryMessages(agreement, saved.readBy, complete);
     })],
-  [completionRecords, prototypeState.projects, saved.readBy, timingMessages, visibleDeliveries]);
+  [completionRecords, prototypeState.projects, saved.readBy, timingMessages, visibleDeliveries, visibleVersionDeliveries]);
 
   const getDeliveryAgreement = useCallback((project: Project) =>
     visibleDeliveries.find((entry) => entry.projectId === project.id) ?? initialDeliveryAgreement(project), [visibleDeliveries]);
 
+  const getVersionDeliveryAgreement = useCallback((project: Project, versionId: string, versionName: string, versionDate: string) =>
+    saved.versionDeliveries.find((entry) => entry.projectId === project.id && entry.deliverableId === versionId)
+      ?? initialVersionDeliveryAgreement(project.id, versionId, versionName, versionDate), [saved.versionDeliveries]);
+
   const proposeDeliveryDate = useCallback((projectId: string, date: string, reason: string) => {
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
     if (!viewer || (viewer.role !== "Studio Staff" && viewer.role !== "Customer") || !project || project.status === "Completed" || project.status === "Archived" || completionRecords[projectId] || !canActOnProject(viewer, project, prototypeState, "approve")
-      || !Number.isFinite(Date.parse(date)) || !reason.trim()) return false;
+      || !Number.isFinite(Date.parse(date))) return false;
     const proposedAt = new Date().toISOString();
     const proposedByRole = viewer.role;
     return commit((current) => {
@@ -242,7 +261,7 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
     const changedAt = new Date().toISOString();
     return commit((current) => {
       const agreement = current.deliveries.find((entry) => entry.projectId === projectId) ?? initialDeliveryAgreement(project);
-      if (agreement.agreedDate !== expectedDate || Date.parse(date) === Date.parse(agreement.agreedDate ?? "") || agreement.agreedDate && !reason.trim()) return current;
+      if (agreement.agreedDate !== expectedDate || Date.parse(date) === Date.parse(agreement.agreedDate ?? "")) return current;
       const change: DeliveryDateChange = { id: crypto.randomUUID(), date, previousDate: agreement.agreedDate,
         changedAt, changedBy: viewer.name, changedById: viewer.id, source: "studio", reason: reason.trim() };
       return { ...current,
@@ -255,6 +274,68 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
       };
     });
   }, [allIssues, commit, completionRecords, prototypeState, viewer]);
+
+  const proposeVersionDeliveryDate = useCallback((projectId: string, versionId: string, versionName: string,
+    versionDate: string, date: string, reason: string) => {
+    const project = prototypeState.projects.find((entry) => entry.id === projectId);
+    if (!viewer || (viewer.role !== "Studio Staff" && viewer.role !== "Customer") || !project
+      || project.status === "Completed" || project.status === "Archived" || completionRecords[projectId]
+      || !canActOnProject(viewer, project, prototypeState, "approve") || !Number.isFinite(Date.parse(date))) return false;
+    const proposedAt = new Date().toISOString();
+    return commit((current) => {
+      const agreement = current.versionDeliveries.find((entry) => entry.projectId === projectId && entry.deliverableId === versionId)
+        ?? initialVersionDeliveryAgreement(projectId, versionId, versionName, versionDate);
+      if (viewer.role === "Customer" && !agreement.agreedDate) return current;
+      const pending = getPendingDeliveryProposal(agreement);
+      if (date === agreement.agreedDate || pending && pending.date === date && pending.reason === reason.trim()) return current;
+      const proposal = { id: crypto.randomUUID(), date, previousDate: agreement.agreedDate, reason: reason.trim(),
+        proposedAt, proposedBy: viewer.name, proposedById: viewer.id, proposedByRole: viewer.role === "Customer" ? "Customer" as const : "Studio Staff" as const,
+        status: "pending" as const, agreedAt: null, agreedBy: null, agreedById: null };
+      return { ...current, versionDeliveries: [...current.versionDeliveries.filter((entry) => entry.projectId !== projectId || entry.deliverableId !== versionId), {
+        ...agreement, deliverableName: versionName, proposals: [...agreement.proposals.map((entry) => entry.status === "pending"
+          ? { ...entry, status: "superseded" as const } : entry), proposal],
+      }] };
+    });
+  }, [commit, completionRecords, prototypeState, viewer]);
+
+  const agreeVersionDeliveryDate = useCallback((projectId: string, versionId: string, proposalId: string) => {
+    const project = prototypeState.projects.find((entry) => entry.id === projectId);
+    if (!viewer || !project || project.status === "Completed" || project.status === "Archived" || completionRecords[projectId]
+      || !canActOnProject(viewer, project, prototypeState, "approve")) return false;
+    const agreedAt = new Date().toISOString();
+    return commit((current) => {
+      const agreement = current.versionDeliveries.find((entry) => entry.projectId === projectId && entry.deliverableId === versionId);
+      const pending = agreement && getPendingDeliveryProposal(agreement);
+      if (!agreement || !pending || pending.id !== proposalId || pending.previousDate !== agreement.agreedDate
+        || viewer.role !== deliveryAgreementSide(pending)) return current;
+      return { ...current, versionDeliveries: current.versionDeliveries.map((entry) => entry !== agreement ? entry : {
+        ...entry, agreedDate: pending.date, proposals: entry.proposals.map((proposal) => proposal.id !== proposalId ? proposal : {
+          ...proposal, status: "agreed" as const, agreedAt, agreedBy: viewer.name, agreedById: viewer.id,
+        }),
+      }) };
+    });
+  }, [commit, completionRecords, prototypeState, viewer]);
+
+  const saveVersionDeliveryDate = useCallback((projectId: string, versionId: string, versionName: string,
+    versionDate: string, date: string, reason: string, expectedDate: string | null) => {
+    const project = prototypeState.projects.find((entry) => entry.id === projectId);
+    if (viewer?.role !== "Studio Staff" || !project || project.status === "Completed" || project.status === "Archived"
+      || completionRecords[projectId] || !canActOnProject(viewer, project, prototypeState, "approve")
+      || !Number.isFinite(Date.parse(date))) return false;
+    const changedAt = new Date().toISOString();
+    return commit((current) => {
+      const agreement = current.versionDeliveries.find((entry) => entry.projectId === projectId && entry.deliverableId === versionId)
+        ?? initialVersionDeliveryAgreement(projectId, versionId, versionName, versionDate);
+      if (agreement.agreedDate !== expectedDate || date === agreement.agreedDate) return current;
+      const change: DeliveryDateChange = { id: crypto.randomUUID(), date, previousDate: agreement.agreedDate,
+        changedAt, changedBy: viewer.name, changedById: viewer.id, source: "studio", reason: reason.trim() };
+      return { ...current, versionDeliveries: [...current.versionDeliveries.filter((entry) => entry.projectId !== projectId || entry.deliverableId !== versionId), {
+        ...agreement, deliverableName: versionName, originalDate: agreement.originalDate ?? date, agreedDate: date,
+        changes: [...(agreement.changes ?? []), change], proposals: agreement.proposals.map((proposal) => proposal.status === "pending"
+          ? { ...proposal, status: "superseded" as const } : proposal),
+      }] };
+    });
+  }, [commit, completionRecords, prototypeState, viewer]);
 
   const getBriefAssessment = useCallback((projectId: string, requestedDate: string) => {
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
@@ -320,7 +401,8 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
 
   return <ProjectTimingContext.Provider value={{ hasHydrated: loadedKey === storageKey, issues, messages,
     getBriefAssessment, submitBriefTiming, shareClientUpdate, markChannelRead,
-    getDeliveryAgreement, proposeDeliveryDate, agreeDeliveryDate, saveDeliveryDate }}>{children}</ProjectTimingContext.Provider>;
+    getDeliveryAgreement, proposeDeliveryDate, agreeDeliveryDate, saveDeliveryDate,
+    getVersionDeliveryAgreement, proposeVersionDeliveryDate, agreeVersionDeliveryDate, saveVersionDeliveryDate }}>{children}</ProjectTimingContext.Provider>;
 }
 
 export function useProjectTiming() {

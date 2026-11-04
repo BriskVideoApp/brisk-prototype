@@ -9,9 +9,10 @@ export function briefDeliveryDate(fields: BriefFields): string {
     const rows: unknown = JSON.parse(fields.deliverables.value || "[]");
     if (Array.isArray(rows)) {
       const main: unknown = rows.find((row: unknown) => row && typeof row === "object" && "isMain" in row && row.isMain) ?? rows[0];
-      if (main && typeof main === "object" && "deadline" in main && typeof main.deadline === "string" && main.deadline) return main.deadline;
+      if (main && typeof main === "object" && "deadline" in main && typeof main.deadline === "string"
+        && (main.deadline || ("usesProjectDeadline" in main && main.usesProjectDeadline === false))) return main.deadline;
     }
-  } catch { /* Use the standalone deadline for an incomplete Brief. */ }
+  } catch { /* Preserve the legacy date until the Brief has deliverables. */ }
   return fields.deadline.value;
 }
 
@@ -33,11 +34,18 @@ export type DeliveryDateProposal = {
 
 export type ProjectDeliveryAgreement = {
   projectId: string;
+  deliverableId?: string;
+  deliverableName?: string;
   originalDate: string | null;
   agreedDate: string | null;
   proposals: DeliveryDateProposal[];
   changes?: DeliveryDateChange[];
 };
+
+export function initialVersionDeliveryAgreement(projectId: string, deliverableId: string, deliverableName: string, date: string): ProjectDeliveryAgreement {
+  const agreedDate = date ? deliveryInstant(date, "17:00") : null;
+  return { projectId, deliverableId, deliverableName, originalDate: agreedDate, agreedDate, proposals: [] };
+}
 
 export type DeliveryDateChange = {
   id: string;
@@ -68,7 +76,8 @@ export function applyDeliveryAgreement(deadline: ProjectDeadline | undefined, ag
   return deadline || finalDueAt ? { ...deadline, finalDueAt } : undefined;
 }
 
-export function deliveryHref(projectId: string) {
+export function deliveryHref(projectId: string, deliverableId?: string) {
+  if (deliverableId) return `/projects/${encodeURIComponent(projectId)}/stages/brief?versionDeadline=${encodeURIComponent(deliverableId)}`;
   return `/projects/${encodeURIComponent(projectId)}/delivery`;
 }
 
@@ -115,17 +124,18 @@ export function formatDeliveryDate(value: string | null, includeTime = true) {
 }
 
 export function createDeliveryMessages(agreement: ProjectDeliveryAgreement, readBy: Record<string, string[]>, projectComplete = false): ChatMessage[] {
+  const subject = agreement.deliverableName ? `${agreement.deliverableName} delivery` : "final delivery";
   const changes: ChatMessage[] = (agreement.changes ?? []).map((change) => {
     const id = `delivery-${change.id}-changed`;
-    const copy = `${change.changedBy} ${change.source === "brief" ? "set final delivery in the Brief" : "changed final delivery"} to ${formatDeliveryDate(change.date)}.${change.reason ? ` ${change.reason}` : ""}`;
+    const copy = `${change.changedBy} ${change.source === "brief" ? `set ${subject} in the Brief` : `changed ${subject}`} to ${formatDeliveryDate(change.date)}.${change.reason ? ` ${change.reason}` : ""}`;
     return { id, projectId: agreement.projectId, channel: "external", threadId: null,
       senderId: null, senderSystem: "Project update", senderRole: "system", body: copy, attachments: [], reactions: [],
       sourceChannel: "brisk", createdAt: change.changedAt, editedAt: null, deletedAt: null,
       readBy: readBy[id] ?? [], mentions: [], projectUpdate: {
         kind: "event", eventKey: "project.delivery.date_changed", canonicalEventId: id,
         presentation: "passive", state: "information", label: "Changed",
-        title: change.source === "brief" ? "Delivery deadline set" : "Delivery deadline changed", copy,
-        href: deliveryHref(agreement.projectId), ctaLabel: "View deadline",
+        title: change.source === "brief" ? "Delivery deadline set" : `${agreement.deliverableName ?? "Delivery"} deadline changed`, copy,
+        href: deliveryHref(agreement.projectId, agreement.deliverableId), ctaLabel: "View deadline",
       } };
   });
   return [...changes, ...agreement.proposals.flatMap<ChatMessage>((proposal) => {
@@ -137,21 +147,21 @@ export function createDeliveryMessages(agreement: ProjectDeliveryAgreement, read
       sourceChannel: "brisk", createdAt: proposal.proposedAt, editedAt: null, deletedAt: null,
       readBy: readBy[proposedId] ?? [], mentions: [],
     };
-    const copy = `Proposed delivery: ${formatDeliveryDate(proposal.date)}. ${proposal.reason}`;
+    const copy = `${agreement.deliverableName ? `Proposed ${subject}` : "Proposed delivery"}: ${formatDeliveryDate(proposal.date)}.${proposal.reason ? ` ${proposal.reason}` : ""}`;
     const proposed: ChatMessage = { ...base, body: copy, projectUpdate: {
       kind: "event", eventKey: "project.delivery.date_proposed", canonicalEventId: proposedId,
       presentation: needsAgreement ? "actionable" : "passive", state: needsAgreement ? "warning" : proposal.status === "agreed" ? "success" : "information", label: needsAgreement ? "Needs attention" : proposal.status === "agreed" ? "Approved" : "Update",
-      title: needsAgreement ? "New delivery date proposed" : proposal.status === "agreed" ? "Delivery proposal agreed" : "Earlier delivery proposal", copy,
-      href: deliveryHref(agreement.projectId), ctaLabel: needsAgreement ? "Review date" : "View delivery",
+      title: needsAgreement ? `${agreement.deliverableName ?? "New delivery"} date proposed` : proposal.status === "agreed" ? "Delivery proposal agreed" : "Earlier delivery proposal", copy,
+      href: deliveryHref(agreement.projectId, agreement.deliverableId), ctaLabel: needsAgreement ? "Review date" : "View delivery",
     } };
     if (proposal.status !== "agreed") return [proposed];
     const agreedId = deliveryMessageId(proposal.id, "agreed");
-    const agreedCopy = `${proposal.agreedBy} agreed to final delivery on ${formatDeliveryDate(proposal.date)}. The previous date is retained in delivery history.`;
+    const agreedCopy = `${proposal.agreedBy} agreed to ${subject} on ${formatDeliveryDate(proposal.date)}. The previous date is retained in delivery history.`;
     return [proposed, { ...base, id: agreedId, body: agreedCopy, createdAt: proposal.agreedAt ?? proposal.proposedAt,
       readBy: readBy[agreedId] ?? [], projectUpdate: {
         kind: "event", eventKey: "project.delivery.date_agreed", canonicalEventId: agreedId,
         presentation: "passive", state: "success", label: "Approved", title: "New delivery date agreed", copy: agreedCopy,
-        href: deliveryHref(agreement.projectId), ctaLabel: "View delivery",
+        href: deliveryHref(agreement.projectId, agreement.deliverableId), ctaLabel: "View delivery",
       } }];
   })];
 }

@@ -452,7 +452,7 @@
 .billing-add-on {
   display: flex;
   min-width: var(--brisk-space-none);
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   border-top: 1px solid var(--brisk-border-secondary);
   gap: var(--brisk-space-l);
@@ -615,7 +615,7 @@
 }
 
 .billing-plan-pricing {
-  min-height: calc(var(--brisk-space-3xl) * 3);
+  min-height: var(--brisk-space-none);
   justify-content: center;
   border-top: 1px solid var(--brisk-border-secondary);
   border-bottom: 1px solid var(--brisk-border-secondary);

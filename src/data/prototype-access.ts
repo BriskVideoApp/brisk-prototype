@@ -64,7 +64,7 @@ export function canViewPendingOfferBrief(
   if (!scoped) return false;
   const pendingOffer = offers.some((offer) => offer.projectId === project.id
     && offer.contractorId === viewer.personId && offer.state === "Pending");
-  return pendingOffer && scoped.team.some((slot) => !slot.archivedAt && !slot.acceptedInvitationId
+  return pendingOffer && scoped.team.some((slot) => !slot.archivedAt
     && slot.invitations.some((invitation) => invitation.personId === viewer.personId
       && (invitation.status === "invited" || invitation.status === "seen")));
 }

@@ -97,9 +97,8 @@ export const briefSteps: Array<{ id: BriefStepId; index: number; label: string; 
   { id: "similarVideos", index: 4, label: "Similar videos", shortLabel: "Videos" },
   { id: "brandKit", index: 5, label: "Brand kit", shortLabel: "Brand" },
   { id: "contentProduction", index: 6, label: "Footage and filming", shortLabel: "Footage" },
-  { id: "deadline", index: 7, label: "Deadline", shortLabel: "Deadline" },
-  { id: "deliverablesTiming", index: 8, label: "Deliverables", shortLabel: "Versions" },
-  { id: "summary", index: 9, label: "Review your brief", shortLabel: "Summary" },
+  { id: "deliverablesTiming", index: 7, label: "Deliverables", shortLabel: "Versions" },
+  { id: "summary", index: 8, label: "Review your brief", shortLabel: "Summary" },
 ];
 
 export const confidenceChipLabels: Record<ConfidenceState, ConfidenceChipModel> = {

@@ -654,6 +654,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
       fileSize: formatFileSize(file.size),
       durationSeconds: previousVersion?.durationSeconds ?? durationLabelToSeconds(target.duration),
       shadePath: `Shade/${project.name}/Masters/${target.name}/V${nextNumber}`,
+      posterUrl: target.kind === "video" ? "" : undefined,
     };
 
     setDeliverables((current) => current.map((deliverable) =>
@@ -672,6 +673,18 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
         : deliverable,
     ));
     setSelectedVersionByDeliverable((current) => ({ ...current, [target.id]: nextVersion.id }));
+    if (target.kind === "video") {
+      void captureMastersVideoPoster(file).then((posterUrl) => {
+        if (!posterUrl) return;
+        setDeliverables((current) => current.map((deliverable) =>
+          deliverable.id === target.id
+            ? { ...deliverable, versions: deliverable.versions.map((version) =>
+                version.id === nextVersion.id ? { ...version, posterUrl } : version,
+              ) }
+            : deliverable,
+        ));
+      });
+    }
     if (target.recutBrief) setRecutPanelDeliverableId(null);
     setCurrentTimeSeconds(0);
     event.target.value = "";
@@ -1304,9 +1317,9 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
           <section className="masters-delivery-register" aria-label="Deliverables register" role="table">
             <div className="masters-register-column-header" role="row">
               <span role="columnheader">Video</span>
-              <span role="columnheader">Assets</span>
-              <span role="columnheader">Comments</span>
-              <span role="columnheader">Action</span>
+              <span role="columnheader">Supporting files</span>
+              <span role="columnheader" aria-label="Actions" />
+              <span role="columnheader" aria-label="Comments" />
               <span role="columnheader" aria-label="More actions" />
             </div>
             {deliverables.length ? (
@@ -1725,7 +1738,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
         </footer>
       </section>
 
-        {isFilmmaker ? <input ref={uploadInputRef} className="sr-only" type="file" onChange={uploadVersion} /> : null}
+        {isFilmmaker ? <input ref={uploadInputRef} className="sr-only" type="file" accept="video/*" onChange={uploadVersion} /> : null}
       <input ref={assetUploadInputRef} className="sr-only" type="file" accept="image/*,.srt,.vtt,.txt" onChange={uploadAsset} />
       <input ref={thumbnailUploadInputRef} className="sr-only" type="file" accept="image/*" onChange={replaceThumbnail} />
       <input ref={recutSourceUploadInputRef} className="sr-only" type="file" accept="video/*" onChange={uploadRecutSource} />
@@ -1853,6 +1866,10 @@ function DeliverableRow({
   const hasCaptions = Boolean(deliverable.srt && deliverable.captions.some((caption) => caption !== "None"));
   const primaryAction = getDeliverablePrimaryAction(deliverable.status, selectedVersion, isFilmmaker, downloaded);
   const primaryActionIsDownload = primaryAction?.kind === "download";
+  const showVideoUpload = isFilmmaker && deliverable.kind === "video" && !selectedVersion;
+  const posterUrl = selectedVersion?.posterUrl === undefined
+    ? deliverable.thumbnail?.imageUrl
+    : selectedVersion.posterUrl;
   const rowCommands: Array<BriskSelectOption<string> & { run: () => void }> = [
     ...(selectedVersion && !primaryActionIsDownload ? [{value: "download", label: "Download", run: onDownload}] : []),
     {value: "share", label: "Share item", run: onShare},
@@ -1888,7 +1905,7 @@ function DeliverableRow({
         if (event.key.toLowerCase() === "a" && primaryAction && !primaryAction.disabled) { event.preventDefault(); runPrimaryAction(); }
       }}
     >
-      <div className="masters-row-identity" role="cell">
+      <div className={`masters-row-identity ${selectedVersion && deliverable.kind === "video" ? "has-video-preview" : ""}`} role="cell">
         {hasChildren || canExpand ? (
           <button
             className="masters-disclosure"
@@ -1910,7 +1927,18 @@ function DeliverableRow({
             <DsIcon name="arrow-bend-up-right" size={18} />
           </span>
         ) : null}
-        <div className="masters-row-name-zone">
+        {selectedVersion && deliverable.kind === "video" ? (
+          <button
+            className="masters-row-thumbnail masters-row-video-preview"
+            type="button"
+            aria-label={`Preview ${deliverable.name}, version ${selectedVersion.number}`}
+            onClick={(event) => { event.stopPropagation(); onSelect(); }}
+          >
+            <MastersPreviewImage key={posterUrl} src={posterUrl} icon="film-strip" aspectRatio={selectedVersion.posterUrl ? deliverable.format.replace(":", " / ") : undefined} />
+            <span className="masters-row-preview-play" aria-hidden="true"><DsIcon name="play" size={14} /></span>
+          </button>
+        ) : null}
+        <div className="masters-row-name-zone" title={selectedVersion?.filename}>
           <div className="masters-row-name-line">
             {editingName ? (
               <input
@@ -1923,8 +1951,18 @@ function DeliverableRow({
               />
             ) : <span className="masters-row-name label-m-semibold">{deliverable.name}</span>}
             {deliverable.isRequested ? <span className="masters-requested-tag label-xs-semibold">Client request</span> : null}
+            {selectedVersion && deliverable.kind === "video" ? (
+              <span className="masters-row-uploaded label-xs-semibold"><DsIcon name="check-circle" size={14} />Uploaded</span>
+            ) : null}
           </div>
           <span className="masters-row-meta label-xs">{formatRowMetadata(deliverable, selectedVersion)}</span>
+          {showVideoUpload ? (
+            <Button size="S" variant="primary" type="button" className="masters-row-upload-video"
+              onClick={(event) => { event.stopPropagation(); onUpload(); }}
+            >
+              <DsIcon name="upload-simple" size={14} />Upload video
+            </Button>
+          ) : null}
         </div>
       </div>
 
@@ -1937,7 +1975,7 @@ function DeliverableRow({
             onClick={(event) => { event.stopPropagation(); onOpenThumbnail(); }}
           >
             <span className="masters-asset-tile-preview">
-              <img src={deliverable.thumbnail?.imageUrl} alt="" />
+              <MastersPreviewImage key={deliverable.thumbnail?.imageUrl} src={deliverable.thumbnail?.imageUrl} icon="image-square" />
             </span>
             <span className="label-xs-semibold">Thumbnail</span>
           </button>
@@ -1953,17 +1991,44 @@ function DeliverableRow({
             <span className="label-xs-semibold">Captions</span>
           </button>
         ) : null}
-        {isFilmmaker && deliverable.kind === "video" ? (
-          <button
-            className="masters-asset-tile masters-asset-upload is-empty"
+        {isFilmmaker && deliverable.kind === "video" && selectedVersion ? (
+          <Button size="S" variant="ghost"
+            className="masters-asset-upload"
             type="button"
-            aria-label={`Add asset to ${deliverable.name}`}
-            data-tooltip="Upload caption files, thumbnails, etc."
+            aria-label={`Add supporting file to ${deliverable.name}`}
+            data-tooltip="Add a thumbnail or caption file"
             onClick={(event) => { event.stopPropagation(); onAddAsset(); }}
           >
             <DsIcon name="plus" size={14} />
-            <span className="label-xs-semibold">Add asset</span>
-          </button>
+            Add file
+          </Button>
+        ) : null}
+      </div>
+
+      <div className="masters-row-actions" role="cell">
+        {recutActionLabel ? (
+          <Button size="S" variant="secondary"
+            className="masters-row-recut-action"
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onRecutAction();
+            }}
+          >
+            <DsIcon name="stage-edit" size={14} />
+            {recutActionLabel}
+          </Button>
+        ) : null}
+        {primaryAction && !showVideoUpload ? (
+        <Button size="S" variant={primaryAction.style}
+          className="masters-row-primary-action"
+          type="button"
+          disabled={primaryAction.disabled}
+          onClick={(event) => { event.stopPropagation(); runPrimaryAction(); }}
+        >
+          <DsIcon name={getPrimaryActionIcon(primaryAction.kind)} size={14} />
+          {primaryAction.label}
+        </Button>
         ) : null}
       </div>
 
@@ -1983,33 +2048,6 @@ function DeliverableRow({
         </button>
       </div>
 
-      <div className="masters-row-actions" role="cell">
-        {recutActionLabel ? (
-          <Button size="S" variant="secondary"
-            className="masters-row-recut-action"
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onRecutAction();
-            }}
-          >
-            <DsIcon name="stage-edit" size={14} />
-            {recutActionLabel}
-          </Button>
-        ) : null}
-        {primaryAction ? (
-        <Button size="S" variant={primaryAction.style}
-          className="masters-row-primary-action"
-          type="button"
-          disabled={primaryAction.disabled}
-          onClick={(event) => { event.stopPropagation(); runPrimaryAction(); }}
-        >
-          <DsIcon name={getPrimaryActionIcon(primaryAction.kind)} size={14} />
-          {primaryAction.label}
-        </Button>
-        ) : null}
-      </div>
-
       <div className="masters-row-overflow" role="cell">
         <div className="masters-row-menu-wrap" onClick={(event) => event.stopPropagation()}>
           <BriskSelect mode="action" value="" clearable={false} ariaLabel={`Actions for ${deliverable.name}`} placeholder="Asset actions"
@@ -2022,6 +2060,17 @@ function DeliverableRow({
       </div>
     </article>
   );
+}
+
+function MastersPreviewImage({ src, icon, aspectRatio }: { src?: string; icon: "film-strip" | "image-square"; aspectRatio?: string }) {
+  const [failed, setFailed] = useState(false);
+  const previewUrl = src?.startsWith("https://images.pexels.com/videos/853800/")
+    ? "/mock-thumbnails/good-citizens-purple.svg"
+    : src;
+
+  return previewUrl && !failed
+    ? <img src={previewUrl} alt="" style={aspectRatio ? { aspectRatio, width: "auto", maxWidth: "100%", objectFit: "fill" } : undefined} onError={() => setFailed(true)} />
+    : <DsIcon name={icon} size={20} />;
 }
 
 function ExpandedDeliverable({
@@ -3393,9 +3442,15 @@ function getMastersScopeFingerprint(scopeKey: string, deliverables: MastersDeliv
   const deliverable = deliverables.find((item) => item.id === deliverableId);
   const version = deliverable?.versions.find((item) => item.id === versionId);
   if (deliverable && version) {
-    return JSON.stringify({ version, name: deliverable.name, captions: deliverable.srt, thumbnail: deliverable.thumbnail });
+    return JSON.stringify({ version: { ...version, posterUrl: undefined }, name: deliverable.name, captions: deliverable.srt, thumbnail: deliverable.thumbnail });
   }
-  return JSON.stringify(deliverables.map((item) => ({ id: item.id, name: item.name, versions: item.versions, captions: item.srt, thumbnail: item.thumbnail })));
+  return JSON.stringify(deliverables.map((item) => ({
+    id: item.id,
+    name: item.name,
+    versions: item.versions.map((entry) => ({ ...entry, posterUrl: undefined })),
+    captions: item.srt,
+    thumbnail: item.thumbnail,
+  })));
 }
 
 function getPresentedVersion(deliverable: MastersDeliverable, selections: Record<string, string>) {
@@ -3412,6 +3467,47 @@ function getDownloadedVersionKey(deliverableId: string, versionId: string) {
 function formatRowMetadata(deliverable: MastersDeliverable, version?: MastersVersion) {
   const duration = deliverable.duration.replace("mins", "min").replace("secs", "sec");
   return [version ? `V${version.number}` : deliverable.recutBrief ? "V0" : null, deliverable.format, duration].filter(Boolean).join(" · ");
+}
+
+function captureMastersVideoPoster(file: File): Promise<string | undefined> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+    let finished = false;
+    const finish = (posterUrl?: string) => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+      URL.revokeObjectURL(url);
+      resolve(posterUrl);
+    };
+    const capture = () => {
+      if (!video.videoWidth || !video.videoHeight) { finish(); return; }
+      try {
+        const canvas = document.createElement("canvas");
+        const scale = 160 / Math.max(video.videoWidth, video.videoHeight);
+        canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+        canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+        const context = canvas.getContext("2d");
+        if (!context) { finish(); return; }
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        finish(canvas.toDataURL("image/jpeg", 0.68));
+      } catch { finish(); }
+    };
+    const timeout = window.setTimeout(() => finish(), 4000);
+    video.muted = true;
+    video.preload = "auto";
+    video.onloadedmetadata = () => {
+      if (video.duration > 0.2) video.currentTime = Math.min(0.2, video.duration / 2);
+      else capture();
+    };
+    video.onseeked = capture;
+    video.onerror = () => finish();
+    video.src = url;
+  });
 }
 
 function formatShortDate(value: string) { return new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value)); }

@@ -8,6 +8,7 @@ import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { notificationTemplateValues, resolveNotificationTemplate } from "@/data/studio-notification-copy";
 import type {
   StudioNotificationCategoryCopy,
   StudioNotificationCopy,
@@ -279,8 +280,8 @@ function StudioNotificationPreviewCard({
       <span className="sr-only">{notification.statusLabel}. </span>
       <div className="notification-wording-preview-body">
         <div className="notification-wording-content">
-          <h4 className="label-l-semibold">{copy.title}</h4>
-          <p className="paragraph-s">{copy.message}</p>
+          <h4 className="label-l-semibold">{resolveNotificationTemplate(copy.title, notification)}</h4>
+          <p className="paragraph-s">{resolveNotificationTemplate(copy.message, notification)}</p>
           <p className="notification-wording-meta label-xs">
             {notification.projectName} · {notification.stage}
           </p>
@@ -332,22 +333,33 @@ function NotificationEditorModal({
   onSave: (copy: StudioNotificationCopy) => void;
 }) {
   const [draft, setDraft] = useState<StudioNotificationCopy>({ ...copy });
+  const hasChanges = !notificationCopyMatches(draft, copy);
+  const unknownVariables = [...`${draft.title} ${draft.message}`.matchAll(/\{\{(.*?)\}\}/g)]
+    .some((match) => !(match[1].trim() in notificationTemplateValues(notification)));
+  const canSave = hasChanges && Boolean(draft.title.trim() && draft.message.trim()) && !unknownVariables;
 
   return (
     <ClientModal
       className="customer-message-template-modal"
-      title={`Edit ${notification.label}`}
+      title="Edit notification message"
+      description={notification.label}
       onClose={onClose}
       footer={(
         <>
           <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="S" onClick={() => onSave(draft)}>Save</Button>
+          <Button size="S" disabled={!canSave} onClick={() => { if (canSave) onSave(draft); }}>Save message</Button>
         </>
       )}
     >
       <div className="customer-message-template-fields">
+        <p className="paragraph-s studio-review-dialog-note">Values in double braces are filled from the project event. The preview uses example names and versions.</p>
         <Input label="Title" value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
         <Textarea label="Message" wrapperClassName="customer-message-template-textarea" maxLength={240} rows={5} value={draft.message} onChange={(event) => setDraft((current) => ({ ...current, message: event.target.value }))} />
+        <div className="customer-message-automatic-details">
+          <span className="label-xs">Available values</span>
+          <div className="customer-message-automatic-chips">{Object.keys(notificationTemplateValues(notification)).map((key) => <span className="label-xs-semibold" key={key}>{`{{${key}}}`}</span>)}</div>
+        </div>
+        {unknownVariables ? <p className="paragraph-s" role="alert">Use one of the available values shown above.</p> : null}
       </div>
     </ClientModal>
   );

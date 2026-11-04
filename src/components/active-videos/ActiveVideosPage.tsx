@@ -2602,7 +2602,7 @@ function DeadlineCell({ project, deadline }: {
   const first = ordered[0];
   const isOverdue = Boolean(first?.dueAt && Date.parse(first.dueAt) < timing.now);
   return <div className="deadline-cell">
-    <button className="deadline-display" type="button" aria-label={`View deadlines for ${project.name}`} onClick={(event) => { event.stopPropagation(); openDeadline(project.id); }}>
+    <button className="deadline-display" type="button" aria-label={`Final delivery for ${project.name}`} onClick={(event) => { event.stopPropagation(); openDeadline(project.id, { view: "calendar" }); }}>
       {first ? <span className={`deadline-stage-text label-xs-semibold${isOverdue ? " is-overdue" : ""}`}>{first.label} · {first.dueAt ? countdown(first.dueAt, timing.now, timing.timezone).replace(" working", "") : selectedRole === "Studio Staff" ? "Set deadline" : "No deadline set"}{active.length > 1 ? ` · +${active.length - 1}` : ""}</span> : null}
       <span className="deadline-final-text label-xs">Final delivery · {deadline?.finalDueAt ? formatShortDeadlineDate(deadline.finalDueAt) : "TBC"}</span>
     </button>

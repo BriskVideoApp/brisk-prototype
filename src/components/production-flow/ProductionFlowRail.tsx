@@ -204,7 +204,7 @@ export function ProductionFlowAdjuster({
 
   return (
     <div className="production-flow-adjuster">
-      {quietTrigger ? <IconButton {...triggerProps} size="S" variant="quiet" tooltipAlign="end">
+      {quietTrigger ? <IconButton {...triggerProps} size="S" variant="quiet" tooltipAlign="end" tooltipPlacement="bottom">
         <DsIcon name="faders-horizontal" size={16} />
       </IconButton> : <button
         {...triggerProps}

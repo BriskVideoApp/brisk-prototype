@@ -8,25 +8,37 @@ import { formatBriefDate, parseBriefDateValue } from "@/lib/brief-dates";
 const briefCalendarWeekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 export function BriskDatePicker({
+  allowClear = true,
   ariaLabel,
   defaultOpen = false,
+  dialogAutoFocus = false,
   disabled = false,
   displayLabel,
   inline = false,
   isTertiary = false,
   onChange,
   placeholder,
+  popoverAlign,
+  popoverSize = "default",
+  portalToBody = false,
   value,
   variant,
 }: {
+  allowClear?: boolean;
   ariaLabel: string;
   defaultOpen?: boolean;
+  /** Use the existing DS dialog focus target without opening the calendar. */
+  dialogAutoFocus?: boolean;
   disabled?: boolean;
   displayLabel?: string;
   inline?: boolean;
   isTertiary?: boolean;
   onChange: (value: string) => void;
   placeholder: string;
+  popoverAlign?: "start" | "end";
+  popoverSize?: "default" | "compact";
+  /** Let calendars in scroll containers float outside them. Modals use their own portal. */
+  portalToBody?: boolean;
   value: string;
   variant: "field" | "pill" | "summary";
 }) {
@@ -35,25 +47,68 @@ export function BriskDatePicker({
   const pickerRef = useRef<HTMLDivElement | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>();
-  const modal = pickerRef.current?.closest("dialog");
+  const [portalHost, setPortalHost] = useState<HTMLElement | null>(null);
+  const align = popoverAlign ?? (variant === "summary" ? "end" : "start");
+
   useLayoutEffect(() => {
-    if (!isOpen || inline || !pickerRef.current?.closest("dialog")) { setPopoverStyle(undefined); return; }
+    // Escape scroll containers, while keeping modal calendars in the top layer.
+    setPortalHost(isOpen && !inline ? pickerRef.current?.closest("dialog") ?? (portalToBody ? document.body : null) : null);
+    setPopoverStyle(undefined);
+  }, [inline, isOpen, portalToBody]);
+
+  useLayoutEffect(() => {
+    const picker = pickerRef.current;
+    const popover = popoverRef.current;
+    if (!isOpen || inline || !portalHost || !picker || !popover) return;
+
     const position = () => {
-      const trigger = pickerRef.current?.getBoundingClientRect();
-      if (!trigger) return;
-      const tokens = getComputedStyle(document.documentElement);
-      const padding = Number.parseFloat(tokens.getPropertyValue("--brisk-space-l")) || 16;
-      const gap = Number.parseFloat(tokens.getPropertyValue("--brisk-space-s")) || 8;
-      const width = Math.min(popoverRef.current?.offsetWidth || 300, window.innerWidth - padding * 2);
-      const height = popoverRef.current?.offsetHeight || 340;
-      const above = window.innerHeight - trigger.bottom < height + padding && trigger.top > window.innerHeight - trigger.bottom;
-      setPopoverStyle({ position: "fixed", left: Math.max(padding, Math.min(trigger.left, window.innerWidth - width - padding)), width, top: above ? undefined : trigger.bottom + gap, bottom: above ? window.innerHeight - trigger.top + gap : undefined, maxHeight: Math.max(0, (above ? trigger.top : window.innerHeight - trigger.bottom) - padding - gap), overflowY: "auto" });
+      const trigger = picker.getBoundingClientRect();
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const viewportLeft = viewport?.offsetLeft ?? 0;
+      const viewportWidth = viewport?.width ?? window.innerWidth;
+      const viewportHeight = viewport?.height ?? window.innerHeight;
+      const tokens = getComputedStyle(popover);
+      const padding = Number.parseFloat(tokens.getPropertyValue("--brisk-space-l"));
+      const gap = Number.parseFloat(tokens.getPropertyValue("--brisk-space-s"));
+      const preferredWidth = Number.parseFloat(tokens.getPropertyValue("--brisk-space-3xl")) * (popoverSize === "compact" ? 7 : 8);
+      const width = Math.min(preferredWidth, viewportWidth - padding * 2);
+      const height = popover.scrollHeight + popover.offsetHeight - popover.clientHeight;
+      const below = viewportTop + viewportHeight - trigger.bottom - padding - gap;
+      const above = trigger.top - viewportTop - padding - gap;
+      const openAbove = below < height && above > below;
+      const availableHeight = Math.max(0, openAbove ? above : below);
+
+      setPopoverStyle({
+        position: "fixed",
+        left: Math.max(viewportLeft + padding, Math.min(align === "end" ? trigger.right - width : trigger.left, viewportLeft + viewportWidth - width - padding)),
+        width,
+        top: openAbove ? Math.max(viewportTop + padding, trigger.top - gap - Math.min(height, availableHeight)) : trigger.bottom + gap,
+        maxHeight: availableHeight,
+        overflowY: "auto",
+      });
     };
     position();
+    const observer = new ResizeObserver(position);
+    observer.observe(picker);
     window.addEventListener("resize", position);
     window.addEventListener("scroll", position, true);
-    return () => { window.removeEventListener("resize", position); window.removeEventListener("scroll", position, true); };
-  }, [inline, isOpen]);
+    window.visualViewport?.addEventListener("resize", position);
+    window.visualViewport?.addEventListener("scroll", position);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", position);
+      window.removeEventListener("scroll", position, true);
+      window.visualViewport?.removeEventListener("resize", position);
+      window.visualViewport?.removeEventListener("scroll", position);
+    };
+  }, [align, inline, isOpen, popoverSize, portalHost]);
+
+  useLayoutEffect(() => {
+    if (defaultOpen && isOpen && portalHost) {
+      (popoverRef.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]') ?? popoverRef.current?.querySelector("button"))?.focus({ preventScroll: true });
+    }
+  }, [defaultOpen, isOpen, portalHost]);
   const readableDate = formatBriefDate(value);
   const selectedDate = parseBriefDateValue(value);
   const selectedValue = selectedDate ? toBriefDateInputValue(selectedDate) : "";
@@ -112,6 +167,7 @@ export function BriskDatePicker({
 
     if (!inline) {
       setIsOpen(false);
+      pickerRef.current?.querySelector("button")?.focus();
     }
   }
 
@@ -123,7 +179,7 @@ export function BriskDatePicker({
   }
 
   const calendar = (
-        <div ref={popoverRef} style={popoverStyle} className="brief-date-popover" role={inline ? "group" : "dialog"} aria-label={ariaLabel}
+        <div ref={popoverRef} style={inline || !portalHost ? undefined : popoverStyle ?? { visibility: "hidden" }} className={`brief-date-popover${popoverSize === "compact" ? " brief-date-popover-compact" : ""}`} role={inline ? "group" : "dialog"} aria-label={ariaLabel}
         >
 
           <div className="brief-date-popover-head">
@@ -158,6 +214,7 @@ export function BriskDatePicker({
                   type="button"
                   aria-label={formatBriefCalendarDayLabel(date)}
                   aria-pressed={isSelected}
+                  disabled={disabled}
                   onClick={() => selectDate(dateValue)}
                 >
                   {date.getDate()}
@@ -166,10 +223,10 @@ export function BriskDatePicker({
             })}
           </div>
           <div className="brief-date-popover-actions">
-            <button className="label-xs-semibold" type="button" onClick={() => selectDate("")}>
+            {allowClear ? <button className="label-xs-semibold" type="button" onClick={() => selectDate("")}>
               Clear
-            </button>
-            <button className="label-xs-semibold" type="button" onClick={selectToday}>
+            </button> : <span />}
+            <button className="label-xs-semibold" type="button" disabled={disabled} onClick={selectToday}>
               Today
             </button>
           </div>
@@ -187,6 +244,24 @@ export function BriskDatePicker({
           setIsOpen(false);
           pickerRef.current?.querySelector("button")?.focus();
         }
+
+        if (event.key === "Tab" && isOpen && portalHost && !inline) {
+          const trigger = pickerRef.current?.querySelector("button");
+          const controls = popoverRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)");
+          if (!trigger || !controls?.length) return;
+
+          // Keep the floating calendar in the field's original keyboard order.
+          if (event.target === trigger && !event.shiftKey) {
+            event.preventDefault();
+            controls[0].focus();
+          } else if (event.target === controls[0] && event.shiftKey) {
+            event.preventDefault();
+            trigger.focus();
+          } else if (event.target === controls[controls.length - 1] && !event.shiftKey) {
+            trigger.focus();
+            setIsOpen(false);
+          }
+        }
       }}
       onBlur={(event) => {
         if (inline) {
@@ -201,12 +276,12 @@ export function BriskDatePicker({
       }}
     >
       {inline ? null : (
-        <button className={triggerClassName} type="button" aria-expanded={isOpen} aria-haspopup="dialog" disabled={disabled} onClick={openPicker}>
+        <button className={triggerClassName} type="button" data-dialog-autofocus={dialogAutoFocus || undefined} aria-expanded={isOpen} aria-haspopup="dialog" disabled={disabled} onClick={openPicker}>
           <span className={variant !== "summary" ? "brief-deliverable-trigger-label" : undefined}>{displayText}</span>
           {variant === "summary" ? null : <DsIcon name="caret-down" size={12} />}
         </button>
       )}
-      {inline || isOpen ? (modal && !inline ? createPortal(calendar, modal) : calendar) : null}
+      {inline || isOpen ? (portalHost && !inline ? createPortal(calendar, portalHost) : calendar) : null}
     </div>
   );
 }

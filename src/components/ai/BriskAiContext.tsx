@@ -14,6 +14,7 @@ import {
 import {
   cloneStudioAiPlaybook,
   initialStudioAiPlaybook,
+  upgradeDefaultPlaybook,
   type BriskAiStage,
   type FilmmakerModeId,
   type StudioAiPlaybook,
@@ -242,13 +243,13 @@ function readStoredPlaybook(): StudioAiPlaybook | null {
       throw new Error("Stored AI Playbook is incomplete");
     }
 
-    return cloneStudioAiPlaybook({
+    return upgradeDefaultPlaybook(cloneStudioAiPlaybook({
       ...initialStudioAiPlaybook,
       ...storedPlaybook,
       exampleReferences: storedPlaybook.exampleReferences,
       referenceLinks: storedPlaybook.referenceLinks ?? [],
       clientAccessEnabled: true,
-    });
+    }));
   } catch {
     window.localStorage.removeItem(playbookStorageKey);
     return null;

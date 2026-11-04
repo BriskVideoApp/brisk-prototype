@@ -3,21 +3,26 @@
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Radio } from "../../../Brisk DS/src/app/components/Radio";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import type { Project, ProjectDeadline } from "@/components/active-videos/types";
-import { ProjectTimingWarning } from "./ProjectTimingNotice";
 import { useTurnaround, type ActiveStageDeadline } from "./TurnaroundContext";
 import { countdown, deadlineInput, formatStageDeadline, localDeadline, type TurnaroundRule } from "@/data/turnaround";
 import { deliveryTimeZone, formatDeliveryDate } from "@/data/project-delivery";
+import { formatTimingDate } from "@/data/project-timing";
 import type { ProductionFlowStageKey } from "@/data/production-flow";
 import { ProjectDeadlineLink, useDeadlineDialog } from "./DeadlineDialogContext";
 import { TimingDisclosure } from "./TimingDisclosure";
+import { useProjectTiming } from "./ProjectTimingContext";
 
 export function StageDeadlinePanel({ project, deadline, embedded = false, initialStage, onSaved }: { project: Project; deadline?: ProjectDeadline; embedded?: boolean; initialStage?: ProductionFlowStageKey; onSaved?: () => void }) {
   const timing = useTurnaround();
+  const { getDeliveryAgreement, issues, shareClientUpdate } = useProjectTiming();
   const openDeadline = useDeadlineDialog();
+  const { completionRecords } = useProjectCompletion();
   const { selectedRole } = usePrototypeRole();
   const active = timing.getActiveDeadlines(project, deadline);
   const initial = active.find((entry) => entry.stage === initialStage);
@@ -26,8 +31,13 @@ export function StageDeadlinePanel({ project, deadline, embedded = false, initia
   const [internal, setInternal] = useState(deadlineInput(initial?.internalDueAt, timing.timezone));
   const [client, setClient] = useState(deadlineInput(initial?.dueAt, timing.timezone));
   const [error, setError] = useState("");
+  const [clientCopy, setClientCopy] = useState<string | null>(null);
+  const [shareFeedback, setShareFeedback] = useState("");
+  const agreement = getDeliveryAgreement(project);
+  const issue = issues.filter((entry) => entry.projectId === project.id && !entry.resolvedAt)
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
   const preview = editing ? timing.previewDeadline(project, editing.stage) : null;
-  const canEdit = selectedRole === "Studio Staff" && project.status !== "Paused";
+  const canEdit = selectedRole === "Studio Staff" && project.status !== "Paused" && project.status !== "Completed" && project.status !== "Archived" && !completionRecords[project.id];
   const internalInstant = internal ? localDeadline(internal, timing.timezone) : null;
   const clientInstant = client ? localDeadline(client, timing.timezone) : null;
   const valid = mode === "automatic" || Boolean(clientInstant && (!internal || internalInstant && internalInstant <= clientInstant));
@@ -39,10 +49,9 @@ export function StageDeadlinePanel({ project, deadline, embedded = false, initia
     </div>{canEdit ? <Button size="S" variant="ghost" onClick={() => open(entry)}>{entry.dueAt ? "Change date" : "Set deadline"}<span className="sr-only"> for {entry.label}</span></Button> : null}</div>) : <p className="paragraph-s">No active stage deadlines.</p>}
     {project.status === "Paused" && active.length ? <p className="label-xs">Project paused. Existing dates stay unchanged.</p> : null}
     {!embedded ? <div className="deadline-read-copy">
-      <span className="deadline-read-date label-s"><strong className="label-s-semibold">Final delivery</strong> · {deadline?.finalDueAt ? formatDeadlineDay(deadline.finalDueAt, deliveryTimeZone) : "TBC"}</span>
+      <button type="button" className="deadline-read-date label-s" onClick={() => openDeadline(project.id, { view: "calendar" })}><strong className="label-s-semibold">Final delivery</strong> · {deadline?.finalDueAt ? formatDeadlineDay(deadline.finalDueAt, deliveryTimeZone) : "TBC"}</button>
       <div className="deadline-summary-actions">
-        <ProjectDeadlineLink className="timing-review-deadline-link label-xs-semibold" projectId={project.id}>View deadline</ProjectDeadlineLink>
-        <ProjectTimingWarning projectId={project.id} label="Review timing" />
+        <ProjectDeadlineLink className="timing-review-deadline-link label-xs-semibold" projectId={project.id}>Review timing</ProjectDeadlineLink>
       </div>
     </div> : null}
     <TimingDisclosure key={project.id} label={embedded ? "Stage details" : "Timing details"}>
@@ -54,6 +63,24 @@ export function StageDeadlinePanel({ project, deadline, embedded = false, initia
       </div>)}
       {!embedded && deadline?.finalDueAt ? <span className="label-xs">Final delivery: {formatDeliveryDate(deadline.finalDueAt)} · {deliveryTimeZone}</span> : null}
       <span className="label-xs">Stage times: {timing.timezone}. Working days exclude weekends.</span>
+      {!embedded && issue && (selectedRole !== "Customer" || issue.clientUpdate || issue.kind === "brief") ? <div className="deadline-read-copy">
+        <strong className="label-xs-semibold">Suggested delivery · {formatTimingDate(issue.suggestedDate)}</strong>
+        {selectedRole === "Studio Staff" && project.status !== "Completed" && project.status !== "Archived" && !completionRecords[project.id] && issue.kind === "production" && !issue.clientUpdate ? <>
+          <Textarea label="Client update" rows={2} value={clientCopy ?? issue.reason}
+            hint="Only this message and the suggested date will be shared with the Client."
+            onChange={(event) => setClientCopy(event.target.value)} />
+          <Button size="S" variant="secondary" disabled={!(clientCopy ?? issue.reason).trim()} onClick={() => {
+            if (shareClientUpdate(issue.id, clientCopy ?? issue.reason)) setShareFeedback("Timing update shared.");
+          }}>Share with Client</Button>
+          <span className="label-xs" role="status">{shareFeedback}</span>
+        </> : issue.clientUpdate ? <span className="label-xs">{issue.clientUpdate.reason}</span> : null}
+      </div> : null}
+      {!embedded && (agreement.originalDate || agreement.proposals.length || agreement.changes?.length) ? <div className="final-delivery-history" aria-label="Delivery history">
+        <strong className="label-xs-semibold">Delivery history</strong>
+        {agreement.originalDate ? <span className="label-xs">Initial deadline · {formatDeliveryDate(agreement.originalDate)}</span> : null}
+        {agreement.changes?.map((change) => <span className="label-xs" key={change.id}>{change.source === "brief" ? "Set in Brief" : "Changed"} · {formatDeliveryDate(change.date)} · {change.changedBy}{change.reason ? ` · ${change.reason}` : ""}</span>)}
+        {agreement.proposals.map((proposal) => <span className="label-xs" key={proposal.id}>{proposal.status === "agreed" ? "Agreed" : proposal.status === "superseded" ? "Superseded" : "Proposed"} · {formatDeliveryDate(proposal.date)} · {proposal.proposedBy} · {proposal.reason}</span>)}
+      </div> : null}
     </TimingDisclosure>
     {editing && embedded && canEdit ? <div className="turnaround-form" role="group" aria-label={`${editing.label} deadline`}>
       <h3 className="label-s-semibold">{editing.label} deadline</h3>
@@ -70,7 +97,7 @@ function formatDeadlineDay(instant: string, timeZone: string) {
 }
 
 /** Reuses the existing project-panel date and time picker composition. */
-export function DeadlineDateTimePicker({ ariaLabel, value, onChange }: { ariaLabel: string; value: string; onChange: (value: string) => void }) {
+export function DeadlineDateTimePicker({ ariaLabel, value, onChange, dialogAutoFocus }: { ariaLabel: string; value: string; onChange: (value: string) => void; dialogAutoFocus?: boolean }) {
   const [date = "", time = ""] = value.split("T");
-  return <div className="project-detail-deadline-date-time"><div className="project-detail-deadline-picker"><BriskDatePicker ariaLabel={ariaLabel} placeholder="Choose date" value={date} variant="field" onChange={(next) => onChange(next ? `${next}T${time || "17:00"}` : "")} /></div><div className="project-detail-deadline-time-picker"><BriskTimePicker ariaLabel={`${ariaLabel} time`} placeholder="Choose time" value={time} onChange={(next) => onChange(date ? `${date}T${next || "17:00"}` : "")} /></div></div>;
+  return <div className="project-detail-deadline-date-time"><div className="project-detail-deadline-picker"><BriskDatePicker ariaLabel={ariaLabel} dialogAutoFocus={dialogAutoFocus} placeholder="Choose date" value={date} variant="field" onChange={(next) => onChange(next ? `${next}T${time || "17:00"}` : "")} /></div><div className="project-detail-deadline-time-picker"><BriskTimePicker ariaLabel={`${ariaLabel} time`} placeholder="Choose time" value={time} onChange={(next) => onChange(date ? `${date}T${next || "17:00"}` : "")} /></div></div>;
 }

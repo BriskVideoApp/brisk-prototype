@@ -377,7 +377,9 @@ export function updateWorkspaceDetailsState(
       reviewDraft: { ...state.onboarding.reviewDraft, studioName: details.name,
         studioDescription: details.description, studioWebsite: details.website },
       studioAnswer: state.onboarding.studioAnswer ? { ...state.onboarding.studioAnswer,
-        studioName: details.name, studioDescription: details.description } : null,
+        studioName: details.name, studioDescription: details.description,
+        sources: [...state.onboarding.studioAnswer.sources.filter((source) => source.type !== "website"),
+          ...(details.website ? [{ id: "studio-website", type: "website" as const, label: details.website }] : [])] } : null,
     } : state.onboarding,
   };
 }

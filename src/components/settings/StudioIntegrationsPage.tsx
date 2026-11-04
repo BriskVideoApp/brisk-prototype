@@ -2,27 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 import { SourceLogo, getSourceLabel } from "@/components/chat/SourceLogo";
-import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { useStudioSettings } from "./StudioSettingsContext";
+import { SettingsSummaryRow } from "./SettingsSummaryRow";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { StudioIntegrationId } from "@/data/studio-settings";
-
-const integrationCopy: Record<StudioIntegrationId, { description: string; scope: string }> = {
-  whatsapp: {
-    description: "Send and receive Client messages through your Studio’s WhatsApp Business account.",
-    scope: "Choose the WhatsApp conversation for each project in its External Chat settings.",
-  },
-  slack: {
-    description: "Keep Client conversations in sync through Slack Connect or the Brisk Slack app.",
-    scope: "Choose the Slack channel for each project in its External Chat settings.",
-  },
-};
 
 const integrationIds: StudioIntegrationId[] = ["whatsapp", "slack"];
 
 export function StudioIntegrationsPage() {
   const { studio, updateIntegrationConnection } = useStudioSettings();
+  const [selected, setSelected] = useState<StudioIntegrationId | null>(null);
+  const [disconnecting, setDisconnecting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const connection = selected ? studio.integrations[selected] : null;
+  const label = selected ? getSourceLabel(selected) : "";
 
   useEffect(() => {
     if (!toast) return;
@@ -30,66 +26,36 @@ export function StudioIntegrationsPage() {
     return () => window.clearTimeout(timeout);
   }, [toast]);
 
-  const reconnect = (integrationId: StudioIntegrationId) => {
-    updateIntegrationConnection(integrationId, true);
-    setToast(`${getSourceLabel(integrationId)} reconnected for ${studio.details.name}.`);
-  };
+  function setConnection(connected: boolean) {
+    if (!selected) return;
+    updateIntegrationConnection(selected, connected);
+    setToast(`${label} ${connected ? "reconnected" : "disconnected"} in this prototype.`);
+    setDisconnecting(false);
+    setSelected(null);
+  }
 
-  return (
-    <section className="studio-settings-section" aria-labelledby="studio-integrations-title">
-      <div className="studio-settings-info-block">
-        <DsIcon name="info" size={18} />
-        <div>
-          <h2 className="label-m-semibold" id="studio-integrations-title">Studio messaging connections</h2>
-          <p className="paragraph-s">
-            Reconnect shared accounts here. Project-specific channels and conversations stay in each project’s External Chat settings.
-          </p>
-        </div>
+  return <section className="studio-settings-section" aria-label="Studio messaging connections">
+    <div className="studio-setup-settings-panel">
+      {integrationIds.map((id) => <SettingsSummaryRow key={id} title={<SourceLogo source={id} size={20} withLabel tooltipFocusable={false} />} headingAs="h2"
+        action={<Button size="S" variant="secondary" onClick={() => setSelected(id)}>{studio.integrations[id].connected ? "Manage" : "Reconnect"} {getSourceLabel(id)}</Button>}>
+        <strong className="label-m-semibold">{studio.integrations[id].detail}</strong>
+        <span className="paragraph-s">{studio.integrations[id].connected ? "Connected" : "Reconnect required"}</span>
+        <p className="paragraph-s">{id === "whatsapp" ? "Send and receive Client messages through your WhatsApp Business account." : "Send and receive Client messages in a linked Slack channel."}</p>
+      </SettingsSummaryRow>)}
+    </div>
+    <p className="paragraph-s studio-review-dialog-note">Connect your Studio’s account here, then choose a conversation or channel in each project’s External Chat settings. Client messages and replies sync with that conversation. Internal Chat stays private to your Studio.</p>
+    {selected && connection ? <EditingDialog title={`${connection.connected ? "Manage" : "Reconnect"} ${label}`} onCancel={() => setSelected(null)}
+      description="Manage the shared account used by your Studio."
+      actions={<><Button size="S" variant="secondary" onClick={() => setSelected(null)}>Close</Button>{connection.connected
+        ? <Button size="S" variant="danger" onClick={() => setDisconnecting(true)}>Disconnect {label}</Button>
+        : <Button size="S" onClick={() => setConnection(true)}>Reconnect {label}</Button>}</>}>
+      <div className="studio-editor-fields">
+        <strong className="label-m-semibold">{connection.detail}</strong>
+        <p className="paragraph-s">{connection.connected ? "Connected" : "Reconnect required"}</p>
+        <p className="paragraph-s studio-review-dialog-note">Prototype connection only. No external account is contacted.</p>
       </div>
-
-      <div className="studio-integration-list">
-        {integrationIds.map((integrationId) => {
-          const integration = studio.integrations[integrationId];
-          const copy = integrationCopy[integrationId];
-          const label = getSourceLabel(integrationId);
-
-          return (
-            <article className="studio-integration-card" key={integrationId}>
-              <div className="studio-integration-heading">
-                <span className="studio-integration-logo">
-                  <SourceLogo source={integrationId} size={20} tooltipFocusable={false} />
-                </span>
-                <div>
-                  <h2 className="headings-2xs-bold">{label}</h2>
-                  <p className="paragraph-s">{copy.description}</p>
-                </div>
-                <span className={`studio-integration-status label-xs-semibold ${integration.connected ? "is-connected" : "needs-attention"}`}>
-                  <DsIcon name={integration.connected ? "check-circle" : "alert-triangle"} size={14} />
-                  {integration.connected ? "Connected" : "Reconnect required"}
-                </span>
-              </div>
-
-              <div className="studio-integration-details">
-                <div>
-                  <span className="label-xs-semibold">Connected account</span>
-                  <strong className="label-s-semibold">{integration.detail}</strong>
-                </div>
-                <p className="label-xs">{copy.scope}</p>
-                {!integration.connected ? (
-                  <Button size="M" onClick={() => reconnect(integrationId)}>Reconnect {label}</Button>
-                ) : null}
-              </div>
-            </article>
-          );
-        })}
-      </div>
-
-      {toast ? (
-        <div className="studio-settings-toast label-s-semibold" role="status">
-          <DsIcon name="check-circle" size={16} />
-          {toast}
-        </div>
-      ) : null}
-    </section>
-  );
+    </EditingDialog> : null}
+    {disconnecting ? <ConfirmationDialog title={`Disconnect ${label}?`} description="New external messages will stop syncing through this shared account. Existing project messages stay available." confirmLabel="Disconnect" tone="danger" onConfirm={() => setConnection(false)} onCancel={() => setDisconnecting(false)} /> : null}
+    {toast ? <div className="studio-settings-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={16} />{toast}</div> : null}
+  </section>;
 }

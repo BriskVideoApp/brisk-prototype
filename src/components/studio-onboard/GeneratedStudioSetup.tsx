@@ -26,6 +26,7 @@ import {
   createRecommendedStudioBriefConfiguration,
   getStudioBrandColours,
   getStudioCustomVideoTypes,
+  showClientDeliveryDates,
   studioOnboardingVideoTypeLabels,
   type StudioBrandColour,
   type StudioBriefConfiguration,
@@ -211,6 +212,8 @@ export function GeneratedStudioSetup({
         </header>
         <BriefGuidedExperience
           doneLabel="Save Brief"
+          showDeliveryDates={showClientDeliveryDates(briefConfigurationDraft)}
+          onDeliveryDatesVisibilityChange={(show) => setBriefConfigurationDraft((current) => ({ ...current, showClientDeliveryDates: show }))}
           excludedFieldIds={briefConfigurationDraft.excludedFieldIds}
           excludedOptionValues={briefConfigurationDraft.excludedOptionValues}
           fields={briefPreviewFields}

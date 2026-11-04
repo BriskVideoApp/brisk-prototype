@@ -1648,6 +1648,7 @@ function getSelectedApproach(modeId: FilmmakerModeId, customName: string, custom
 function applyCreativeApproach(response: BriskAiResponse, approach: FilmmakerMode): BriskAiResponse {
   if (!response.draft && !response.categoryRows) return response;
   const directionByApproach: Record<FilmmakerModeId, string> = {
+    "standard-filmmaker": "It keeps the audience, project facts and practical next steps clear.",
     "cinematic-storyteller": "It stays visual and human-led.",
     "documentary-filmmaker": "It stays authentic and evidence-led.",
     "corporate-communicator": "It stays clear and stakeholder-safe.",

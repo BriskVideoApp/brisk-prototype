@@ -55,6 +55,7 @@ export type MastersVersion = {
   fileSize: string;
   durationSeconds: number;
   shadePath: string;
+  posterUrl?: string;
   prototypeSample?: boolean;
 };
 
@@ -123,7 +124,7 @@ export type MastersDeliverable = {
   recutSourceUpload?: MastersVersion;
 };
 
-const mastersVideoFrameImageUrl = "https://images.pexels.com/videos/853800/free-video-853800.jpg?auto=compress&cs=tinysrgb&w=1200";
+const mastersVideoFrameImageUrl = "/mock-thumbnails/good-citizens-purple.svg";
 
 const mainComments: MastersComment[] = [
   {
@@ -209,6 +210,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "8.4 GB",
         durationSeconds: 180,
         shadePath: "Shade/Good Citizens/Masters/Main Video/V1",
+        posterUrl: mastersVideoFrameImageUrl,
       },
       {
         id: "main-v2",
@@ -221,6 +223,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "8.7 GB",
         durationSeconds: 180,
         shadePath: "Shade/Good Citizens/Masters/Main Video/V2",
+        posterUrl: mastersVideoFrameImageUrl,
       },
     ],
   },
@@ -270,6 +273,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "146 MB",
         durationSeconds: 30,
         shadePath: "Shade/Good Citizens/Masters/Instagram 30s/V1",
+        posterUrl: mastersVideoFrameImageUrl,
       },
     ],
   },

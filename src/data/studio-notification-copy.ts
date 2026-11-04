@@ -15,6 +15,7 @@ export type StudioNotificationPreview = {
   status: "success" | "warning" | "failure" | "information";
   statusLabel: string;
   actor: string;
+  sampleVersion?: string;
   projectCode: string;
   projectName: string;
   stage: string;
@@ -38,6 +39,7 @@ export const studioNotificationCopyCategories = [
     notifications: [
       {
         id: "review-requested",
+        sampleVersion: "v3",
         label: "Edit sent for review",
         sentWhen: "When a filmmaker sends an Edit version for review.",
         recipient: "A client or filmmaker chosen to review it.",
@@ -54,8 +56,8 @@ export const studioNotificationCopyCategories = [
         destinationLabel: "Review Edit",
         destinationHref: "/projects/loom-launch-film/stages/edit",
         briskDefault: {
-          title: "Edit v3 is ready to review",
-          message: "David Ryan requested your review.",
+          title: "{{stage}} {{version}} is ready to review",
+          message: "{{actor}} requested your review.",
         },
       },
       {
@@ -75,8 +77,8 @@ export const studioNotificationCopyCategories = [
         destinationLabel: "View Script",
         destinationHref: "/projects/loom-launch-film/script",
         briskDefault: {
-          title: "Script approved",
-          message: "The latest Script has been approved.",
+          title: "{{stage}} approved",
+          message: "The latest {{stage}} has been approved.",
         },
       },
     ],
@@ -421,4 +423,15 @@ export const studioNotificationCopyCategories = [
 
 export function getStudioNotificationCopyCategory(categoryId: string) {
   return studioNotificationCopyCategories.find((category) => category.id === categoryId);
+}
+
+/** Sample values for the settings preview; production messages supply event values. */
+export function notificationTemplateValues(notification: StudioNotificationPreview): Record<string, string> {
+  return { actor: notification.actor, stage: notification.stage, project_name: notification.projectName,
+    ...(notification.sampleVersion ? { version: notification.sampleVersion } : {}) };
+}
+
+export function resolveNotificationTemplate(text: string, notification: StudioNotificationPreview): string {
+  const values = notificationTemplateValues(notification);
+  return text.replace(/\{\{\s*([a-z_]+)\s*\}\}/g, (match, key: string) => values[key] ?? match);
 }

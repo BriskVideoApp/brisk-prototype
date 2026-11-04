@@ -260,8 +260,8 @@ const activeSubscription: SubscriptionFixture = {
   status: "active",
   billingFrequency: "monthly",
   canManageBilling: true,
-  nextRenewal: "12 October 2026",
-  effectiveDate: "12 October 2026",
+  nextRenewal: "12 November 2026",
+  effectiveDate: "12 November 2026",
   usage: billingUsageFixtures.approachingLimit,
 };
 
@@ -270,10 +270,10 @@ export const subscriptionFixtures = {
   trial: {
     ...activeSubscription,
     status: "trial",
-    nextRenewal: "15 October 2026",
-    effectiveDate: "15 October 2026",
+    nextRenewal: "15 November 2026",
+    effectiveDate: "15 November 2026",
     trialDaysRemaining: 8,
-    trialEndDate: "15 October 2026",
+    trialEndDate: "15 November 2026",
   },
   overdue: { ...activeSubscription, status: "overdue" },
   cancelling: { ...activeSubscription, status: "cancelling" },

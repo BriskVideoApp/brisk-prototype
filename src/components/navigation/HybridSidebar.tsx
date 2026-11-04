@@ -40,7 +40,7 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
   const isClient = selectedRole === "Customer";
   const canAdministerStudio = canManageStudio;
   const isStudioSettings = canAdministerStudio && (pathname.startsWith("/settings/studio")
-    || ["/settings/notifications", "/settings/plan-billing", "/settings/client-billing"].includes(pathname));
+    || ["/settings/notifications", "/settings/plan-billing", "/settings/client-billing"].some((path) => pathname === path || pathname.startsWith(`${path}/`)));
   const isAccountSettings = pathname.startsWith("/settings/personal/")
     || (isClient && (pathname.startsWith("/settings/client/") || pathname === "/client/invoices"));
   const workspace: SidebarLink[] = [
@@ -134,7 +134,7 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
     </div>
     <div className="hybrid-sidebar-footer">
       <UserAvatarMenu placement="sidebar" collapsed={collapsed} />
-      {canAdministerStudio ? links([{ label: "Studio settings", href: "/settings/studio", icon: "settings" }], "Studio administration") : null}
+      {canAdministerStudio && !isStudioSettings ? links([{ label: "Studio settings", href: "/settings/studio", icon: "settings" }], "Studio administration") : null}
       <PrototypeScenarioToolbar inline placement="sidebar" />
     </div>
   </aside>;

@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import type { StageStatus } from "@/components/active-videos/types";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import type { ReviewComment } from "@/components/video-review/types";
 import type { ScriptVersion } from "@/data/script";
 import {
@@ -60,6 +61,7 @@ const storyboardStorageKey = "brisk-storyboards-v1";
 const StoryboardContext = createContext<StoryboardContextValue | null>(null);
 
 export function StoryboardProvider({ children }: { children: ReactNode }) {
+  const { completionRecords } = useProjectCompletion();
   const [records, setRecords] = useState<Record<string, StoryboardRecord>>(() => cloneStoryboardRecords(initialStoryboardRecords));
   const [hasHydrated, setHasHydrated] = useState(false);
   const frameHistoryRef = useRef<Record<string, { past: StoryboardFrame[][]; future: StoryboardFrame[][] }>>({});
@@ -271,6 +273,7 @@ export function StoryboardProvider({ children }: { children: ReactNode }) {
       return records[projectId] ?? null;
     },
     getStoryboardStatus(projectId) {
+      if (completionRecords[projectId]) return { state: "done", daysAgo: 0 };
       return records[projectId]?.status ?? { state: "not_started" };
     },
     insertFrame(projectId, frameId, position) {
@@ -424,7 +427,7 @@ export function StoryboardProvider({ children }: { children: ReactNode }) {
     updateFrameComments(projectId, frameId, comments) {
       updateFrame(projectId, frameId, (frame) => ({ ...frame, comments }));
     },
-  }), [hasHydrated, commitRecords, records, updateCurrentVersion, updateFrame]);
+  }), [hasHydrated, commitRecords, completionRecords, records, updateCurrentVersion, updateFrame]);
 
   return <StoryboardContext.Provider value={value}>{children}</StoryboardContext.Provider>;
 }

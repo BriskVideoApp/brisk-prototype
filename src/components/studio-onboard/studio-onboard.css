@@ -330,7 +330,7 @@
   box-shadow: none;
 }
 
-.studio-client-logo.studio-profile-logo-upload:has(img) {
+.studio-profile-review-logo .studio-client-logo:has(img) {
   width: auto;
   height: auto;
   min-width: calc(var(--brisk-space-3xl) * 2);
@@ -338,7 +338,7 @@
   border: var(--brisk-space-none);
 }
 
-.studio-client-logo.studio-profile-logo-upload img {
+.studio-profile-review-logo .studio-client-logo img {
   width: auto;
   height: auto;
   max-width: calc(var(--brisk-space-3xl) * 3);

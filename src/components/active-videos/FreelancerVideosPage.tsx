@@ -25,7 +25,7 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { StageKey } from "@/components/active-videos/types";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { selectWorkspaceProjects } from "@/data/prototype-state";
 import {
   getAcceptedFreelancerEngagements,
   getFreelancerEngagements,
@@ -117,24 +117,19 @@ export function FreelancerVideosPage() {
   const { publishOfferNotification } = useNotificationInbox();
   const { people } = usePeople();
   const [sharedTimeEntries, setSharedTimeEntries] = useState<SharedTimeEntry[]>([]);
-  const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
-  const projects = useMemo(() => scenarioProjects.flatMap((project) => {
+  const projects = useMemo(() => selectWorkspaceProjects(state, state.session.activeWorkspaceId).map((project) => {
     const completion = completionRecords[project.id];
-    const scoped = state.projects.find((candidate) => candidate.id === project.id
-      && candidate.workspaceId === state.session.activeWorkspaceId);
-    if (!scoped) return [];
-    return [{
+    return {
       ...project,
-      deadline: applyDeliveryAgreement(scoped.deadline, getDeliveryAgreement(scoped)),
-      deadlineAt: getDeliveryAgreement(scoped).agreedDate ?? project.deadlineAt,
-      team: scoped.team,
+      deadline: applyDeliveryAgreement(project.deadline, getDeliveryAgreement(project)),
+      deadlineAt: getDeliveryAgreement(project).agreedDate ?? project.deadlineAt,
       timeEntries: [...project.timeEntries, ...sharedTimeEntries.filter((entry) => entry.projectId === project.id
         && !project.timeEntries.some((existing) => existing.id === entry.id)).map(toProjectTimeEntry)],
       status: completion ? "Completed" as const : project.status,
       stages: getProjectStages(project),
       deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
-    }];
-  }), [completionRecords, getDeliveryAgreement, getProjectStages, scenarioProjects, sharedTimeEntries, state.projects, state.session.activeWorkspaceId]);
+    };
+  }), [completionRecords, getDeliveryAgreement, getProjectStages, sharedTimeEntries, state]);
   const baseEngagements = useMemo(
     () => getFreelancerEngagements(projects, personId),
     [personId, projects],
@@ -738,7 +733,10 @@ function getFreelancerVideoPriority(
 }
 
 function formatDeadline(value: string) {
-  return new Intl.DateTimeFormat("en-AU", { timeZone: deliveryTimeZone, day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
+  const date = new Date(value);
+  return Number.isFinite(date.getTime())
+    ? new Intl.DateTimeFormat("en-AU", { timeZone: deliveryTimeZone, day: "numeric", month: "short", year: "numeric" }).format(date)
+    : "TBC";
 }
 
 function formatHours(value: number) {

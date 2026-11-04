@@ -22,8 +22,6 @@ type RoleRowProps = {
   onOpenEditor: () => void;
 };
 
-const teamReferenceDate = new Date("2026-06-25T09:00:00+10:00");
-
 export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor }: RoleRowProps) {
   const roleLabel = getSlotLabel(slot);
   const estimatedHours = getRoleEstimatedHours(slot);
@@ -42,7 +40,7 @@ export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor }: Role
             aria-label={`Open ${acceptedPerson.name}'s People profile`}
           >{acceptedPerson.name}</Link> : <span className="label-s-semibold">{roleLabel}</span>}
           <span className="team-overview-meta label-xs">
-            {acceptedPerson ? `${roleLabel} · ${acceptedPerson.personType}` : "Unassigned"} · {estimatedHours}h required
+            {acceptedPerson ? `${roleLabel} · ${acceptedPerson.personType}` : pendingInvitations.length > 0 ? "Awaiting response" : "Unassigned"} · {estimatedHours}h required
           </span>
           {acceptedPerson?.personType === "Studio Freelancer" && acceptedInvitation?.assignmentMethod === "direct" ? <span className="team-overview-meta label-xs">Assigned</span> : null}
         </div>
@@ -56,7 +54,7 @@ export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor }: Role
           {acceptedPerson ? "Change" : "Assign"}
         </Button> : null}
       </div>
-      {!acceptedPerson && pendingInvitations.length > 0 ? (
+      {pendingInvitations.length > 0 ? (
         <InvitationList invitations={pendingInvitations} people={people} roleHours={estimatedHours} showCosts={showCosts} />
       ) : null}
     </div>
@@ -68,7 +66,7 @@ export function TeamPersonAvatar({ person }: { person: TeamPerson }) {
 }
 
 function InvitationList({ invitations, people, roleHours, showCosts }: { invitations: Invitation[]; people: TeamPerson[]; roleHours: number; showCosts: boolean }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const id = useId();
 
   return (
@@ -132,7 +130,7 @@ function formatInvitationStatus(status: Invitation["status"]) {
 
 function formatSentTime(sentAt: string) {
   const sentDate = new Date(sentAt);
-  const daysAgo = Math.max(0, Math.round((teamReferenceDate.getTime() - sentDate.getTime()) / 86_400_000));
+  const daysAgo = Math.max(0, Math.floor((Date.now() - sentDate.getTime()) / 86_400_000));
 
   if (daysAgo === 0) {
     return "Sent today";

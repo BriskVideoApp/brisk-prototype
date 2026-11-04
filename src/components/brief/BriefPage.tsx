@@ -26,6 +26,7 @@ import {
   type RefObject,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
@@ -33,6 +34,7 @@ import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
@@ -70,12 +72,12 @@ import {
   type Logline,
 } from "@/data/brief";
 import { productionFlowStages } from "@/data/production-flow";
-import { getStudioBriefFieldOrder, type StudioBriefConfiguration } from "@/data/studio-onboard";
+import { getStudioBriefFieldOrder, showClientDeliveryDates, type StudioBriefConfiguration } from "@/data/studio-onboard";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { formatBriefDate, parseBriefDateValue } from "@/lib/brief-dates";
 import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
-import { ProjectDeadlineLink, useDeadlineDialog } from "@/components/project-timing/DeadlineDialogContext";
-import { briefDeliveryDate, formatDeliveryDate } from "@/data/project-delivery";
+import { useDeadlineDialog } from "@/components/project-timing/DeadlineDialogContext";
+import { briefDeliveryDate, deliveryAgreementSide, deliveryDateParts, getPendingDeliveryProposal, type DeliveryDateProposal, type ProjectDeliveryAgreement } from "@/data/project-delivery";
 import { BriefTimingSuggestion } from "@/components/project-timing/ProjectTimingNotice";
 
 type BriefPageProps = {
@@ -96,7 +98,6 @@ const briefStepFields: Partial<Record<BriefStepId, readonly BriefFieldId[]>> = {
   similarVideos: ["referenceVideos"],
   brandKit: ["brandKit"],
   contentProduction: ["liveFootage", "voiceover"],
-  deadline: ["deadline"],
   deliverablesTiming: ["deliverables"],
 };
 
@@ -139,7 +140,7 @@ type BriefAiSubmit = {
 const maxBriefWords = 1000;
 const landingIntroPlaceholder = "__landing_intro_placeholder__";
 const summaryMissingSelector =
-  ".brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-written-slot.is-guess, .brief-summary-page .brief-summary-static-chip.is-missing, .brief-summary-page .brief-summary-static-chip.is-guess";
+  ".brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-written-slot.is-guess, .brief-summary-page .brief-summary-static-chip.is-missing, .brief-summary-page .brief-summary-static-chip.is-guess, .brief-summary-page .brief-summary-deadline-value.is-missing, .brief-summary-page .brief-summary-deadline-value.is-guess";
 
 const placeholderStepCopy: Record<Exclude<BriefStepId, "basics" | "summary">, string> = {
   videoType: "The video format, production category and primary platform will be shaped here.",
@@ -199,12 +200,12 @@ const briefSectionIntros: Record<BriefStepId, BriefSectionIntroModel> = {
     tone: "deliverables",
   },
   deliverablesTiming: {
-    step: 8,
+    step: 7,
     title: "Deliverables",
     tone: "deliverables",
   },
   summary: {
-    step: 9,
+    step: 8,
     title: "Review your brief",
     tone: "summary",
   },
@@ -298,6 +299,7 @@ type DeliverableRow = {
   captions: boolean;
   captionOptions?: DeliverableCaptionOption[];
   deadline: string;
+  usesProjectDeadline?: boolean;
   isMain: boolean;
 };
 
@@ -603,8 +605,9 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const currentStudioName = useStudioCompanyName();
   const studioName = providedStudioName ?? currentStudioName;
   const { selectedRole } = usePrototypeRole();
-  const { submitBriefTiming, getDeliveryAgreement } = useProjectTiming();
+  const { submitBriefTiming, getDeliveryAgreement, getVersionDeliveryAgreement } = useProjectTiming();
   const openDeadline = useDeadlineDialog();
+  const { completionRecords } = useProjectCompletion();
   const { publishStageReviewFollowUp } = useNotificationInbox();
   const { openInvitePerson } = useInvitations();
   const { state, hasHydrated } = usePrototypeState();
@@ -630,9 +633,10 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const auditStorageKey = `brisk-brief-action-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const isBriefApproved = briefStageStatus.state === "done";
   const [briefMode, setBriefMode] = useBriefAiState(project.id, "mode", () => clientHasBriefToApprove ? "steps" : "landing");
-  const [activeStepId, setActiveStepId] = useBriefAiState(project.id, "step", () => clientHasBriefToApprove
+  const [savedActiveStepId, setActiveStepId] = useBriefAiState(project.id, "step", () => clientHasBriefToApprove
     ? "summary"
     : getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields)[0].id);
+  const activeStepId = savedActiveStepId === "deadline" ? "deliverablesTiming" : savedActiveStepId;
   const { regionRef: stepRegionRef, selectStep } = useBriefStepNavigation(activeStepId, setActiveStepId);
   const [briefFields, setBriefFields] = useBriefAiState(project.id, "fields", () => cloneBriefFields(initialFields ?? initialBriefFields));
   const [searchFieldFocus, setSearchFieldFocus] = useState<BriefFieldId | null>(null);
@@ -665,11 +669,66 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       title: field.label, text: field.value, meta: `${project.clientName} · ${project.name}`, projectId: project.id,
       href: `/projects/${project.id}/stages/brief?searchField=${field.id}`, onSelect: () => revealSearchField(field.id) })) });
   const timingRequestedDate = briefDeliveryDate(briefFields);
-  const finalDeadline = getDeliveryAgreement(project).agreedDate;
-  const timingSuggestion = finalDeadline ? <p className="brief-timing-suggestion label-s">Final delivery · {formatDeliveryDate(finalDeadline, false)} · <ProjectDeadlineLink projectId={project.id} className="timing-review-deadline-link label-s-semibold">{selectedRole === "Customer" ? "Propose a change" : "Change deadline"}</ProjectDeadlineLink></p>
+  const deliveryAgreement = getDeliveryAgreement(project);
+  const finalDeadline = deliveryAgreement.agreedDate ?? undefined;
+  const pendingDeliveryProposal = project.status === "Completed" || project.status === "Archived" || completionRecords[project.id]
+    ? null : getPendingDeliveryProposal(deliveryAgreement);
+  const versionAgreements = Object.fromEntries(parseDeliverables(briefFields.deliverables.value)
+    .filter((row) => !row.isMain)
+    .map((row) => {
+      const agreement = getVersionDeliveryAgreement(project, row.id, row.name, row.deadline);
+      return [row.id, project.status === "Completed" || project.status === "Archived" || completionRecords[project.id]
+        ? { ...agreement, proposals: agreement.proposals.filter((proposal) => proposal.status !== "pending") } : agreement];
+    })) as Record<string, ProjectDeliveryAgreement>;
+  const studioBriefConfiguration = state.studioBriefTemplates.find((template) => template.workspaceId === state.session.activeWorkspaceId)?.configuration;
+  const showDeliveryDates = selectedRole !== "Customer" || showClientDeliveryDates(studioBriefConfiguration ?? briefConfiguration);
+  const deadlineReadOnly = project.status === "Completed" || project.status === "Archived" || Boolean(completionRecords[project.id]) || !canActOnProject(viewer, project, state, "approve");
+  const changeFinalDeadline = (date: string) => {
+    if (deadlineReadOnly || !showDeliveryDates) return;
+    if (finalDeadline) {
+      if (date && date !== deliveryDateParts(finalDeadline).date) openDeadline(project.id, { date });
+    } else {
+      const rows = parseDeliverables(briefFieldsRef.current.deliverables.value);
+      updateBriefField("deliverables", serialiseDeliverables(rows.map((row) => row.isMain ? { ...row, deadline: date, usesProjectDeadline: false } : row)));
+    }
+  };
+  function changeVersionDeadline(rowId: string, date: string) {
+    const row = parseDeliverables(briefFieldsRef.current.deliverables.value).find((entry) => entry.id === rowId && !entry.isMain);
+    if (!row || deadlineReadOnly || !showDeliveryDates) return;
+    if (!date) { updateVersionAgreedDate(rowId, ""); return; }
+    const agreement = getVersionDeliveryAgreement(project, row.id, row.name, row.deadline);
+    if (date === deliveryDateParts(agreement.agreedDate ?? "").date) {
+      openDeadline(project.id, { version: { id: row.id, name: row.name, date: row.deadline,
+        onAgreedDateChange: (next) => updateVersionAgreedDate(row.id, next) } });
+      return;
+    }
+    openDeadline(project.id, { date, version: { id: row.id, name: row.name, date: row.deadline,
+      onAgreedDateChange: (next) => updateVersionAgreedDate(row.id, next) } });
+  }
+  function updateVersionAgreedDate(rowId: string, date: string) {
+    const rows = parseDeliverables(briefFieldsRef.current.deliverables.value);
+    if (!rows.some((row) => row.id === rowId && !row.isMain)) return;
+    updateBriefField("deliverables", serialiseDeliverables(rows.map((row) => row.id === rowId
+      ? { ...row, deadline: date, usesProjectDeadline: false } : row)));
+  }
+  const openedVersionDeadlineRef = useRef<string | null>(null);
+  const requestedVersionDeadline = searchParams.get("versionDeadline");
+  useEffect(() => {
+    if (!requestedVersionDeadline) { openedVersionDeadlineRef.current = null; return; }
+    const requestKey = `${project.id}:${requestedVersionDeadline}`;
+    if (!hasHydrated || openedVersionDeadlineRef.current === requestKey) return;
+    const row = parseDeliverables(briefFields.deliverables.value).find((entry) => entry.id === requestedVersionDeadline && !entry.isMain);
+    if (!row) return;
+    openedVersionDeadlineRef.current = requestKey;
+    setBriefMode("steps"); setActiveStepId("summary");
+    openDeadline(project.id, { version: { id: row.id, name: row.name, date: row.deadline,
+      onAgreedDateChange: (next) => updateVersionAgreedDate(row.id, next) } });
+  // The URL identifies one request. Subsequent Brief edits should not reopen its dialog.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestedVersionDeadline, project.id, hasHydrated, briefFields.deliverables.value]);
+  const timingSuggestion = finalDeadline || !showDeliveryDates ? undefined
     : <BriefTimingSuggestion projectId={project.id} requestedDate={timingRequestedDate} />;
   const briefFieldsRef = useRef(briefFields);
-  const summaryMissingActiveIndexRef = useRef(-1);
   const [logline, setLogline] = useBriefAiState(project.id, "logline", { text: "", status: "not_generated" });
   const [chatMessages, setChatMessages] = useBriefAiState(project.id, "messages", []);
   const [hasStartedClarifying, setHasStartedClarifying] = useBriefAiState(project.id, "started", false);
@@ -695,7 +754,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     ? "Animation"
     : productionFlowStages[nextStage].label;
   const isSummaryStep = briefMode === "steps" && activeStepId === "summary";
-  const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName);
+  const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName, finalDeadline, showDeliveryDates);
   const hasBriefContent = Object.values(briefFields).some((field) => field.value.trim());
   const canSendBrief = canActOnProject(viewer, project, state, "send", "brief");
   const canApproveBrief = canActOnProject(viewer, project, state, "approve", "brief");
@@ -738,10 +797,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     }
   }, [auditStorageKey]);
 
-  useEffect(() => {
-    summaryMissingActiveIndexRef.current = -1;
-  }, [summaryMissingCount]);
-
   useEffect(() => () => {
     if (approvalNavigationTimeoutRef.current !== null) {
       window.clearTimeout(approvalNavigationTimeoutRef.current);
@@ -752,15 +807,14 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     let nextFields = typeof update === "function" ? update(briefFieldsRef.current) : update;
     const previousFields = briefFieldsRef.current;
     const requestedDate = briefDeliveryDate(nextFields);
-    if (finalDeadline && (requestedDate !== briefDeliveryDate(previousFields) || nextFields.deadline.value !== previousFields.deadline.value)) {
-      const proposed = requestedDate !== briefDeliveryDate(previousFields) ? requestedDate : nextFields.deadline.value;
-      openDeadline(project.id, { date: proposed || undefined });
-      const rows = parseDeliverables(nextFields.deliverables.value, previousFields.deadline.value);
-      const mainIndex = Math.max(0, rows.findIndex((row) => row.isMain));
-      nextFields = { ...nextFields, deadline: previousFields.deadline,
-        deliverables: nextFields.deliverables.value === previousFields.deliverables.value ? nextFields.deliverables
-          : { ...nextFields.deliverables, value: JSON.stringify(rows.map((row, index) => index === mainIndex
-            ? { ...row, deadline: briefDeliveryDate(previousFields) } : row)) } };
+    const previousDate = briefDeliveryDate(previousFields);
+    if (finalDeadline && requestedDate !== previousDate) {
+      if (!deadlineReadOnly && showDeliveryDates) openDeadline(project.id, { date: requestedDate || undefined, view: "calendar" });
+      nextFields = { ...nextFields, deadline: previousFields.deadline, deliverables: {
+        ...nextFields.deliverables,
+        value: serialiseDeliverables(parseDeliverables(nextFields.deliverables.value).map((row) => row.isMain
+          ? { ...row, deadline: previousDate } : row)),
+      } };
     }
     if (isBriefApproved && Object.keys(nextFields).some((key) => {
       const fieldId = key as BriefFieldId;
@@ -1226,27 +1280,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     selectStep(stepId);
   }
 
-  function jumpToSummaryMissing(direction: "previous" | "next") {
-    const missingItems = Array.from(document.querySelectorAll<HTMLElement>(summaryMissingSelector));
-
-    if (missingItems.length === 0) {
-      return;
-    }
-
-    const currentIndex = summaryMissingActiveIndexRef.current;
-    const nextIndex =
-      currentIndex < 0
-        ? direction === "next" ? 0 : missingItems.length - 1
-        : direction === "next"
-          ? (currentIndex + 1) % missingItems.length
-          : (currentIndex - 1 + missingItems.length) % missingItems.length;
-    const nextMissing = missingItems[nextIndex];
-    summaryMissingActiveIndexRef.current = nextIndex;
-
-    nextMissing.scrollIntoView({ behavior: "smooth", block: "center" });
-    nextMissing.focus();
-  }
-
   const canUseBriefAssistant = canViewProject(viewer, project, state)
     && (selectedRole !== "Studio Freelancer" || canActOnProject(viewer, project, state, "edit", "brief"));
   useEffect(() => {
@@ -1438,19 +1471,16 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
                 studioName={studioName}
               />
             ) : null}
-            {activeStepId === "deadline" ? (
-              <BriefDeadlineSection
-                timingSuggestion={timingSuggestion}
-                intro={activeStepIntro}
-                excludedFieldIds={briefConfiguration?.excludedFieldIds}
-                fields={briefFields}
-                onConfirmField={confirmBriefField}
-                onFieldChange={updateBriefField}
-                onRegenerateField={regenerateBriefField}
-              />
-            ) : null}
             {activeStepId === "deliverablesTiming" ? (
               <BriefDeliverablesSection
+                agreedDeadline={finalDeadline}
+                showDeliveryDates={showDeliveryDates}
+                deadlineReadOnly={deadlineReadOnly}
+                onDeadlineChange={changeFinalDeadline}
+                pendingProposal={pendingDeliveryProposal}
+                versionAgreements={versionAgreements}
+                onVersionDeadlineChange={changeVersionDeadline}
+                timingSuggestion={timingSuggestion}
                 intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
@@ -1465,7 +1495,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             activeStepId !== "similarVideos" &&
             activeStepId !== "brandKit" &&
             activeStepId !== "contentProduction" &&
-            activeStepId !== "deadline" &&
             activeStepId !== "deliverablesTiming" &&
             activeStepId !== "summary" ? (
               <BriefPlaceholderSection stepLabel={activeStep.label} copy={placeholderStepCopy[activeStepId]} />
@@ -1473,13 +1502,19 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             {activeStepId === "summary" ? (
               <BriefSummaryPage
                 timingSuggestion={timingSuggestion}
+                agreedDeadline={finalDeadline}
+                showDeliveryDates={showDeliveryDates}
+                deadlineReadOnly={deadlineReadOnly}
+                onDeadlineChange={changeFinalDeadline}
+                pendingProposal={pendingDeliveryProposal}
+                versionAgreements={versionAgreements}
+                onVersionDeadlineChange={changeVersionDeadline}
                 intro={activeStepIntro}
                 fields={briefFields}
                 logline={logline}
                 summaryMissingCount={summaryMissingCount}
                 approvalGuidance={approvalGuidance}
                 onConfirmField={confirmBriefField}
-                onCycleSummaryMissing={jumpToSummaryMissing}
                 onFieldChange={updateBriefField}
                 onGoToStep={selectStep}
                 studioName={studioName}
@@ -1514,6 +1549,8 @@ export function BriefGuidedExperience({
   onFieldsChange,
   onToggleFieldExcluded,
   readOnly = false,
+  showDeliveryDates = true,
+  onDeliveryDatesVisibilityChange,
   studioName,
   videoTypeAction,
   videoTypeIds,
@@ -1530,12 +1567,14 @@ export function BriefGuidedExperience({
   onFieldsChange?: (fields: BriefFields) => void;
   onToggleFieldExcluded?: (fieldId: BriefFieldId) => void;
   readOnly?: boolean;
+  showDeliveryDates?: boolean;
+  onDeliveryDatesVisibilityChange?: (show: boolean) => void;
   studioName: string;
   videoTypeAction?: ReactNode;
   videoTypeIds: readonly BriefVideoTypeId[];
   videoTypeOptionIds?: readonly BriefVideoTypeId[];
 }) {
-  const [activeStepId, setActiveStepId] = useState<BriefStepId>(initialStepId);
+  const [activeStepId, setActiveStepId] = useState<BriefStepId>(initialStepId === "deadline" ? "deliverablesTiming" : initialStepId);
   const { regionRef: stepRegionRef, selectStep } = useBriefStepNavigation(activeStepId, setActiveStepId);
   const [logline, setLogline] = useState<Logline>({ text: "", status: "not_generated" });
   const activeStepIndex = briefSteps.findIndex((step) => step.id === activeStepId);
@@ -1550,7 +1589,7 @@ export function BriefGuidedExperience({
       ? isLiveFootageValueComplete(value)
       : Boolean(value.trim());
 
-    onFieldsChange({
+    const nextFields: BriefFields = {
       ...fields,
       [fieldId]: {
         ...fields[fieldId],
@@ -1558,7 +1597,8 @@ export function BriefGuidedExperience({
         confidence: hasCompleteValue ? "confident" : "missing",
         source: hasCompleteValue ? "manual_edit" : "missing",
       },
-    });
+    };
+    onFieldsChange(nextFields);
   }
 
   function confirmField(fieldId: BriefFieldId) {
@@ -1613,15 +1653,14 @@ export function BriefGuidedExperience({
           {activeStepId === "contentProduction" ? (
             <BriefContentProductionSection clientName={clientName} excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.contentProduction} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} studioName={studioName} />
           ) : null}
-          {activeStepId === "deadline" ? (
-            <BriefDeadlineSection excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.deadline} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
-          ) : null}
           {activeStepId === "deliverablesTiming" ? (
-            <BriefDeliverablesSection excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.deliverablesTiming} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
+            <BriefDeliverablesSection showDeliveryDates={showDeliveryDates} deadlineReadOnly={readOnly} onDeliveryDatesVisibilityChange={onDeliveryDatesVisibilityChange} excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.deliverablesTiming} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
           ) : null}
           {activeStepId === "summary" ? (
             <BriefSummaryPage
               fields={fields}
+              showDeliveryDates={showDeliveryDates}
+              deadlineReadOnly={readOnly}
               intro={briefGuidedExperienceIntros.summary}
               logline={logline}
               onConfirmField={confirmField}
@@ -2736,18 +2775,19 @@ function BriefPurposeSelect({ excludedOptions = [], onChange, value }: {
 /** Shared Brief composition: a preset dropdown with editable custom wording. */
 function BriefPresetPicker({ ariaLabel, placeholder, inputLabel, inputPlaceholder, inputId,
   presetValues, options, value, onChange, editablePresets = false,
-  customOptionValue = "Something else", customEmptyValue = customOptionValue,
+  customOptionValue = "Something else", customEmptyValue = customOptionValue, autoOpen = false,
 }: {
   ariaLabel: string; placeholder: string; inputLabel: string; inputPlaceholder: string; inputId?: string;
   presetValues: readonly string[]; options: readonly BriskSelectOption[];
   value: string; onChange: (value: string) => void; editablePresets?: boolean;
-  customOptionValue?: string; customEmptyValue?: string;
+  customOptionValue?: string; customEmptyValue?: string; autoOpen?: boolean;
 }) {
   const [customRequested, setCustomRequested] = useState(false);
   const isPreset = value !== customOptionValue && presetValues.includes(value);
   const isCustom = value === customOptionValue || (!isPreset && (Boolean(value) || customRequested));
   return <div className="brief-purpose-picker">
     <BriskSelect ariaLabel={ariaLabel} id={inputId ? `${inputId}-preset` : undefined}
+      autoOpen={autoOpen}
       clearable={false} placeholder={placeholder} value={isCustom ? customOptionValue : value}
       options={options} onChange={(nextValue) => {
         const custom = nextValue === customOptionValue;
@@ -2840,9 +2880,11 @@ function BriefCallToActionSelect({
 }
 
 function BriefAudienceList({
+  autoOpen = false,
   onChange,
   value,
 }: {
+  autoOpen?: boolean;
   onChange: (value: string) => void;
   value: string;
 }) {
@@ -2875,6 +2917,7 @@ function BriefAudienceList({
           <div className="brief-audience-item" key={`${label}-${index}`}>
             <div className="brief-audience-input-wrap">
               <BriefPresetPicker
+                autoOpen={autoOpen && index === 0}
                 ariaLabel={label} placeholder={`Choose ${label.toLowerCase()}`}
                 inputId={`brief-audience-${index}`} inputLabel={`${label} details`}
                 inputPlaceholder={getAudiencePlaceholder(index)}
@@ -3060,75 +3103,42 @@ function BriefContentProductionSection({
   );
 }
 
-function BriefDeadlineSection({
+function BriefDeliverablesSection({
+  agreedDeadline,
+  pendingProposal,
+  versionAgreements,
+  onVersionDeadlineChange,
+  deadlineReadOnly = false,
+  showDeliveryDates = true,
+  onDeliveryDatesVisibilityChange,
   excludedFieldIds = [],
   fields,
-  intro = briefSectionIntros.deadline,
+  intro = briefSectionIntros.deliverablesTiming,
   onConfirmField,
+  onDeadlineChange,
   onFieldChange,
   onRegenerateField,
   onToggleFieldExcluded,
   summaryMode = false,
   timingSuggestion,
 }: {
+  agreedDeadline?: string;
+  pendingProposal?: DeliveryDateProposal | null;
+  versionAgreements?: Record<string, ProjectDeliveryAgreement>;
+  onVersionDeadlineChange?: (rowId: string, date: string) => void;
+  deadlineReadOnly?: boolean;
+  showDeliveryDates?: boolean;
+  onDeliveryDatesVisibilityChange?: (show: boolean) => void;
   fields: BriefFields;
   intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
+  onDeadlineChange?: (date: string) => void;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
   timingSuggestion?: ReactNode;
 } & BriefFieldExclusionProps) {
-  return (
-    <section
-      className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
-      aria-label={summaryMode ? undefined : "Deadline"}
-      aria-labelledby={summaryMode ? "brief-deadline-title" : "brief-deadline-step-title"}
-    >
-      {summaryMode ? (
-        <BriefSectionHeader
-          hideCopy
-          hideEyebrow
-          titleId="brief-deadline-title"
-          title="Deadline"
-        />
-      ) : (
-        <BriefSectionIntro
-          intro={intro}
-          titleId="brief-deadline-step-title"
-        />
-      )}
-      <div className="brief-field-list">
-        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.deadline} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
-          <BriefDeadlineField
-            inline={!summaryMode}
-            value={fields.deadline.value}
-            onChange={(value) => onFieldChange("deadline", value)}
-          />
-        </BriefFieldRow>
-        {timingSuggestion}
-      </div>
-    </section>
-  );
-}
-
-function BriefDeliverablesSection({
-  excludedFieldIds = [],
-  fields,
-  intro = briefSectionIntros.deliverablesTiming,
-  onConfirmField,
-  onFieldChange,
-  onRegenerateField,
-  onToggleFieldExcluded,
-  summaryMode = false,
-}: {
-  fields: BriefFields;
-  intro?: BriefSectionIntroModel;
-  onConfirmField: (fieldId: BriefFieldId) => void;
-  onFieldChange: (fieldId: BriefFieldId, value: string) => void;
-  onRegenerateField: (fieldId: BriefFieldId) => void;
-  summaryMode?: boolean;
-} & BriefFieldExclusionProps) {
+  const finalDate = agreedDeadline ? deliveryDateParts(agreedDeadline).date : briefDeliveryDate(fields);
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
@@ -3148,15 +3158,26 @@ function BriefDeliverablesSection({
           titleId="brief-deliverables-step-title"
         />
       )}
+      <BriefFieldOrderContext.Provider value={null}>
       <div className="brief-field-list">
+        {onDeliveryDatesVisibilityChange ? <Checkbox label="Show delivery dates to Clients" checked={showDeliveryDates} onChange={onDeliveryDatesVisibilityChange} /> : null}
         <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.deliverables} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefDeliverablesTable
-            fallbackDeadline={fields.deadline.value}
+            mainDeadline={finalDate}
+            pendingProposal={pendingProposal}
+            versionAgreements={versionAgreements}
+            onVersionDeadlineChange={onVersionDeadlineChange}
+            showDeliveryDates={showDeliveryDates}
+            onMainDeadlineChange={onDeadlineChange}
+            mainDeadlineEstablished={Boolean(agreedDeadline)}
+            deadlineReadOnly={deadlineReadOnly}
             value={fields.deliverables.value}
             onChange={(value) => onFieldChange("deliverables", value)}
           />
+          {showDeliveryDates ? timingSuggestion : null}
         </BriefFieldRow>
       </div>
+      </BriefFieldOrderContext.Provider>
     </section>
   );
 }
@@ -3182,15 +3203,29 @@ function BriefTableViewport({ children, className, label }: { children: ReactNod
 }
 
 function BriefDeliverablesTable({
-  fallbackDeadline,
+  deadlineReadOnly = false,
+  showDeliveryDates,
+  mainDeadline,
+  pendingProposal,
+  versionAgreements,
+  onVersionDeadlineChange,
+  mainDeadlineEstablished,
+  onMainDeadlineChange,
   onChange,
   value,
 }: {
-  fallbackDeadline: string;
+  deadlineReadOnly?: boolean;
+  showDeliveryDates: boolean;
+  mainDeadline: string;
+  pendingProposal?: DeliveryDateProposal | null;
+  versionAgreements?: Record<string, ProjectDeliveryAgreement>;
+  onVersionDeadlineChange?: (rowId: string, date: string) => void;
+  mainDeadlineEstablished: boolean;
+  onMainDeadlineChange?: (date: string) => void;
   onChange: (value: string) => void;
   value: string;
 }) {
-  const rows = parseDeliverables(value, fallbackDeadline);
+  const rows = parseDeliverables(value, mainDeadline);
   const [openNotesRowIds, setOpenNotesRowIds] = useState<string[]>([]);
 
 
@@ -3203,11 +3238,10 @@ function BriefDeliverablesTable({
   }
 
   function addRow() {
-    const previousRow = rows[rows.length - 1];
     const rowNames = ["Platform cutdown", "Square cut", "Shorts cut", "Paid social cut"];
     const nextName = rowNames[Math.max(0, rows.length - 1)] ?? `Version ${rows.length + 1}`;
 
-    updateRows([...rows, createBlankDeliverableRow(nextName, previousRow?.deadline ?? fallbackDeadline)]);
+    updateRows([...rows, createBlankDeliverableRow(nextName)]);
   }
 
   function duplicateRow(row: DeliverableRow) {
@@ -3218,6 +3252,8 @@ function BriefDeliverablesTable({
         id: `deliverable-${Date.now()}`,
         isMain: false,
         name: row.name ? `${row.name} copy` : "Version copy",
+        deadline: "",
+        usesProjectDeadline: false,
       },
     ]);
   }
@@ -3235,12 +3271,12 @@ function BriefDeliverablesTable({
   return (
     <div className="brief-deliverables-control">
       <BriefTableViewport className="brief-deliverables-table-wrap" label="Deliverable specifications">
-        <table className="brief-deliverables-table">
+        <table className={`brief-deliverables-table brief-deliverables-table-input${showDeliveryDates ? " has-delivery-dates" : ""}`}>
           <thead>
             <tr>
               <BriefDeliverablesHeader title="Deliverable" />
+              {showDeliveryDates ? <BriefDeliverablesHeader title="Delivery date" /> : null}
               <BriefDeliverablesHeader title="Duration" />
-              <BriefDeliverablesHeader title="Deadline" />
               <BriefDeliverablesHeader title="Platform" />
               <BriefDeliverablesHeader title="Format" />
               <BriefDeliverablesHeader title="Captions" />
@@ -3274,16 +3310,21 @@ function BriefDeliverablesTable({
                     />
                   ) : null}
                 </td>
+                {showDeliveryDates ? <td className="brief-deliverable-date-cell"><div className="brief-delivery-date-stack"><BriefVersionDeadline name={row.name}
+                  value={row.isMain ? mainDeadline : versionAgreements?.[row.id]?.agreedDate ? deliveryDateParts(versionAgreements[row.id].agreedDate!).date : row.deadline}
+                  readOnly={deadlineReadOnly} allowClear={row.isMain ? !mainDeadlineEstablished : !onVersionDeadlineChange || !row.deadline && !versionAgreements?.[row.id]?.agreedDate}
+                  onChange={(deadline) => { if (deadlineReadOnly) return; if (row.isMain && onMainDeadlineChange) onMainDeadlineChange(deadline);
+                    else if (onVersionDeadlineChange) onVersionDeadlineChange(row.id, deadline);
+                    else updateRow(row.id, { deadline, usesProjectDeadline: false }); }} />
+                  {row.isMain && pendingProposal ? <BriefPendingDeliveryStatus proposal={pendingProposal} /> : null}
+                  {!row.isMain && versionAgreements?.[row.id] && getPendingDeliveryProposal(versionAgreements[row.id])
+                    ? <BriefPendingDeliveryStatus proposal={getPendingDeliveryProposal(versionAgreements[row.id])!}
+                      onReview={!deadlineReadOnly ? () => onVersionDeadlineChange?.(row.id, deliveryDateParts(versionAgreements[row.id].agreedDate ?? "").date) : undefined} /> : null}
+                </div></td> : null}
                 <td>
                   <BriefDeliverableDurationControl
                     row={row}
                     onChange={(updates) => updateRow(row.id, updates)}
-                  />
-                </td>
-                <td>
-                  <BriefDeliverableDeadlineControl
-                    value={row.deadline}
-                    onChange={(deadline) => updateRow(row.id, { deadline })}
                   />
                 </td>
                 <td>
@@ -3311,7 +3352,7 @@ function BriefDeliverablesTable({
                       { value: "duplicate", label: "Duplicate" },
                       ...(!row.isMain ? [{ value: "delete", label: "Delete", tone: "danger" as const }] : []),
                     ]}
-                    actionTrigger={(props) => <IconButton {...props} size="S" aria-label={`Open menu for ${row.name || "version"}`}><DsIcon name="dots-three" size={14} /></IconButton>}
+                    actionTrigger={(props) => <IconButton {...props} size="S" tooltipAlign="end" aria-label={`Open menu for ${row.name || "version"}`}><DsIcon name="dots-three" size={14} /></IconButton>}
                     onChange={(action) => { if (action === "notes") toggleNotes(row.id); else if (action === "duplicate") duplicateRow(row); else if (action === "delete") removeRow(row.id); }}
                   />
                 </td>
@@ -3406,41 +3447,27 @@ function BriefDeliverableCaptionsControl({ onChange, row }: { onChange: (updates
     }} />;
 }
 
-function BriefDeliverableDeadlineControl({
-  onChange,
-  value,
-}: {
-  onChange: (value: string) => void;
-  value: string;
+function BriefVersionDeadline({ name, value, readOnly, allowClear = true, variant = "field", onChange }: {
+  name: string; value: string; readOnly?: boolean; allowClear?: boolean; variant?: "field" | "summary"; onChange: (date: string) => void;
 }) {
-  return (
-    <div className="brief-deliverable-deadline">
-      <BriskDatePicker
-        ariaLabel="Deliverable deadline"
-        placeholder="Choose date"
-        value={value}
-        variant="field"
-        onChange={onChange}
-      />
-    </div>
-  );
+  return <div className={`brief-version-deadline${variant === "summary" ? ` brief-summary-deadline-value${!value ? " is-missing" : ""}` : ""}`}>
+    {readOnly ? <span className="label-xs-semibold">{formatBriefDate(value) || "TBC"}</span> :
+      <BriskDatePicker ariaLabel={`${name || "Version"} delivery date`} placeholder="TBC" value={value} variant={variant}
+        allowClear={allowClear} displayLabel={value ? formatBriefShortDate(value) : undefined} portalToBody popoverAlign="end" popoverSize="compact" onChange={onChange} />}
+  </div>;
 }
 
-function BriefDeadlineField({
-  inline = false,
-  onChange,
-  value,
-}: {
-  inline?: boolean;
-  onChange: (value: string) => void;
-  value: string;
-}) {
-  return (
-    <div className="brief-deadline-control">
-      <BriskDatePicker ariaLabel="Deadline" inline={inline} placeholder="Choose date" value={value} variant="field" onChange={onChange} />
-    </div>
-  );
+function BriefPendingDeliveryStatus({ proposal, onReview }: { proposal: DeliveryDateProposal; onReview?: () => void }) {
+  const date = formatBriefShortDate(deliveryDateParts(proposal.date).date);
+  const awaiting = deliveryAgreementSide(proposal) === "Customer" ? "Client" : "Studio";
+  return <span className="brief-pending-delivery-status label-xs" role="status"
+    aria-label={`Proposed delivery date ${date}, awaiting ${awaiting} approval`}>
+    <span>Proposed {date}</span>
+    <span className="brief-pending-delivery-chip label-xs-semibold">Awaiting {awaiting}</span>
+    {onReview ? <button type="button" className="timing-review-deadline-link label-xs-semibold" onClick={onReview}>Review proposal</button> : null}
+  </span>;
 }
+
 
 function BriefLiveFootageToggle({
   clientName,
@@ -4317,25 +4344,24 @@ function formatDeliverableCaptionSummary(row: DeliverableRow) {
   return getDeliverableCaptionOptions(row).join(", ");
 }
 
-function parseDeliverables(value: string, fallbackDeadline = ""): DeliverableRow[] {
+function parseDeliverables(value: string, legacyMainDeadline = ""): DeliverableRow[] {
   if (!value.trim()) {
-    return [createMainDeliverableRow(fallbackDeadline)];
+    return [createMainDeliverableRow(legacyMainDeadline)];
   }
 
   try {
     const parsedValue: unknown = JSON.parse(value);
 
     if (!Array.isArray(parsedValue)) {
-      return [createMainDeliverableRow(fallbackDeadline)];
+      return [createMainDeliverableRow(legacyMainDeadline)];
     }
 
-    const parsedRows = parsedValue
-      .filter(isDeliverableRow)
-      .map((row, rowIndex) => normaliseDeliverableRow(row, fallbackDeadline, rowIndex));
+    const validRows = parsedValue.filter(isDeliverableRow);
+    const parsedRows = validRows.map((row, rowIndex) => normaliseDeliverableRow(row, rowIndex, legacyMainDeadline));
 
-    return parsedRows.length > 0 ? parsedRows : [createMainDeliverableRow(fallbackDeadline)];
+    return parsedRows.length > 0 ? parsedRows : [createMainDeliverableRow(legacyMainDeadline)];
   } catch {
-    return [createMainDeliverableRow(fallbackDeadline)];
+    return [createMainDeliverableRow(legacyMainDeadline)];
   }
 }
 
@@ -4368,11 +4394,12 @@ function isDeliverableRow(value: unknown): value is DeliverableRow {
       (Array.isArray(maybeRow.captionOptions) &&
         maybeRow.captionOptions.every((captionOption) => typeof captionOption === "string"))) &&
     (typeof maybeRow.deadline === "undefined" || typeof maybeRow.deadline === "string") &&
+    (typeof maybeRow.usesProjectDeadline === "undefined" || typeof maybeRow.usesProjectDeadline === "boolean") &&
     typeof maybeRow.isMain === "boolean"
   );
 }
 
-function normaliseDeliverableRow(row: DeliverableRow, fallbackDeadline = "", rowIndex = 0): DeliverableRow {
+function normaliseDeliverableRow(row: DeliverableRow, rowIndex = 0, legacyMainDeadline = ""): DeliverableRow {
   const captionOptions = getDeliverableCaptionOptions(row);
 
   return {
@@ -4380,7 +4407,8 @@ function normaliseDeliverableRow(row: DeliverableRow, fallbackDeadline = "", row
     captionOptions,
     captions: captionOptions.some((captionOption) => captionOption !== "None"),
     notes: row.notes ?? "",
-    deadline: row.deadline || fallbackDeadline,
+    deadline: row.deadline || (row.isMain && row.usesProjectDeadline !== false ? legacyMainDeadline : ""),
+    usesProjectDeadline: false,
     name: row.name || (rowIndex === 0 ? "Main Video" : `Version ${rowIndex + 1}`),
   };
 }
@@ -4400,6 +4428,7 @@ function createMainDeliverableRow(deadline = ""): DeliverableRow {
     captions: true,
     captionOptions: ["Baked in captions"],
     deadline,
+    usesProjectDeadline: false,
     isMain: true,
   };
 }
@@ -4419,6 +4448,7 @@ function createBlankDeliverableRow(name = "Platform cutdown", deadline = ""): De
     captions: true,
     captionOptions: ["Baked in captions"],
     deadline,
+    usesProjectDeadline: false,
     isMain: false,
   };
 }
@@ -4431,6 +4461,7 @@ function getMockReferenceTags(source: string) {
 
 function BriefFieldRow({
   canEditOptions = false,
+  hideStatus = false,
   children,
   excludedFieldIds = [],
   field,
@@ -4441,6 +4472,7 @@ function BriefFieldRow({
   onToggleFieldExcluded,
 }: {
   canEditOptions?: boolean;
+  hideStatus?: boolean;
   children: ReactNode;
   excludedFieldIds?: readonly BriefFieldId[];
   field: BriefField;
@@ -4485,7 +4517,7 @@ function BriefFieldRow({
                 {isExcluded ? "Restore" : "Exclude"}
               </Button>
             </>
-          ) : (
+          ) : hideStatus ? null : (
             <BriefFieldStatusDot field={field} onEdit={focusFieldControl} onRegenerate={onRegenerate} />
           )}
         </div>
@@ -4569,11 +4601,17 @@ function BriefPlaceholderSection({ copy, stepLabel }: { copy: string; stepLabel:
 }
 
 function BriefSummaryPage({
+  agreedDeadline,
+  pendingProposal,
+  versionAgreements,
+  onVersionDeadlineChange,
   fields,
   intro = briefSectionIntros.summary,
   logline,
   onConfirmField,
-  onCycleSummaryMissing,
+  onDeadlineChange,
+  deadlineReadOnly = false,
+  showDeliveryDates = true,
   onFieldChange,
   onGoToStep,
   studioName,
@@ -4581,11 +4619,17 @@ function BriefSummaryPage({
   timingSuggestion,
   approvalGuidance,
 }: {
+  agreedDeadline?: string;
+  pendingProposal?: DeliveryDateProposal | null;
+  versionAgreements?: Record<string, ProjectDeliveryAgreement>;
+  onVersionDeadlineChange?: (rowId: string, date: string) => void;
   fields: BriefFields;
   intro?: BriefSectionIntroModel;
   logline: Logline;
   onConfirmField: (fieldId: BriefFieldId) => void;
-  onCycleSummaryMissing?: (direction: "previous" | "next") => void;
+  onDeadlineChange?: (date: string) => void;
+  deadlineReadOnly?: boolean;
+  showDeliveryDates?: boolean;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onGoToStep: (stepId: BriefStepId) => void;
   studioName: string;
@@ -4596,8 +4640,48 @@ function BriefSummaryPage({
   const [editingFieldId, setEditingFieldId] = useState<BriefSummaryEditTarget | null>(null);
   const [editingDeliverableCell, setEditingDeliverableCell] = useState<string | null>(null);
   const deliverableRows = parseDeliverables(fields.deliverables.value, fields.deadline.value);
-  const primaryDeliverable = deliverableRows[0] ?? createMainDeliverableRow(fields.deadline.value);
-  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable, studioName);
+  const primaryDeliverable = deliverableRows.find((row) => row.isMain) ?? deliverableRows[0] ?? createMainDeliverableRow();
+  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable, studioName, agreedDeadline);
+  const summaryRef = useRef<HTMLElement | null>(null);
+  const activeReviewRef = useRef<HTMLElement | null>(null);
+  const [reviewDetail, setReviewDetail] = useState<string | null>(null);
+
+  useEffect(() => {
+    setReviewDetail(null);
+    activeReviewRef.current?.classList.remove("brief-summary-review-target");
+    activeReviewRef.current = null;
+    return () => { activeReviewRef.current?.classList.remove("brief-summary-review-target"); };
+  }, [fields, agreedDeadline]);
+
+  function cycleUnconfirmedDetail(direction: "previous" | "next") {
+    const seen = new Set<string>();
+    const missingItems = Array.from(summaryRef.current?.querySelectorAll<HTMLElement>(summaryMissingSelector) ?? [])
+      .filter((element) => {
+        const key = element.dataset.reviewKey;
+        if (!key) return true;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    if (!missingItems.length) return;
+
+    const currentIndex = activeReviewRef.current ? missingItems.indexOf(activeReviewRef.current) : -1;
+    const nextIndex = currentIndex < 0
+      ? direction === "next" ? 0 : missingItems.length - 1
+      : (currentIndex + (direction === "next" ? 1 : -1) + missingItems.length) % missingItems.length;
+    const target = missingItems[nextIndex];
+    activeReviewRef.current?.classList.remove("brief-summary-review-target");
+    activeReviewRef.current = target;
+    target.classList.add("brief-summary-review-target");
+    const label = target.dataset.reviewLabel ?? target.textContent?.trim() ?? "Detail";
+    setReviewDetail(`${nextIndex + 1} of ${missingItems.length} · ${label} · ${target.classList.contains("is-missing") ? "Missing detail" : "Needs confirmation"}`);
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+      block: "center",
+      inline: "nearest",
+    });
+  }
 
   function stopEditing() {
     setEditingFieldId(null);
@@ -4614,11 +4698,11 @@ function BriefSummaryPage({
   }
 
   function jumpToStep(target: BriefStepId) {
-    onGoToStep(target);
+    onGoToStep(target === "deadline" ? "deliverablesTiming" : target);
   }
 
   return (
-    <section className="brief-summary-page" aria-labelledby="brief-summary-title">
+    <section className="brief-summary-page" aria-labelledby="brief-summary-title" ref={summaryRef}>
       <BriefSectionIntro
         intro={intro}
         titleId="brief-summary-title"
@@ -4633,30 +4717,39 @@ function BriefSummaryPage({
         onChange={onFieldChange}
         onConfirm={onConfirmField}
         onEdit={setEditingFieldId}
-        onKeyDown={handleEditKeyDown}
         onStopEditing={stopEditing}
       />
-      <BriefSummarySpecStrip specGroups={summaryModel.specGroups} onJump={jumpToStep} />
-      {timingSuggestion}
+      <BriefSummarySpecStrip specGroups={summaryModel.specGroups} onJump={jumpToStep} showDeliveryDates={showDeliveryDates}
+        deadlineValue={agreedDeadline ? deliveryDateParts(agreedDeadline).date : briefDeliveryDate(fields)}
+        pendingProposal={pendingProposal}
+        deadlineReadOnly={deadlineReadOnly} allowClear={!agreedDeadline}
+        onDeadlineChange={onDeadlineChange ?? ((deadline) => {
+          if (!deadlineReadOnly) onFieldChange("deliverables", serialiseDeliverables(deliverableRows.map((row) => row.id === primaryDeliverable.id ? { ...row, deadline, usesProjectDeadline: false } : row)));
+        })} />
+      {showDeliveryDates ? timingSuggestion : null}
       <div className="brief-summary-deliverables-panel">
         <BriefSummaryCardHead
           index="03"
           title="Additional versions"
         />
         <BriefSummaryDeliverablesTable
+          versionAgreements={versionAgreements}
+          onVersionDeadlineChange={onVersionDeadlineChange}
+          deadlineReadOnly={deadlineReadOnly}
+          showDeliveryDates={showDeliveryDates}
+          legacyMainDeadline={briefDeliveryDate(fields)}
           editingCell={editingDeliverableCell}
-          fallbackDeadline={fields.deadline.value}
           onChange={(value) => onFieldChange("deliverables", value)}
           onEditCell={setEditingDeliverableCell}
-          primaryDeadline={primaryDeliverable.deadline || fields.deadline.value}
           value={fields.deliverables.value}
         />
       </div>
-      {summaryMissingCount && summaryMissingCount > 0 && onCycleSummaryMissing ? (
+      {summaryMissingCount && summaryMissingCount > 0 ? (
         <BriefSummaryConfirmationNote
           missingCount={summaryMissingCount}
           approvalGuidance={approvalGuidance}
-          onCycle={onCycleSummaryMissing}
+          reviewDetail={reviewDetail}
+          onCycle={cycleUnconfirmedDetail}
         />
       ) : null}
     </section>
@@ -4667,10 +4760,12 @@ function BriefSummaryConfirmationNote({
   approvalGuidance,
   missingCount,
   onCycle,
+  reviewDetail,
 }: {
   approvalGuidance?: string;
   missingCount: number;
   onCycle: (direction: "previous" | "next") => void;
+  reviewDetail: string | null;
 }) {
   return (
     <div className="brief-summary-confirmation-note label-s-semibold">
@@ -4679,6 +4774,7 @@ function BriefSummaryConfirmationNote({
           <strong>{missingCount}</strong> {missingCount === 1 ? "detail" : "details"}
         </span>{" "}
         {missingCount === 1 ? "hasn't" : "haven't"} been confirmed. {approvalGuidance}
+        <span className="brief-summary-review-detail label-xs-semibold" role="status" aria-atomic="true">{reviewDetail}</span>
       </span>
       <span className="brief-summary-confirmation-cycler" aria-label="Cycle unconfirmed details">
         <button
@@ -4776,9 +4872,21 @@ type WrittenSummaryModel = {
 };
 
 function BriefSummarySpecStrip({
+  deadlineValue,
+  pendingProposal,
+  deadlineReadOnly,
+  allowClear,
+  onDeadlineChange,
+  showDeliveryDates,
   onJump,
   specGroups,
 }: {
+  deadlineValue: string;
+  pendingProposal?: DeliveryDateProposal | null;
+  deadlineReadOnly: boolean;
+  allowClear: boolean;
+  onDeadlineChange: (date: string) => void;
+  showDeliveryDates: boolean;
   onJump: (target: BriefStepId) => void;
   specGroups: BriefSummarySpecGroup[];
 }) {
@@ -4793,6 +4901,7 @@ function BriefSummarySpecStrip({
     "brand-kit",
   ];
   const specs = specGroups.flatMap((group) => group.specs)
+    .filter((spec) => showDeliveryDates || spec.id !== "deadline")
     .sort((first, second) => specOrder.indexOf(first.id) - specOrder.indexOf(second.id));
 
   return (
@@ -4812,8 +4921,15 @@ function BriefSummarySpecStrip({
             <tr>
               {specs.map((spec) => (
                 <td key={spec.id}>
-                  <button
+                  {spec.id === "deadline" ? <div className="brief-delivery-date-stack"><span
+                    className={`brief-summary-deadline-value${!spec.value ? " is-missing" : spec.confidence === "guess" ? " is-guess" : ""}`}
+                    data-review-key="deadline" data-review-label="Main Video · Delivery date" tabIndex={-1}>
+                    <BriskDatePicker ariaLabel="Main Video delivery date" value={deadlineValue} displayLabel={spec.value || "TBC"} placeholder="TBC" variant="summary"
+                      portalToBody disabled={deadlineReadOnly} allowClear={allowClear} onChange={onDeadlineChange} />
+                  </span>{pendingProposal ? <BriefPendingDeliveryStatus proposal={pendingProposal} /> : null}</div> : <button
                     className={`brief-summary-static-chip label-xs-semibold ${spec.value.trim() ? spec.confidence === "guess" ? "is-guess" : "" : "is-missing"}`}
+                    data-review-key={spec.id === "video-type" ? "videoType" : spec.id === "duration" ? "durationSlot" : spec.id}
+                    data-review-label={`Main Video · ${getSummarySpecHeading(spec.id)}`}
                     type="button"
                     aria-label={spec.value.trim()
                       ? `${spec.confidence === "guess" ? "Review" : "Edit"} ${getSummarySpecHeading(spec.id)}`
@@ -4821,7 +4937,7 @@ function BriefSummarySpecStrip({
                     onClick={() => onJump(spec.target)}
                   >
                     {spec.value.trim() ? spec.value : `+ Add ${getSummarySpecHeading(spec.id).toLocaleLowerCase("en-AU")}`}
-                  </button>
+                  </button>}
                 </td>
               ))}
             </tr>
@@ -4836,7 +4952,7 @@ function getSummarySpecHeading(id: BriefSummarySpecId) {
   const headings: Record<BriefSummarySpecId, string> = {
     "brand-kit": "Brand kit",
     captions: "Captions",
-    deadline: "Deadline",
+    deadline: "Delivery date",
     duration: "Duration",
     format: "Format",
     platform: "Platform",
@@ -4864,6 +4980,8 @@ function BriefSummaryReferenceLink({
   return (
     <a
       className={`brief-written-slot hero brief-summary-reference-link ${isGuess ? "is-guess" : ""}`}
+      data-review-key="referenceTitleSlot"
+      data-review-label="Logline · Reference"
       href={href}
       rel={isExternal ? "noreferrer" : undefined}
       target={isExternal ? "_blank" : undefined}
@@ -4946,7 +5064,7 @@ function BriefWrittenSlot({
   const isEditing = editingFieldId === editTarget;
   const isGuess = field.confidence === "guess";
   const isMissing = !value.trim();
-  const editorRef = useRef<HTMLSpanElement | null>(null);
+  const editorRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!isEditing) {
@@ -4968,7 +5086,7 @@ function BriefWrittenSlot({
 	    }
 
     function handleKeyDown(event: globalThis.KeyboardEvent) {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !event.defaultPrevented) {
         onStopEditing();
       }
     }
@@ -4983,10 +5101,11 @@ function BriefWrittenSlot({
   }, [isEditing, onStopEditing]);
 
   if (isEditing) {
+    const Editor = className === "hero" ? "div" : "span";
     return (
-      <span className="brief-written-inline-editor" ref={editorRef}>
+      <Editor className="brief-written-inline-editor" ref={(element) => { editorRef.current = element; }}>
         {editor}
-      </span>
+      </Editor>
     );
   }
 
@@ -4995,6 +5114,8 @@ function BriefWrittenSlot({
   return (
     <Slot
       className={`brief-written-slot ${className ?? ""} ${isGuess ? "is-guess" : ""} ${isMissing ? "is-missing" : ""}`}
+      data-review-key={editTarget}
+      data-review-label={`${className === "hero" ? "Logline · " : ""}${label}`}
       type={Slot === "button" ? "button" : undefined}
       role={Slot === "span" ? "button" : undefined}
       tabIndex={Slot === "span" ? 0 : undefined}
@@ -5033,6 +5154,7 @@ function createWrittenSummaryModel(
   deliverableRows: DeliverableRow[],
   primaryDeliverable: DeliverableRow,
   studioName: string,
+  agreedDeadline?: string,
 ): WrittenSummaryModel {
   const videoTypes = parseMultiSelectValue(fields.videoType.value);
   const referenceVideos = parseReferenceVideos(fields.referenceVideos.value);
@@ -5040,7 +5162,7 @@ function createWrittenSummaryModel(
   const audiences = parseAudienceList(fields.audience.value).filter(Boolean);
   const [footageChoices, shooterChoice, filmingContentChoices] = parseLiveFootageValue(fields.liveFootage.value);
   const platform = primaryDeliverable.platform || fields.platform.value;
-  const deadlineValue = primaryDeliverable.deadline || fields.deadline.value;
+  const deadlineValue = agreedDeadline ? deliveryDateParts(agreedDeadline).date : briefDeliveryDate(fields);
   const deadline = formatBriefDate(deadlineValue);
   const shortDeadline = formatBriefShortDate(deadlineValue);
   const deadlineCountdown = formatDeadlineCountdown(deadlineValue);
@@ -5118,7 +5240,7 @@ function createWrittenSummaryModel(
           },
           {
             id: "deadline",
-            confidence: primaryDeliverable.deadline ? fields.deliverables.confidence : fields.deadline.confidence,
+            confidence: agreedDeadline ? "confident" : primaryDeliverable.deadline ? fields.deliverables.confidence : fields.deadline.confidence,
             value: shortDeadline,
             target: "deadline",
           },
@@ -5259,12 +5381,12 @@ function formatDeadlineCountdown(value: string) {
   return `${Math.abs(dayDifference)} days ago`;
 }
 
-function getSummaryMissingCount(fields: BriefFields, logline: Logline, studioName: string) {
+function getSummaryMissingCount(fields: BriefFields, logline: Logline, studioName: string, agreedDeadline?: string, showDeliveryDates = true) {
   const deliverableRows = parseDeliverables(fields.deliverables.value, fields.deadline.value);
-  const primaryDeliverable = deliverableRows[0] ?? createMainDeliverableRow(fields.deadline.value);
-  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable, studioName);
+  const primaryDeliverable = deliverableRows.find((row) => row.isMain) ?? deliverableRows[0] ?? createMainDeliverableRow();
+  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable, studioName, agreedDeadline);
 
-  return countSummaryMissingSlots(summaryModel, deliverableRows, fields, logline);
+  return countSummaryMissingSlots(summaryModel, deliverableRows, fields, logline, showDeliveryDates);
 }
 
 function countSummaryMissingSlots(
@@ -5272,6 +5394,7 @@ function countSummaryMissingSlots(
   rows: DeliverableRow[],
   fields: BriefFields,
   _logline: Logline,
+  showDeliveryDates = true,
 ) {
   const loglineItems = [
     { field: fields.deliverables, value: model.duration },
@@ -5282,7 +5405,7 @@ function countSummaryMissingSlots(
   ];
   const detailItems = model.specGroups
     .flatMap((group) => group.specs)
-    .filter((spec) => !["duration", "video-type"].includes(spec.id))
+    .filter((spec) => !["duration", "video-type"].includes(spec.id) && (showDeliveryDates || spec.id !== "deadline"))
     .map((spec) => !spec.value.trim() || spec.confidence !== "confident");
   const deliverableItems = rows.filter((row) => !row.isMain).flatMap((row) => [
     row.name,
@@ -5414,7 +5537,6 @@ function BriefSummaryLogline({
   onChange,
   onConfirm,
   onEdit,
-  onKeyDown,
   onStopEditing,
   primaryDeliverable,
 }: {
@@ -5426,7 +5548,6 @@ function BriefSummaryLogline({
   onChange: (fieldId: BriefFieldId, value: string) => void;
   onConfirm: (fieldId: BriefFieldId) => void;
   onEdit: (fieldId: BriefSummaryEditTarget) => void;
-  onKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onStopEditing: () => void;
   primaryDeliverable: DeliverableRow;
 }) {
@@ -5446,7 +5567,7 @@ function BriefSummaryLogline({
     <section className="brief-summary-logline" aria-label="Logline">
       <BriefSummaryCardHead index="01" title="Logline" />
       <div className="brief-summary-logline-prose">
-        <p>
+        <div>
           A{" "}
           <BriefWrittenSlot
             className="hero"
@@ -5506,20 +5627,10 @@ function BriefSummaryLogline({
             onEdit={onEdit}
             onStopEditing={onStopEditing}
             editor={
-              <textarea
-                autoFocus
-                aria-label="Audience"
-                className="brief-summary-inline-textarea brief-summary-audience-editor label-s"
-                rows={1}
-                ref={(element) => {
-                  if (!element) return;
-                  element.style.height = "auto";
-                  element.style.height = `${element.scrollHeight}px`;
-                }}
+              <BriefAudienceList
+                autoOpen
                 value={fields.audience.value}
-                onBlur={onStopEditing}
-                onChange={(event) => onChange("audience", event.target.value)}
-                onKeyDown={onKeyDown}
+                onChange={(value) => onChange("audience", value)}
               />
             }
           />
@@ -5575,7 +5686,7 @@ function BriefSummaryLogline({
             />
           )}
           .
-        </p>
+        </div>
         {referenceVideos.length > 0 ? <BriefSummaryReferenceVideos videos={referenceVideos} /> : null}
       </div>
     </section>
@@ -5901,21 +6012,27 @@ function BriefSummaryEmptyValue() {
 }
 
 function BriefSummaryDeliverablesTable({
+  deadlineReadOnly = false,
+  showDeliveryDates,
+  legacyMainDeadline,
+  versionAgreements,
+  onVersionDeadlineChange,
   editingCell,
-  fallbackDeadline,
   onChange,
   onEditCell,
-  primaryDeadline,
   value,
 }: {
+  deadlineReadOnly?: boolean;
+  showDeliveryDates: boolean;
+  legacyMainDeadline: string;
+  versionAgreements?: Record<string, ProjectDeliveryAgreement>;
+  onVersionDeadlineChange?: (rowId: string, date: string) => void;
   editingCell: string | null;
-  fallbackDeadline: string;
   onChange: (value: string) => void;
   onEditCell: (cellId: string | null) => void;
-  primaryDeadline: string;
   value: string;
 }) {
-  const rows = parseDeliverables(value, fallbackDeadline);
+  const rows = parseDeliverables(value, legacyMainDeadline);
   const additionalRows = rows.filter((row) => !row.isMain);
 
   function updateRows(nextRows: DeliverableRow[]) {
@@ -5938,17 +6055,15 @@ function BriefSummaryDeliverablesTable({
       {additionalRows.length > 0 ? (
         <>
           <BriefTableViewport className="brief-summary-version-table-wrap" label="Additional version specifications">
-          <table className="brief-deliverables-table brief-deliverables-table-summary brief-summary-version-table">
+          <table className={`brief-deliverables-table brief-deliverables-table-summary brief-summary-version-table${showDeliveryDates ? " has-delivery-dates" : ""}`}>
             <thead>
               <tr>
                 <BriefDeliverablesHeader title="Deliverable" />
+                {showDeliveryDates ? <BriefDeliverablesHeader title="Delivery date" /> : null}
                 <BriefDeliverablesHeader title="Duration" />
-                <BriefDeliverablesHeader title="Deadline" />
                 <BriefDeliverablesHeader title="Platform" />
                 <BriefDeliverablesHeader title="Format" />
                 <BriefDeliverablesHeader title="Captions" />
-                <th aria-hidden="true" />
-                <th aria-hidden="true" />
               </tr>
             </thead>
             <tbody>
@@ -5962,6 +6077,16 @@ function BriefSummaryDeliverablesTable({
                       <span className="brief-deliverable-main-name label-s-semibold">{row.name}</span>
                     </span>
                   </td>
+                  {showDeliveryDates ? <td className="brief-deliverable-date-cell"><div className="brief-delivery-date-stack">
+                    <BriefVersionDeadline name={row.name} variant="summary"
+                      value={versionAgreements?.[row.id]?.agreedDate ? deliveryDateParts(versionAgreements[row.id].agreedDate!).date : row.deadline}
+                      readOnly={deadlineReadOnly} allowClear={!onVersionDeadlineChange || !row.deadline && !versionAgreements?.[row.id]?.agreedDate}
+                      onChange={(deadline) => { if (deadlineReadOnly) return; if (onVersionDeadlineChange) onVersionDeadlineChange(row.id, deadline);
+                        else updateRow(row.id, { deadline, usesProjectDeadline: false }); }} />
+                    {versionAgreements?.[row.id] && getPendingDeliveryProposal(versionAgreements[row.id])
+                      ? <BriefPendingDeliveryStatus proposal={getPendingDeliveryProposal(versionAgreements[row.id])!}
+                        onReview={!deadlineReadOnly ? () => onVersionDeadlineChange?.(row.id, deliveryDateParts(versionAgreements[row.id].agreedDate ?? "").date) : undefined} /> : null}
+                  </div></td> : null}
                   <td>
                     {editingCell === `${row.id}:duration` ? (
                       <BriefDeliverableDurationControl
@@ -5975,20 +6100,14 @@ function BriefSummaryDeliverablesTable({
                     ) : (
                       <button
                         className={`brief-summary-static-chip label-xs-semibold ${row.duration ? "" : "is-missing"}`}
+                        data-review-key={`${row.id}:duration`}
+                        data-review-label={`${row.name || `Version ${index + 1}`} · Duration`}
                         type="button"
                         onClick={() => onEditCell(`${row.id}:duration`)}
                       >
                         {row.duration ? formatDurationLabel(row.duration) : "+ Add duration"}
                       </button>
                     )}
-                  </td>
-                  <td>
-                    <BriefSummaryDeadlineValue
-                      isInherited={!row.deadline}
-                      label={row.deadline ? formatBriefDate(row.deadline) : "Same as Main Video"}
-                      value={row.deadline || primaryDeadline}
-                      onChange={(deadline) => updateRow(row.id, { deadline })}
-                    />
                   </td>
                   <td>
                     {editingCell === `${row.id}:platform` ? (
@@ -6003,6 +6122,8 @@ function BriefSummaryDeliverablesTable({
                     ) : (
                       <button
                         className={`brief-summary-static-chip label-xs-semibold ${row.platform ? "" : "is-missing"}`}
+                        data-review-key={`${row.id}:platform`}
+                        data-review-label={`${row.name || `Version ${index + 1}`} · Platform`}
                         type="button"
                         onClick={() => onEditCell(`${row.id}:platform`)}
                       >
@@ -6023,6 +6144,8 @@ function BriefSummaryDeliverablesTable({
                     ) : (
                       <button
                         className={`brief-summary-static-chip label-xs-semibold ${row.format ? "" : "is-missing"}`}
+                        data-review-key={`${row.id}:format`}
+                        data-review-label={`${row.name || `Version ${index + 1}`} · Format`}
                         type="button"
                         onClick={() => onEditCell(`${row.id}:format`)}
                       >
@@ -6047,8 +6170,6 @@ function BriefSummaryDeliverablesTable({
                       </button>
                     )}
                   </td>
-                  <td aria-hidden="true" />
-                  <td aria-hidden="true" />
                 </tr>
               ))}
             </tbody>
@@ -6070,32 +6191,6 @@ function BriefSummaryDeliverablesTable({
         </div>
       )}
     </div>
-  );
-}
-
-function BriefSummaryDeadlineValue({
-  isInherited,
-  label,
-  onChange,
-  value,
-}: {
-  isInherited: boolean;
-  label: string;
-  onChange: (deadline: string) => void;
-  value: string;
-}) {
-  return (
-    <span className="brief-summary-deadline-value">
-      <BriskDatePicker
-        ariaLabel="Additional version deadline"
-        displayLabel={label}
-        isTertiary={isInherited}
-        placeholder={label}
-        value={value}
-        variant="summary"
-        onChange={onChange}
-      />
-    </span>
   );
 }
 
@@ -6145,7 +6240,7 @@ function getStepIdForField(fieldId: BriefFieldId): BriefStepId {
   }
 
   if (fieldId === "deadline") {
-    return "deadline";
+    return "deliverablesTiming";
   }
 
   if (fieldId === "deliverables") {

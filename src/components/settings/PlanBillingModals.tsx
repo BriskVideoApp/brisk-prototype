@@ -1,5 +1,6 @@
 "use client";
 
+import { Radio } from "../../../Brisk DS/src/app/components/Radio";
 import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 
 
@@ -50,23 +51,9 @@ export function PlanComparisonModal({
       onClose={onClose}
       footer={<Button size="S" variant="secondary" onClick={onClose}>Close</Button>}
     >
-      <div className="billing-modal-frequency" role="group" aria-label="Billing frequency for plan change">
-        <button
-          className={`label-s-semibold ${billingFrequency === "monthly" ? "is-selected" : ""}`}
-          type="button"
-          aria-pressed={billingFrequency === "monthly"}
-          onClick={() => setBillingFrequency("monthly")}
-        >
-          Monthly
-        </button>
-        <button
-          className={`label-s-semibold ${billingFrequency === "annual" ? "is-selected" : ""}`}
-          type="button"
-          aria-pressed={billingFrequency === "annual"}
-          onClick={() => setBillingFrequency("annual")}
-        >
-          Annual
-        </button>
+      <div className="settings-inline-controls" role="radiogroup" aria-label="Billing frequency for plan change">
+        <Radio name="billing-frequency" label="Monthly" checked={billingFrequency === "monthly"} onChange={() => setBillingFrequency("monthly")} />
+        <Radio name="billing-frequency" label="Annual" checked={billingFrequency === "annual"} onChange={() => setBillingFrequency("annual")} />
       </div>
 
       <div className="billing-plan-grid">
@@ -114,8 +101,7 @@ function PlanComparisonCard({
       <div className="billing-plan-pricing">
         {plan.pricing.monthlyUsd !== null && plan.pricing.annualEffectiveMonthlyUsd !== null && plan.pricing.annualTotalUsd !== null ? (
           <>
-            <p><span className="label-xs-semibold">Monthly</span><strong className="label-m-semibold">{formatBillingMonthlyPrice(plan.pricing.monthlyUsd)}</strong></p>
-            <p><span className="label-xs-semibold">Annual</span><strong className="label-m-semibold">{formatBillingAnnualPrice(plan.pricing.annualEffectiveMonthlyUsd, plan.pricing.annualTotalUsd)}</strong></p>
+            <p><span className="label-xs-semibold">{billingFrequency === "monthly" ? "Monthly" : "Annual"}</span><strong className="label-m-semibold">{billingFrequency === "monthly" ? formatBillingMonthlyPrice(plan.pricing.monthlyUsd) : formatBillingAnnualPrice(plan.pricing.annualEffectiveMonthlyUsd, plan.pricing.annualTotalUsd)}</strong></p>
           </>
         ) : (
           <>
@@ -132,6 +118,7 @@ function PlanComparisonCard({
         <div><dt className="label-xs">Client access</dt><dd className="label-s-semibold">{plan.clientPortal.access}</dd></div>
       </dl>
 
+      <details className="settings-plan-details"><summary className="label-s-semibold">Plan features</summary>
       <div className="billing-plan-portal">
         <span className="label-xs-semibold">Client portal</span>
         <p className="label-s">{plan.clientPortal.collaboration}</p>
@@ -156,13 +143,15 @@ function PlanComparisonCard({
         <span className="label-xs">{plan.onboarding ?? plan.support}</span>
       </div>
 
+      </details>
+
       <div className="billing-plan-option-action">
         {currentSelection ? (
-          <Button size="S" variant="secondary" className="billing-disabled-button" type="button" disabled>Current plan</Button>
+          <Button size="S" variant="secondary" type="button" disabled>Current plan</Button>
         ) : plan.selfService ? (
-          <Button size="M" variant="secondary" onClick={onChoose}>{plan.actionLabel}</Button>
+          <Button size="S" variant="secondary" onClick={onChoose}>{plan.actionLabel}</Button>
         ) : (
-          <Button size="M" variant="secondary" onClick={onContactSales}>Contact sales</Button>
+          <Button size="S" variant="secondary" onClick={onContactSales}>Contact sales</Button>
         )}
         {!currentSelection && plan.selfService ? (
           <span className="label-xs">Change using {billingFrequency} billing</span>

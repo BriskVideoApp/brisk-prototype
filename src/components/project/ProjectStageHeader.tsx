@@ -49,9 +49,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const projectFlow = getProjectFlow(project);
   const flowStageOrder = projectFlow.stages.join(",");
   const projectHeaderStages = projectFlow.stages.map((stage) => getProductionFlowStageDefinition(stage, projectFlow.postProductionTerm));
-  const hasApprovedStageFlow = Object.values(projectStages).every((status) => status.state === "done")
-    && (!projectFlow.stages.includes("storyboard") || storyboardStatus.state === "done");
-  const isProjectDelivered = project.status === "Completed" || (Boolean(completionRecords[project.id]) && hasApprovedStageFlow);
+  const isProjectDelivered = project.status === "Completed" || Boolean(completionRecords[project.id]);
   const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectHeaderStages, projectStages, storyboardStatus)?.key;
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
@@ -162,7 +160,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
 
                 return (
                   <li
-                    className={`project-stage-step is-${presentationState} ${stage.key === "brief" && presentationState === "in_progress" ? "is-brief-with-studio" : ""} ${isCurrentStage ? "is-current" : ""}`}
+                    className={`project-stage-step is-${presentationState} ${isCurrentStage ? "is-current" : ""}`}
                     key={stage.key}
                   >
                     {href ? (

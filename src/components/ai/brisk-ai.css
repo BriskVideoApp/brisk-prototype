@@ -1439,7 +1439,7 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   flex: 1 1 calc(var(--brisk-space-3xl) * 5);
 }
 
-.brisk-ai-reference-list > div > button {
+.brisk-ai-reference-list > div > button:not([data-brisk-icon-button]) {
   display: inline-flex;
   width: var(--brisk-space-2xl);
   height: var(--brisk-space-2xl);
@@ -1453,8 +1453,8 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   padding: var(--brisk-space-none);
 }
 
-.brisk-ai-reference-list > div > button:hover,
-.brisk-ai-reference-list > div > button:focus-visible {
+.brisk-ai-reference-list > div > button:not([data-brisk-icon-button]):hover,
+.brisk-ai-reference-list > div > button:not([data-brisk-icon-button]):focus-visible {
   border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
   box-shadow: var(--brisk-shadow-s);

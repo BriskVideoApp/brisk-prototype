@@ -1,6 +1,8 @@
+import { standardFilmmakerInstructions } from "./studio-ai-playbook";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 
 export type FilmmakerModeId =
+  | "standard-filmmaker"
   | "cinematic-storyteller"
   | "documentary-filmmaker"
   | "corporate-communicator"
@@ -232,6 +234,7 @@ export const mockBriskAiChatHistory: readonly MockBriskAiChat[] = [
 ] as const;
 
 export const filmmakerModes: readonly FilmmakerMode[] = [
+  { id: "standard-filmmaker", label: "Standard filmmaker", description: "Practical help from Brief to final delivery", icon: "film-strip" },
   {
     id: "cinematic-storyteller",
     label: "Cinematic storyteller",
@@ -270,7 +273,7 @@ export const filmmakerModes: readonly FilmmakerMode[] = [
   },
 ] as const;
 
-export const initialStudioAiPlaybook: StudioAiPlaybook = {
+const legacyDefaultPlaybook: StudioAiPlaybook = {
   defaultModeId: "documentary-filmmaker",
   tone: "Direct and constructive",
   responseLength: "Balanced",
@@ -291,6 +294,20 @@ export const initialStudioAiPlaybook: StudioAiPlaybook = {
   referenceLinks: [],
   clientAccessEnabled: true,
 };
+
+export const initialStudioAiPlaybook: StudioAiPlaybook = {
+  ...legacyDefaultPlaybook,
+  defaultModeId: "standard-filmmaker",
+  customInstructions: standardFilmmakerInstructions,
+  customModeName: "Studio filmmaker",
+};
+
+/** Upgrade only the untouched demo seed. Preserve every customised playbook. */
+export function upgradeDefaultPlaybook(playbook: StudioAiPlaybook): StudioAiPlaybook {
+  const untouched = (Object.keys(legacyDefaultPlaybook) as (keyof StudioAiPlaybook)[])
+    .every((key) => JSON.stringify(playbook[key]) === JSON.stringify(legacyDefaultPlaybook[key]));
+  return untouched ? cloneStudioAiPlaybook(initialStudioAiPlaybook) : playbook;
+}
 
 export const stageActionPrompts: Record<BriskAiStage, readonly string[]> = {
   brief: [

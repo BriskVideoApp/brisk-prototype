@@ -7,7 +7,8 @@ import { deliveryHref } from "@/data/project-delivery";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { ProjectDeadlineDialog } from "./ProjectDeadlineDialog";
 
-export type DeadlineDialogOptions = { stage?: ProductionFlowStageKey; date?: string };
+export type DeadlineDialogOptions = { stage?: ProductionFlowStageKey; date?: string; view?: "calendar" | "timing";
+  version?: { id: string; name: string; date: string; onAgreedDateChange: (date: string) => void } };
 const Context = createContext<((projectId: string, options?: DeadlineDialogOptions) => void) | null>(null);
 
 export function DeadlineDialogProvider({ children }: { children: ReactNode }) {
@@ -16,8 +17,9 @@ export function DeadlineDialogProvider({ children }: { children: ReactNode }) {
   const openDeadline = useCallback((projectId: string, options?: DeadlineDialogOptions) => setRequest({ projectId, ...options }), []);
   return <Context.Provider value={openDeadline}>
     {children}
-    {request ? <ProjectDeadlineDialog key={`${request.projectId}:${request.stage ?? "final"}:${request.date ?? ""}:${viewer?.id}:${viewer?.role}`}
-      projectId={request.projectId} initialStage={request.stage} initialDate={request.date} onClose={() => setRequest(null)} /> : null}
+    {request ? <ProjectDeadlineDialog key={`${request.projectId}:${request.version?.id ?? request.stage ?? "final"}:${request.date ?? ""}:${request.view ?? "calendar"}:${viewer?.id}:${viewer?.role}`}
+      projectId={request.projectId} initialStage={request.stage} initialDate={request.date} initialView={request.view}
+      version={request.version} onClose={() => setRequest(null)} /> : null}
   </Context.Provider>;
 }
 

@@ -5,7 +5,7 @@ import { useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { StudioPreviewLogo } from "./StudioClientPortalPreview";
+import { StudioProfileSummary } from "./StudioProfileSummary";
 import { StudioEditor } from "./StudioReviewEditors";
 import { readFileAsDataUrl } from "./studioLogoFiles";
 import type { StudioReviewDraft } from "@/data/studio-onboard";
@@ -43,24 +43,12 @@ export function StudioProfileReview({ draft, onChange, onBack, onContinue, onOpe
       <section className="studio-onboard-stage" aria-labelledby="studio-profile-review-heading">
         <div className="studio-ai-question-centre studio-profile-review">
           <h1 className="headings-m-bold" id="studio-profile-review-heading">Does this look right?</h1>
-          <section className="studio-review-bento-card studio-profile-review-panel" aria-label="Studio summary">
-            <div className="studio-profile-review-identity">
-              <div className="studio-profile-review-logo">
-                <StudioPreviewLogo draft={draft} neutral onClick={() => logoInputRef.current?.click()}
-                  emptyContent={<><DsIcon name="upload-simple" size={16} /><span className="label-xs">Add logo</span></>} />
-                <input ref={logoInputRef} className="studio-hidden-file-input" type="file" accept="image/*" onChange={updateLogo} />
-              </div>
-              <div className="studio-review-summary-content studio-profile-review-copy">
-                <header className="studio-review-bento-card-header">
-                  <h2 className="headings-s-bold">{draft.studioName}</h2>
-                  <IconButton aria-label="Edit Studio profile" tooltip="Edit profile" tooltipAlign="end" onClick={() => setIsEditingProfile(true)}>
-                    <DsIcon name="pencil-simple" size={16} />
-                  </IconButton>
-                </header>
-                <p className="paragraph-s">{draft.studioDescription}</p>
-              </div>
-            </div>
-          </section>
+          <StudioProfileSummary draft={draft} onLogoClick={() => logoInputRef.current?.click()}
+            emptyLogoContent={<><DsIcon name="upload-simple" size={16} /><span className="label-xs">Add logo</span></>}
+            logoInput={<input ref={logoInputRef} className="studio-hidden-file-input" type="file" accept="image/*" onChange={updateLogo} />}
+            editAction={<IconButton aria-label="Edit Studio profile" tooltip="Edit profile" tooltipAlign="end" onClick={() => setIsEditingProfile(true)}>
+              <DsIcon name="pencil-simple" size={16} />
+            </IconButton>} />
           {logoError ? <p className="paragraph-s studio-review-validation" role="alert">{logoError}</p> : null}
           <p className="paragraph-s studio-review-dialog-note">You can change these details in {canOpenSettings
             ? <Link className="studio-review-text-link" href="/settings/studio#studio-identity-heading" onClick={onOpenSettings}>Studio settings</Link>

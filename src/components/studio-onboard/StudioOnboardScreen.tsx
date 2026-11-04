@@ -215,7 +215,9 @@ export function StudioOnboardScreen() {
   function updateProfileDraft(draft: StudioReviewDraft) {
     updateOnboardingProgress({
       reviewDraft: draft,
-      studioAnswer: studioAnswer ? { ...studioAnswer, studioName: draft.studioName, studioDescription: draft.studioDescription } : null,
+      studioAnswer: studioAnswer ? { ...studioAnswer, studioName: draft.studioName, studioDescription: draft.studioDescription,
+        sources: [...studioAnswer.sources.filter((source) => source.type !== "website"),
+          ...(draft.studioWebsite ? [{ id: "studio-website", type: "website" as const, label: draft.studioWebsite }] : [])] } : null,
     });
   }
 

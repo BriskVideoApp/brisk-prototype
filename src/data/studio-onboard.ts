@@ -245,7 +245,12 @@ export type StudioBriefConfiguration = {
   excludedFieldIds: BriefFieldId[];
   excludedOptionValues: Partial<Record<BriefFieldId, string[]>>;
   fieldOrder?: BriefFieldId[];
+  showClientDeliveryDates?: boolean;
 };
+
+export function showClientDeliveryDates(configuration?: StudioBriefConfiguration): boolean {
+  return configuration?.showClientDeliveryDates ?? !configuration?.excludedFieldIds.includes("deadline");
+}
 
 export type GeneratedStudioSetup = {
   studioName: string;
@@ -286,12 +291,14 @@ export function createRecommendedStudioBriefConfiguration(): StudioBriefConfigur
   return {
     excludedFieldIds: [],
     excludedOptionValues: {},
+    showClientDeliveryDates: true,
     fieldOrder: Object.keys(initialBriefFields) as BriefFieldId[],
   };
 }
 
 export function cloneStudioBriefConfiguration(configuration: StudioBriefConfiguration): StudioBriefConfiguration {
   return {
+    showClientDeliveryDates: showClientDeliveryDates(configuration),
     excludedFieldIds: [...configuration.excludedFieldIds],
     excludedOptionValues: Object.fromEntries(
       Object.entries(configuration.excludedOptionValues).map(([fieldId, values]) => [fieldId, [...values]]),

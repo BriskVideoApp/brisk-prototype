@@ -2078,7 +2078,6 @@
 .brief-deliverables-table td:has(.brief-format-menu),
 .brief-deliverables-table td:has(.brief-duration-menu),
 .brief-deliverables-table td:has(.brief-captions-menu),
-.brief-deliverables-table td:has(.brief-date-popover),
 .brief-deliverables-table td:has(.brief-deliverable-menu) {
   z-index: 140;
 }
@@ -2945,9 +2944,7 @@
   padding: var(--brisk-space-l);
 }
 
-.brief-deliverable-deadline .brief-date-popover {
-  right: var(--brisk-space-none);
-  left: auto;
+.brief-date-popover-compact {
   width: calc(var(--brisk-space-3xl) * 7);
 }
 
@@ -3627,7 +3624,8 @@ button.brief-confidence-chip {
   text-align: left;
 }
 
-.brief-deliverables-table-summary.brief-summary-spec-table .brief-summary-static-chip.is-missing {
+.brief-deliverables-table-summary.brief-summary-spec-table .brief-summary-static-chip.is-missing,
+.brief-deliverables-table-summary.brief-summary-spec-table .brief-summary-deadline-value.is-missing button {
   color: var(--brisk-brand-primary-click);
 }
 
@@ -3637,7 +3635,8 @@ button.brief-confidence-chip {
   text-decoration: underline;
 }
 
-.brief-deliverables-table-summary.brief-summary-spec-table .brief-summary-static-chip.is-guess {
+.brief-deliverables-table-summary.brief-summary-spec-table .brief-summary-static-chip.is-guess,
+.brief-deliverables-table-summary.brief-summary-spec-table .brief-summary-deadline-value.is-guess button {
   text-decoration: underline dotted;
   text-decoration-color: var(--brisk-yellow-60);
   text-underline-offset: 0.15em;
@@ -4147,9 +4146,10 @@ button.brief-confidence-chip {
   align-items: baseline;
 }
 
-.brief-summary-logline-prose .brief-written-inline-editor:has(.brief-summary-audience-editor) {
+.brief-summary-logline-prose .brief-written-inline-editor:has(.brief-audience-list) {
   display: block;
   width: 100%;
+  margin-block: var(--brisk-space-s);
 }
 
 .brief-summary-logline-prose .brief-summary-inline-input,
@@ -4169,12 +4169,6 @@ button.brief-confidence-chip {
   line-height: inherit;
   padding: var(--brisk-space-xxs) var(--brisk-space-xs);
   resize: none;
-}
-
-.brief-summary-logline-prose .brief-summary-inline-textarea.brief-summary-audience-editor {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
 }
 
 .brief-summary-logline-prose .brief-summary-inline-input:focus,
@@ -4295,6 +4289,74 @@ button.brief-confidence-chip {
   gap: var(--brisk-space-s);
 }
 
+.brief-version-deadline {
+  min-width: 0;
+}
+
+.brief-version-deadline .brief-date-picker-wrap {
+  max-width: 100%;
+}
+
+.brief-delivery-date-stack,
+.brief-pending-delivery-status {
+  display: grid;
+  justify-items: start;
+  gap: var(--brisk-space-xs);
+  min-width: 0;
+}
+
+.brief-pending-delivery-status {
+  color: var(--brisk-text-secondary);
+  line-height: 1.4;
+}
+
+.brief-pending-delivery-chip {
+  color: var(--brisk-brand-primary-click);
+}
+
+.brief-deliverables-table.brief-deliverables-table-input,
+.brief-deliverables-table-summary.brief-summary-version-table {
+  min-width: 0;
+}
+
+.brief-deliverables-table-input td {
+  padding: var(--brisk-space-s);
+}
+
+.brief-deliverables-table-input td:last-child {
+  padding-inline: var(--brisk-space-none);
+}
+
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(1),
+.brief-summary-version-table.has-delivery-dates th:nth-child(1) { width: 18%; }
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(2),
+.brief-summary-version-table.has-delivery-dates th:nth-child(2) { width: 14%; }
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(3),
+.brief-summary-version-table.has-delivery-dates th:nth-child(3) { width: 12%; }
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(4),
+.brief-summary-version-table.has-delivery-dates th:nth-child(4) { width: 19%; }
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(5),
+.brief-summary-version-table.has-delivery-dates th:nth-child(5) { width: 14%; }
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(6),
+.brief-summary-version-table.has-delivery-dates th:nth-child(6) { width: 18%; }
+.brief-deliverables-table-input.has-delivery-dates th:nth-child(7) { width: 5%; }
+
+.brief-deliverables-table-input:not(.has-delivery-dates) th:nth-child(1),
+.brief-summary-version-table:not(.has-delivery-dates) th:nth-child(1) { width: 23%; }
+.brief-deliverables-table-input:not(.has-delivery-dates) th:nth-child(2),
+.brief-summary-version-table:not(.has-delivery-dates) th:nth-child(2) { width: 13%; }
+.brief-deliverables-table-input:not(.has-delivery-dates) th:nth-child(3),
+.brief-summary-version-table:not(.has-delivery-dates) th:nth-child(3) { width: 24%; }
+.brief-deliverables-table-input:not(.has-delivery-dates) th:nth-child(4),
+.brief-summary-version-table:not(.has-delivery-dates) th:nth-child(4) { width: 18%; }
+.brief-deliverables-table-input:not(.has-delivery-dates) th:nth-child(5),
+.brief-summary-version-table:not(.has-delivery-dates) th:nth-child(5) { width: 17%; }
+.brief-deliverables-table-input:not(.has-delivery-dates) th:nth-child(6) { width: 5%; }
+
+.brief-deliverables-table td.brief-deliverable-date-cell {
+  vertical-align: middle;
+}
+
 .brief-summary-deliverable-number {
   display: inline-flex;
   width: var(--brisk-space-xl);
@@ -4410,7 +4472,7 @@ button.brief-confidence-chip {
 .brief-summary-confirmation-note {
   display: inline-flex;
   width: auto;
-  max-width: min(100%, calc(var(--brisk-space-3xl) * 7));
+  max-width: min(100%, calc(var(--brisk-space-3xl) * 14));
   align-items: center;
   gap: var(--brisk-space-s);
   min-height: var(--brisk-space-3xl);
@@ -4423,10 +4485,26 @@ button.brief-confidence-chip {
 }
 
 .brief-summary-confirmation-note-text {
-  width: calc(var(--brisk-space-3xl) * 5);
+  width: auto;
   max-width: 100%;
   flex: 0 1 auto;
   min-width: var(--brisk-space-none);
+}
+
+.brief-summary-review-detail:not(:empty) {
+  display: block;
+  margin-top: var(--brisk-space-s);
+  color: var(--brisk-brand-primary-click);
+}
+
+/* Keep the current review target visible after focus moves back to the arrows. */
+.brief-summary-page .brief-summary-logline-prose .brief-written-slot.hero.brief-summary-review-target,
+.brief-summary-page .brief-deliverables-table-summary .brief-summary-static-chip.brief-summary-review-target {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  text-decoration: none;
 }
 
 .brief-summary-confirmation-note-count {
@@ -5161,7 +5239,7 @@ button.brief-confidence-chip {
 }
 
 .brief-deliverables-table-summary.brief-summary-spec-table,
-.brief-deliverables-table-summary.brief-summary-version-table {
+.brief-deliverables-table-summary.brief-summary-spec-table {
   min-width: calc(var(--brisk-space-3xl) * 26);
 }
 
