@@ -1403,37 +1403,33 @@
   width: calc(var(--brisk-space-3xl) * 2);
 }
 
-/* Keep the shot itself readable when the Planning navigation is expanded. */
+/* Planning keeps technical settings in the shared shot editor, with a readable row summary. */
 .shoot-planning-shot-table .shoot-shot-table-number-column {
-  width: 4%;
+  width: var(--brisk-space-3xl);
 }
 
 .shoot-planning-shot-table .shoot-shot-table-description-column {
-  width: 49%;
-}
-
-.shoot-planning-shot-table .shoot-shot-table-type-column {
-  width: 9%;
-}
-
-.shoot-planning-shot-table .shoot-shot-table-size-column {
-  width: 8%;
-}
-
-.shoot-planning-shot-table .shoot-shot-table-approach-column {
-  width: 9%;
+  width: auto;
 }
 
 .shoot-planning-shot-table .shoot-shot-table-reference-column {
-  width: 6%;
+  width: calc(var(--brisk-space-3xl) * 2);
 }
 
 .shoot-planning-shot-table .shoot-shot-table-notes-column {
-  width: 10%;
+  width: 20%;
 }
 
 .shoot-planning-shot-table .shoot-shot-table-actions-column {
-  width: 5%;
+  width: calc(var(--brisk-space-3xl) * 2);
+}
+
+.shoot-planning-shot-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-xs) var(--brisk-space-s);
+  color: var(--brisk-text-secondary);
 }
 
 .shoot-shot-table-review-column {
@@ -14674,4 +14670,44 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   .shoot-simple-workspace-toolbar .shoot-button {
     width: 100%;
   }
+}
+
+/* Simple shoots reuse the shared call sheet with its essentials kept visible. */
+.is-compact-call-sheet {
+  gap: var(--brisk-space-l);
+}
+
+.shoot-simple-workspace-toolbar {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shoot-simple-call-sheet-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s);
+}
+
+.is-compact-call-sheet .shared-call-hero > div {
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.is-compact-call-sheet .shared-call-hero [data-brisk-button] {
+  justify-self: start;
+}
+
+.is-compact-call-sheet .shared-section > header,
+.is-compact-call-sheet .shared-section-body {
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.is-compact-call-sheet .shared-contact-list article {
+  padding-block: var(--brisk-space-s);
+}
+
+.shoot-day-dialog-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
+  gap: var(--brisk-space-l);
 }

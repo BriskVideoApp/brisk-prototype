@@ -75,6 +75,8 @@ export type ShareActionRowProps = {
   briefControls?: boolean;
   /** Persistent Stage decisions with a role-specific handover destination. */
   stageDecisionActions?: boolean;
+  /** Keep Stage approval quiet when a section readiness action is primary. */
+  stageApprovalButtonVariant?: "primary" | "secondary";
   allowProjectScope?: boolean;
   scopeType?: "project" | "stage" | "version" | "item" | "selection";
   shareTitle?: string;
@@ -183,6 +185,7 @@ export function ShareActionRow({
   presentation = "row",
   briefControls = false,
   stageDecisionActions = false,
+  stageApprovalButtonVariant,
   allowProjectScope = false,
   scopeType,
   shareTitle,
@@ -822,7 +825,7 @@ export function ShareActionRow({
   const stageSendAction = showSend && userRole !== "Share Link Viewer" ? (
     <Button
       size="S"
-      variant={isCustomerView ? "secondary" : "primary"}
+      variant={sendButtonVariant ?? (isCustomerView ? "secondary" : "primary")}
       disabled={disabled || sendDisabled}
       tooltip={disabled ? disabledTooltip : sendDisabled ? sendDisabledTooltip : sendTooltip}
       onClick={requestSend}
@@ -836,7 +839,7 @@ export function ShareActionRow({
       approveLabel={approveLabel}
       showApproveIcon={false}
       allowRoleApproval={allowRoleApproval}
-      approveButtonVariant={isCustomerView ? "primary" : "secondary"}
+      approveButtonVariant={stageApprovalButtonVariant ?? (isCustomerView ? "primary" : "secondary")}
       approvedClassName="brief-approved-action"
       approvedAt={approvedAt}
       approvedBy={approvedBy}

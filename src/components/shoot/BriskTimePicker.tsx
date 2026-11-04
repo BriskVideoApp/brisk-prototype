@@ -157,7 +157,14 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
           inputMode="text"
           placeholder={placeholder}
           value={draft}
-          onBlur={commitDraft}
+          onBlur={(event) => {
+            commitDraft();
+            const nextFocus = event.relatedTarget;
+            if (!(nextFocus instanceof Node)
+              || (!pickerRef.current?.contains(nextFocus) && !popoverRef.current?.contains(nextFocus))) {
+              setIsOpen(false);
+            }
+          }}
           onChange={(event) => {
             setDraft(event.target.value);
             setIsOpen(true);
@@ -167,6 +174,7 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
             if (event.key === "Enter") {
               event.preventDefault();
               commitDraft();
+              setIsOpen(false);
               event.currentTarget.blur();
             }
             if (event.key === "Escape" && isOpen) {

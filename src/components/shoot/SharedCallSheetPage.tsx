@@ -45,7 +45,7 @@ export type CallSheetSectionControls = {
 };
 
 type CallSheetPlanningSection = "locations" | "people" | "schedule";
-type EditableOperationalSection = "people";
+type EditableOperationalSection = "people" | "notes";
 
 type SharedShootAccessLevel = "viewOnly" | "canEdit" | "canManage";
 
@@ -81,12 +81,14 @@ function getWeatherIcon(weather: string): DsIconName {
   return "weather-cloud";
 }
 
-export function SharedCallSheetPage({ project, previewMode, printMode, viewerId, embedded = false, embeddedCallSheet, canEdit, isStudioInternal, focusedSectionId = null, openSectionRequest, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, onEmbeddedChange, onEmbeddedSelectDay, onExitSectionFocus, onFocusSection, renderInterviewQuestions, renderRunOfDay }: {
+export function SharedCallSheetPage({ project, previewMode, printMode, viewerId, embedded = false, compact = false, onEditEssentials, embeddedCallSheet, canEdit, isStudioInternal, focusedSectionId = null, openSectionRequest, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, onEmbeddedChange, onEmbeddedSelectDay, onExitSectionFocus, onFocusSection, renderInterviewQuestions, renderRunOfDay }: {
   project: Project;
   previewMode: boolean;
   printMode: boolean;
   viewerId?: string;
   embedded?: boolean;
+  compact?: boolean;
+  onEditEssentials?: () => void;
   embeddedCallSheet?: CallSheet;
   canEdit?: boolean;
   isStudioInternal?: boolean;
@@ -118,7 +120,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   const [hasLoaded, setHasLoaded] = useState(false);
   const [copyStatus, setCopyStatus] = useState("Copy link");
   const [showPreviewBar, setShowPreviewBar] = useState(previewMode && !printMode);
-  const [collapsedSectionIds, setCollapsedSectionIds] = useState<string[]>(["documents"]);
+  const [collapsedSectionIds, setCollapsedSectionIds] = useState<string[]>(compact ? ["documents", "locations", "emergency"] : ["documents"]);
   const [standaloneAccess, setStandaloneAccess] = useState<SharedShootAccessLevel>(() => getDefaultShootAccess(selectedRole));
   const effectiveIsStudioInternal = isStudioInternal ?? selectedRole !== "Customer";
 
@@ -305,10 +307,12 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
             clientName={project.clientName}
             day={day}
             embedded={embedded}
+            compact={compact}
+            onEditEssentials={canEdit ? onEditEssentials : undefined}
             projectId={project.id}
             viewer={viewer && isAssignedToDay(viewer.shootDayIds, day.id) ? viewer : undefined}
             isStudioInternal={effectiveIsStudioInternal}
-            getSectionControls={embedded && !printMode && onFocusSection ? getSectionControls : undefined}
+            getSectionControls={embedded && !printMode && (compact || onFocusSection) ? getSectionControls : undefined}
             printIndex={printMode ? index : undefined}
             onSelectDay={!printMode ? selectDay : undefined}
             onChange={embedded && canEdit && !printMode ? updateLiveCallSheet : undefined}
@@ -357,7 +361,7 @@ export function OnSetLiveView({ callSheet, day, isStudioInternal, project, onBac
   </div>;
 }
 
-function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, isStudioInternal, getSectionControls, printIndex, onSelectDay, onChange, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, renderInterviewQuestions, renderRunOfDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; embedded: boolean; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; getSectionControls?: (sectionId: string) => CallSheetSectionControls; printIndex?: number; onSelectDay?: (dayId: string) => void; onChange?: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments?: () => void; onOpenPlanningSection?: (section: CallSheetPlanningSection) => void; onOpenSchedule?: () => void; renderInterviewQuestions?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode; renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode }) {
+function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEditEssentials, projectId, viewer, isStudioInternal, getSectionControls, printIndex, onSelectDay, onChange, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, renderInterviewQuestions, renderRunOfDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; embedded: boolean; compact?: boolean; onEditEssentials?: () => void; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; getSectionControls?: (sectionId: string) => CallSheetSectionControls; printIndex?: number; onSelectDay?: (dayId: string) => void; onChange?: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments?: () => void; onOpenPlanningSection?: (section: CallSheetPlanningSection) => void; onOpenSchedule?: () => void; renderInterviewQuestions?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode; renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode }) {
   const daySwitcherRef = useRef<HTMLElement>(null);
   const activeDayButtonRef = useRef<HTMLButtonElement>(null);
   const [editingOperationalSection, setEditingOperationalSection] = useState<EditableOperationalSection | null>(null);
@@ -371,7 +375,9 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
   const locations = callSheet.locations.filter((item) => isAssignedToDay(item.shootDayIds, day.id));
   const documents = callSheet.documents.filter((document) => isAssignedToDay(document.shootDayIds, day.id));
   const dayNotes = day.notes?.practicalDetails ?? getLegacyDayNotes(callSheet, day, location);
-  const nearestEmergencyHospital = getNearestEmergencyHospital(location, day.safetyEmergency);
+  const nearestEmergencyHospital = compact
+    ? day.safetyEmergency?.confirmed && !day.safetyEmergency.needsReview ? day.safetyEmergency : undefined
+    : getNearestEmergencyHospital(location, day.safetyEmergency);
   const internalNotes = isStudioInternal ? day.notes?.internalNotes?.trim() ?? "" : "";
   const selectedProductionContact = callSheet.people.find((person) => callSheet.onTheDayContact.startsWith(person.name));
   const hideProductionContactDetails = Boolean(!isStudioInternal && selectedProductionContact && selectedProductionContact.showContactDetails !== true);
@@ -416,8 +422,29 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
     switcher.scrollTo({ left: Math.max(0, centredLeft), behavior: "smooth" });
   }, [day.id]);
 
+  const peopleSection = (
+      <SharedSection title="People" count={people.length} controls={getSectionControls?.("people")}>
+        <OperationalSectionActions
+          editing={editingOperationalSection === "people"}
+          editLabel="Edit phone numbers"
+          planningLabel={compact ? "Add person" : people.length ? "Manage people in Planning" : "Add people in Planning"}
+          showEdit={Boolean(onChange && people.length)}
+          showPlanning={Boolean(onOpenPlanningSection)}
+          onEdit={() => setEditingOperationalSection((current) => current === "people" ? null : "people")}
+          onOpenPlanning={() => onOpenPlanningSection?.("people")}
+        />
+        {people.length ? <div className="shared-contact-list">{people.map((person) => (
+          <article key={person.id}>
+            <span className="shared-contact-avatar label-xs-semibold">{getInitials(person.name)}</span>
+            <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime || (compact ? day.generalCallTime : ""))}</span>{(isStudioInternal || person.showContactDetails === true) && person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}{editingOperationalSection === "people" ? <OperationalField label="Phone" type="tel" value={person.phone} onChange={(value) => updatePersonPhone(person.id, value)} /> : null}</div>
+            {editingOperationalSection !== "people" && (isStudioInternal || person.showContactDetails === true) && person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
+          </article>
+        ))}</div> : <div className="shared-section-empty"><strong>No people added</strong><span className="label-xs">{compact ? "Add crew and talent for this shoot day." : "Add crew and talent in Planning before the day begins."}</span></div>}
+      </SharedSection>
+  );
+
   return (
-    <article className={`shared-print-day ${typeof printIndex === "number" ? "is-print-day" : ""}`}>
+    <article className={`shared-print-day ${compact ? "is-compact-call-sheet" : ""} ${typeof printIndex === "number" ? "is-print-day" : ""}`}>
       {typeof printIndex === "number" ? (
         <header className="shared-document-print-header">
           <div className="shared-document-print-studio">
@@ -448,12 +475,14 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
         {typeof printIndex === "number" ? <header className="shared-print-day-heading"><strong>{day.label} of {callSheet.days.length}</strong></header> : null}
         <div className="shared-date-block">
           <span className="label-xs-semibold">Shoot date</span>
-          <h2>{formatShootDate(day.date)}</h2>
+          <h2>{day.date ? formatShootDate(day.date) : "Not set"}</h2>
+          {compact && !day.date && onEditEssentials ? <Button size="S" variant="ghost" onClick={onEditEssentials}>Add shoot date</Button> : null}
         </div>
         <div className="shared-call-time-block">
           <span className="label-xs-semibold">General call time</span>
           <strong>{formatTime(day.generalCallTime)}</strong>
-          {day.expectedWrapTime ? <small>Expected wrap {formatTime(day.expectedWrapTime)}</small> : null}
+          {day.expectedWrapTime ? <small>Expected wrap {formatTime(day.expectedWrapTime)}</small> : compact ? <small>Expected wrap: Not set</small> : null}
+          {compact && (!day.generalCallTime || !day.expectedWrapTime) && onEditEssentials ? <Button size="S" variant="ghost" onClick={onEditEssentials}>Set times</Button> : null}
         </div>
         {viewer ? (
           <div className="shared-personal-call">
@@ -464,14 +493,17 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
         ) : null}
         <div className="shared-location-block">
           <span className="label-xs-semibold">Primary location</span>
-          <strong>{location?.name ?? "Location not set"}</strong>
+          <strong>{location?.name || "Location not set"}</strong>
           {location && (location.mapLink || location.address) ? <a className="shared-location-address label-s-semibold" href={getMapsUrl(location.mapLink || location.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || location.mapLink || "")}</a> : null}
+          {compact && onOpenPlanningSection ? <Button size="S" variant="ghost" onClick={() => onOpenPlanningSection("locations")}>{location ? "Edit location" : "Add location"}</Button> : null}
         </div>
-        <div className="shared-weather-block">
+        {!compact ? <div className="shared-weather-block">
           <div className="shared-weather-summary"><span className="shared-weather-icon" aria-hidden="true"><DsIcon name={getWeatherIcon(displayedWeather)} size={18} /></span><div><strong>{temperature}</strong><p>{[conditions, rainChance].filter(Boolean).join(" · ")}</p></div></div>
           {visibleProductionContact ? <div className="shared-production-contact"><span className="label-xs-semibold">Key contacts</span><strong>{visibleProductionContact}</strong>{visibleProductionPhone ? <a className="label-s-semibold" href={`tel:${visibleProductionPhone}`}>Call production</a> : null}</div> : null}
-        </div>
+        </div> : null}
       </section>
+
+      {compact ? peopleSection : null}
 
       {!embedded ? <section className="shared-day-glance is-single" aria-label="At a glance">
         <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong><small>{renderRunOfDay ? "Track detailed coverage below" : "Track detailed coverage in Shoot day"}</small>{!renderRunOfDay && isStudioInternal && typeof printIndex !== "number" ? <Link className="shared-shot-list-link label-s-semibold" href={`/projects/${projectId}/stages/shoot?view=on-set&day=${encodeURIComponent(day.id)}&section=schedule`}>Open Shoot day<DsIcon name="arrow-right" size={14} /></Link> : null}</article>
@@ -495,12 +527,12 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
 
       {renderInterviewQuestions ? renderInterviewQuestions(day, sectionControls("interview-questions")) : null}
 
-      <SharedSection title="Locations" count={locations.length} controls={getSectionControls?.("locations")}>
+      {!compact || locations.some((item) => item.id !== location?.id) ? <SharedSection title="Locations" count={locations.length} controls={getSectionControls?.("locations")}>
         <OperationalSectionActions
           editing={false}
           planningLabel={locations.length ? "Manage locations in Planning" : "Add locations in Planning"}
           showEdit={false}
-          showPlanning={Boolean(onOpenPlanningSection)}
+          showPlanning={Boolean(onOpenPlanningSection && !compact)}
           onOpenPlanning={() => onOpenPlanningSection?.("locations")}
         />
         {locations.length ? <div className="shared-location-list">{locations.map((item) => (
@@ -509,46 +541,30 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
             {item.mapLink || item.address ? <a className="shared-location-map label-s-semibold" href={getMapsUrl(item.mapLink || item.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(item.address || item.mapLink || "")}</a> : null}
           </article>
         ))}</div> : <div className="shared-section-empty"><strong>No locations added</strong><span className="label-xs">Add the shoot locations in Planning before the day begins.</span></div>}
-      </SharedSection>
+      </SharedSection> : null}
 
-      <SharedSection title="People" count={people.length} controls={getSectionControls?.("people")}>
-        <OperationalSectionActions
-          editing={editingOperationalSection === "people"}
-          editLabel="Edit phone numbers"
-          planningLabel={people.length ? "Manage people in Planning" : "Add people in Planning"}
-          showEdit={Boolean(onChange && people.length)}
-          showPlanning={Boolean(onOpenPlanningSection)}
-          onEdit={() => setEditingOperationalSection((current) => current === "people" ? null : "people")}
-          onOpenPlanning={() => onOpenPlanningSection?.("people")}
-        />
-        {people.length ? <div className="shared-contact-list">{people.map((person) => (
-          <article key={person.id}>
-            <span className="shared-contact-avatar label-xs-semibold">{getInitials(person.name)}</span>
-            <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime)}</span>{(isStudioInternal || person.showContactDetails === true) && person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}{editingOperationalSection === "people" ? <OperationalField label="Phone" type="tel" value={person.phone} onChange={(value) => updatePersonPhone(person.id, value)} /> : null}</div>
-            {editingOperationalSection !== "people" && (isStudioInternal || person.showContactDetails === true) && person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
-          </article>
-        ))}</div> : <div className="shared-section-empty"><strong>No people added</strong><span className="label-xs">Add crew and talent in Planning before the day begins.</span></div>}
-      </SharedSection>
+      {!compact ? peopleSection : null}
 
       {onChange || dayNotes.trim() || internalNotes ? (
         <SharedSection title="Notes for the day" controls={getSectionControls?.("notes")}>
-          {onChange ? (
+          {compact && onChange ? <OperationalSectionActions editing={editingOperationalSection === "notes"} editLabel={dayNotes.trim() ? "Edit notes" : "Add notes"} showEdit onEdit={() => setEditingOperationalSection((current) => current === "notes" ? null : "notes")} /> : null}
+          {onChange && (!compact || editingOperationalSection === "notes") ? (
             <label className="shared-notes-editor">
               <span className="label-xs-semibold">{day.label} notes</span>
               <textarea
                 aria-label={`${day.label} notes`}
                 placeholder={"Parking:\nAccess:\nWi-Fi:\nOther practical details:"}
-                rows={7}
+                rows={compact ? 4 : 7}
                 value={dayNotes}
                 onChange={(event) => updateDayNotes(event.target.value)}
               />
             </label>
-          ) : dayNotes.trim() ? <p className="shared-notes">{dayNotes}</p> : null}
+          ) : dayNotes.trim() ? <p className="shared-notes">{dayNotes}</p> : compact ? <p className="label-s">No notes added.</p> : null}
           {internalNotes ? <div className="shared-practical-grid"><PracticalItem title="Internal Studio notes" body={internalNotes} /></div> : null}
         </SharedSection>
       ) : null}
 
-      {onOpenDocuments || documents.length ? (
+      {documents.length || (!compact && onOpenDocuments) ? (
         <SharedSection sectionId="documents" title="Documents" count={documents.length} controls={getSectionControls?.("documents")}>
           <div className="shared-documents-section">
             {documents.length ? <div className="shared-document-list">{documents.map((document) => <a href={document.url} target="_blank" rel="noreferrer" key={document.id}><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={18} /><span>{document.name}</span><DsIcon name="arrow-bend-up-right" size={16} /></a>)}</div> : <div className="shared-documents-empty"><strong>No documents added</strong><span className="label-xs">Add files or links the crew may need on the shoot day.</span></div>}
@@ -558,7 +574,7 @@ function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, is
       ) : null}
 
       {nearestEmergencyHospital && location ? (
-        <SharedSection title="Nearest emergency hospital">
+        <SharedSection title="Nearest emergency hospital" controls={compact ? getSectionControls?.("emergency") : undefined}>
           <div className="shared-safety-emergency">
             <div>
               <strong>{nearestEmergencyHospital.hospitalName}</strong>
