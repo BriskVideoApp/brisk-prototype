@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { BriskSelect, type BriskActionContext } from "../../../Brisk DS/src/app/components/Select";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { ScriptMediaType } from "@/data/script";
@@ -23,6 +24,7 @@ export function ScriptMediaPicker<T extends string>({
   options,
   triggerLabel,
   triggerClassName = "",
+  quietIconTrigger = false,
   triggerIcon = "plus",
   triggerIconSize = 14,
   triggerText,
@@ -36,6 +38,7 @@ export function ScriptMediaPicker<T extends string>({
   options: Array<ScriptMediaPickerOption<T>>;
   triggerLabel: string;
   triggerClassName?: string;
+  quietIconTrigger?: boolean;
   triggerIcon?: DsIconName | null;
   triggerIconSize?: number;
   triggerText?: string;
@@ -75,7 +78,11 @@ export function ScriptMediaPicker<T extends string>({
         const option = options.find((candidate) => candidate.value === value);
         if (option) onSelect(option.value);
       }}
-      actionTrigger={(props) => <button {...props} className={`script-media-add ${triggerClassName}`.trim()} type="button" aria-label={triggerLabel} data-tooltip={triggerTooltip}>
+      actionTrigger={(props) => quietIconTrigger ? (
+        <IconButton {...props} aria-label={triggerLabel} tooltip={triggerTooltip} tooltipAlign="start">
+          <DsIcon name={triggerIcon ?? "plus"} size={16} />
+        </IconButton>
+      ) : <button {...props} className={`script-media-add ${triggerClassName}`.trim()} type="button" aria-label={triggerLabel} data-tooltip={triggerTooltip}>
         {triggerIcon ? <DsIcon name={triggerIcon} size={triggerIconSize} /> : null}
         {triggerText ? <span>{triggerText}</span> : null}
       </button>}

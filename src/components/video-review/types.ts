@@ -80,6 +80,7 @@ export type Video = {
 export type ReviewVersionStatus = "in_review" | "approved" | "changes_requested";
 
 export type ReviewVersion = {
+  releasedToClient?: boolean;
   label: string;
   number: number;
   fileName: string;

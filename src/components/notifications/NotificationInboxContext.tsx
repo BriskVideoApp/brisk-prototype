@@ -23,6 +23,7 @@ import {
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canActOnProject } from "@/data/prototype-access";
 import type { NotificationEventKey } from "@/data/notification-registry";
 import type { NotificationEmailReminderPreview } from "@/data/notification-inbox";
 import type { ChatMessage } from "@/components/chat/types";
@@ -107,10 +108,53 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
       window.removeEventListener("storage", readPreferences);
     };
   }, []);
+  const [briefAuditRevision, setBriefAuditRevision] = useState(0);
+  useEffect(() => {
+    const refresh = () => setBriefAuditRevision((revision) => revision + 1);
+    const onStorage = (event: StorageEvent) => {
+      if (!event.key || event.key.startsWith("brisk-brief-action-audit-v1:")) refresh();
+    };
+    refresh();
+    window.addEventListener("brisk:brief-activity-updated", refresh);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("brisk:brief-activity-updated", refresh);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+  const removalUpdates = useMemo(() => {
+    if (!briefAuditRevision || !viewer) return [];
+    return prototypeState.projects.filter((project) => project.workspaceId === viewer.workspaceId
+      && canActOnProject(viewer, project, prototypeState, "approve", "brief"))
+      .flatMap((project) => {
+        try {
+          const key = `brisk-brief-action-audit-v1:${project.workspaceId}:${project.id}`;
+          const audit: unknown = JSON.parse(window.localStorage.getItem(key) ?? "[]");
+          if (!Array.isArray(audit)) return [];
+          return audit.flatMap((entry): RecipientInboxItem[] => {
+            if (entry?.action !== "unapproved" || typeof entry.actor !== "string"
+              || typeof entry.id !== "string" || typeof entry.occurredAt !== "string"
+              || !Number.isFinite(Date.parse(entry.occurredAt))) return [];
+            return [{
+              id: `${key}:${entry.id}:${viewer.id}`, canonicalEventId: `${key}:${entry.id}`,
+              eventKey: "stage.approval_removed", recipientId: viewer.id, recipientRole: viewer.role,
+              recipientResponsibility: "reviewer", category: "update", state: "information", label: "Update",
+              title: `${entry.actor} removed Brief approval`, copy: project.name,
+              occurredAt: entry.occurredAt, projectId: project.id, projectName: project.name, stage: "brief",
+              href: `/projects/${project.id}/stages/brief`, deepLinkTarget: "project-stage", ctaLabel: "View Brief",
+              initiallyRead: entry.actorId === viewer.id,
+            }];
+          });
+        } catch {
+          return [];
+        }
+      });
+  }, [briefAuditRevision, prototypeState, viewer]);
+
   const authorisedItems = useMemo(
     () => {
       const fixtureItems = activeScenario?.state === "new" ? [] : getAuthorisedNotificationInboxItems(selectedRole, undefined, recipientId);
-      const authorisedGeneratedItems = getAuthorisedNotificationInboxItems(selectedRole, generatedItems, recipientId)
+      const authorisedGeneratedItems = getAuthorisedNotificationInboxItems(selectedRole, [...generatedItems, ...removalUpdates], recipientId)
         .filter((item) => !item.recipientNames || item.recipientNames.includes(currentRecipientName));
       const uniqueItems = new Map<string, RecipientInboxItem>();
 
@@ -120,7 +164,7 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
 
       return [...uniqueItems.values()].sort((left, right) => right.occurredAt.localeCompare(left.occurredAt));
     },
-    [activeScenario?.state, currentRecipientName, generatedItems, recipientId, selectedRole],
+    [activeScenario?.state, currentRecipientName, generatedItems, removalUpdates, recipientId, selectedRole],
   );
   const allItems = useMemo(
     () => authorisedItems.map((item) => {

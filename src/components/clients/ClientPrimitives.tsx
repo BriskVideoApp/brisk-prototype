@@ -31,12 +31,14 @@ export function ClientModal({ children, className = "", description, footer, onC
 export function ClientPicker({
   initialQuery = "",
   label = "Who is this project for?",
+  onAddClient,
   onChange,
   onClientCreated,
   value,
 }: {
   label?: string;
   initialQuery?: string;
+  onAddClient?: (initialName: string) => void;
   onChange: (client: Client) => void;
   onClientCreated?: (client: Client) => void;
   value: string | null;
@@ -91,7 +93,14 @@ export function ClientPicker({
             setQuery(inlineDuplicate.name); setIsOpen(false); onChange(inlineDuplicate);
           }}>Use existing Client</Button><Button size="S" variant="ghost" className="client-text-button" type="button" onClick={createInline}>Create anyway</Button></div>
         </div> : null}
-        <button className="client-picker-add label-s-semibold" type="button" disabled={!query.trim()} onClick={addInline}>
+        <button className="client-picker-add label-s-semibold" type="button" disabled={!onAddClient && !query.trim()} onClick={() => {
+          if (onAddClient) {
+            setIsOpen(false);
+            onAddClient(query.trim());
+          } else {
+            addInline();
+          }
+        }}>
           <DsIcon name="plus" size={16} />Add new Client{query.trim() ? ` - ${query.trim()}` : ""}
         </button>
         <span className="client-picker-note label-xs">A private portal is created automatically. Contact details can be added later.</span>
@@ -114,19 +123,26 @@ export function AddClientDialog({
   const [form, setForm] = useState<NewClientInput>({ name: initialName, website: "" });
   const [duplicate, setDuplicate] = useState<Client | null>(showDuplicateOnOpen ? findDuplicateClient({ name: initialName }, clients) : null);
 
+  const [emailError, setEmailError] = useState(false);
   const update = <Key extends keyof NewClientInput>(key: Key, value: NewClientInput[Key]) => {
+    if (key === "primaryContactEmail") setEmailError(false);
     setForm((current) => ({ ...current, [key]: value }));
     setDuplicate(null);
   };
 
-  const submit = () => {
+  const submit = (allowDuplicate = false) => {
     if (!form.name.trim()) return;
+    const email = form.primaryContactEmail?.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(email)) {
+      setEmailError(true);
+      return;
+    }
     const match = findDuplicateClient(form, clients);
-    if (match) {
+    if (match && !allowDuplicate) {
       setDuplicate(match);
       return;
     }
-    onCreated(createClient(form));
+    onCreated(createClient({ ...form, primaryContactEmail: email }));
   };
 
   return (
@@ -137,7 +153,7 @@ export function AddClientDialog({
       footer={(
         <>
           <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="S" variant="primary"  type="button" disabled={!form.name.trim()} onClick={submit}>Create Client</Button>
+          <Button size="S" variant="primary"  type="button" disabled={!form.name.trim()} onClick={() => submit()}>Create Client</Button>
         </>
       )}
     >
@@ -155,7 +171,7 @@ export function AddClientDialog({
           }} />
         </label>
         <Input label="Primary contact name" labelSuffix="Optional" value={form.primaryContactName ?? ""} onChange={(event) => update("primaryContactName", event.target.value)} />
-        <Input label="Primary contact email" labelSuffix="Optional" type="email" value={form.primaryContactEmail ?? ""} onChange={(event) => update("primaryContactEmail", event.target.value)} />
+        <Input label="Primary contact email" error={emailError} hint={emailError ? "Enter a valid email address." : undefined} labelSuffix="Optional" type="email" value={form.primaryContactEmail ?? ""} onChange={(event) => update("primaryContactEmail", event.target.value)} />
       </div>
       {duplicate ? (
         <section className="client-duplicate-warning" aria-labelledby="duplicate-client-heading">
@@ -165,7 +181,7 @@ export function AddClientDialog({
             <span className="label-s">{duplicate.name}{duplicate.website ? ` - ${duplicate.website}` : ""}</span>
             <div>
               <Button size="S" variant="secondary" className="client-secondary-button" type="button" onClick={() => onCreated(duplicate)}>Use existing Client</Button>
-              <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onCreated(createClient(form))}>Create anyway</Button>
+              <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => submit(true)}>Create anyway</Button>
             </div>
           </div>
         </section>

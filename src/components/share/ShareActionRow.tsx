@@ -105,7 +105,7 @@ export type ShareActionRowProps = {
   sendMessageEnabled?: boolean;
   onSend?: (message: string) => void;
   onSubmit?: (destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) => void;
-  onBeforeSubmit?: (destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) => boolean;
+  ensureReviewAccess?: (destination: SubmitDestination, message: string) => boolean;
   initialLinkOpens?: ShareLinkOpens;
   initialAccess?: ShareAccess;
   onAccessChange?: (access: ShareAccess) => void;
@@ -141,8 +141,6 @@ export type ShareActionRowProps = {
   beforeAction?: (action: "copy" | "send" | "approve", proceed: () => void) => void;
 };
 
-type ExpandedSection = "access";
-
 const stageLabels: Record<ShareStageContext, string> = {
   project: "Project",
   brief: "Brief",
@@ -159,6 +157,8 @@ const accessLabels: Record<ShareAccess, string> = {
   canComment: "Can comment",
   canEdit: "Can edit",
 };
+
+const shareAccessOptions = (["viewOnly", "canComment", "canEdit"] as const).map((value) => ({ value, label: accessLabels[value] }));
 
 function formatReviewSentAge(value: string, now: number) {
   const elapsedHours = Math.max(0, Math.floor((now - new Date(value).getTime()) / (60 * 60 * 1000)));
@@ -204,7 +204,7 @@ export function ShareActionRow({
   sendMessageEnabled = false,
   onSend,
   onSubmit,
-  onBeforeSubmit,
+  ensureReviewAccess,
   initialAccess = "viewOnly",
   onAccessChange,
   projectId,
@@ -258,7 +258,6 @@ export function ShareActionRow({
   const [mentionPickerMode, setMentionPickerMode] = useState<"helper" | "typing" | null>(null);
   const [activeMentionIndex, setActiveMentionIndex] = useState(0);
   const [reviewClock, setReviewClock] = useState(() => Date.now());
-  const [expandedSections, setExpandedSections] = useState<ExpandedSection[]>(["access"]);
   const [access, setAccess] = useState<ShareAccess>(initialAccess);
   const [projectAccess, setProjectAccess] = useState<ShareAccess>("viewOnly");
   const [selectedLinkScope, setSelectedLinkScope] = useState<"current" | "project">("current");
@@ -398,26 +397,8 @@ export function ShareActionRow({
   const sharedProjectId = projectId ?? shareUrl?.match(/\/projects\/([^/?#]+)/)?.[1];
   const canChooseProjectScope = allowProjectScope && (resolvedScopeType === "stage" || resolvedScopeType === "version") && Boolean(sharedProjectId);
   const linkScopeType = canChooseProjectScope && selectedLinkScope === "project" ? "project" : resolvedScopeType;
-  const linkScopeTitle = linkScopeType === "project"
-    ? "Project"
-    : linkScopeType === "selection"
-    ? "Selected files"
-    : linkScopeType === "stage"
-    ? stageLabel
-    : resolvedShareTitle;
-  const linkScopeSubject = linkScopeType === "project"
-    ? "the whole project"
-    : linkScopeType === "selection"
-    ? "these selected files"
-    : `the ${resolvedShareTitle}`;
-  const selectedAccess = canChooseProjectScope && selectedLinkScope === "project" ? projectAccess : access;
-  const linkAccess = selectedAccess;
-  const linkAccessVerb = linkAccess === "canEdit" ? "edit" : linkAccess === "canComment" ? "comment on" : "open";
-  const copyLinkActionLabel = linkScopeType === "project"
-    ? "Copy project link"
-    : linkScopeType === "selection"
-    ? "Copy selected files link"
-    : `Copy ${linkScopeTitle} link`;
+  const linkAccess = canChooseProjectScope && selectedLinkScope === "project" ? projectAccess : access;
+  const panelTitle = canChooseProjectScope ? "Share" : `Share ${resolvedShareTitle}`;
   const clientTeamWithAccess = account.team.filter((member) => member.status === "Active" && sharedProjectId && member.projectIds.includes(sharedProjectId));
   const canManageClientTeam = isCustomerView && clientAccountAccess.role === "Client Admin";
 
@@ -425,9 +406,9 @@ export function ShareActionRow({
     const handlePointerDown = (event: PointerEvent) => {
       if (sharePanelPresentation === "dialog") return;
       const target = event.target;
-      const menuId = rootRef.current?.querySelector('[aria-haspopup="menu"]')?.getAttribute("aria-controls");
-      const portalMenu = target instanceof Element ? target.closest('.brisk-select-menu[data-brisk-select-mode="action"]')?.querySelector('[role="menu"]') : null;
-      if (menuId && portalMenu?.id === menuId) return;
+      const portal = target instanceof Element ? target.closest(".brisk-select-menu") : null;
+      const popupId = portal?.querySelector('[role="listbox"], [role="menu"]')?.id;
+      if (popupId && rootRef.current?.querySelector(`[aria-controls="${CSS.escape(popupId)}"]`)) return;
       if (!rootRef.current?.contains(event.target as Node)) {
         setIsPopoverOpen(false);
         setIsOverflowOpen(false);
@@ -528,8 +509,8 @@ export function ShareActionRow({
   };
 
   const performSend = () => {
-    if (sendsStageForReview && onBeforeSubmit
-      && !onBeforeSubmit(selectedDestination, sendMessage.trim(), notifiedMembers)) {
+    if (sendsStageForReview && ensureReviewAccess
+      && !ensureReviewAccess(selectedDestination, sendMessage.trim())) {
       setIsPopoverOpen(false);
       setIsSendConfirmationOpen(false);
       return;
@@ -621,9 +602,11 @@ export function ShareActionRow({
     runAction("send", () => {
       setFollowUpKind(null);
       if (sendsStageForReview) {
+        const message = submitMessageFor(defaultDestination);
+        if (ensureReviewAccess && !ensureReviewAccess(defaultDestination, message)) return;
         setSelectedDestination(defaultDestination);
         setMentionCursor(null);
-        setSendMessage(submitMessageFor(defaultDestination));
+        setSendMessage(message);
       }
       setIsSendConfirmationOpen(true);
     });
@@ -770,14 +753,6 @@ export function ShareActionRow({
     runAction("approve", approveProject);
   };
 
-  const toggleSection = (section: ExpandedSection) => {
-    setExpandedSections((currentSections) =>
-      currentSections.includes(section)
-        ? currentSections.filter((currentSection) => currentSection !== section)
-        : [...currentSections, section],
-    );
-  };
-
   const selectAccess = (nextAccess: ShareAccess) => {
     setHasCopied(false);
     if (canChooseProjectScope && selectedLinkScope === "project") {
@@ -792,22 +767,25 @@ export function ShareActionRow({
     className={sharePanelPresentation === "popover" ? "share-copy-primary" : undefined}
     aria-live="polite"
     type="button" onClick={() => runAction("copy", copyLink)}>
-    <DsIcon name={hasCopied ? "check" : "link"} size={16} />{hasCopied ? "Copied" : copyLinkActionLabel}
+    <DsIcon name={hasCopied ? "check" : "link"} size={16} />{hasCopied ? "Copied" : "Copy link"}
   </Button>;
 
   const shareLinkOptions = <>
-    {canConfigureLink ? <ShareOptionSection
-      title="Link access"
-      value={accessLabels[linkAccess]}
-      isExpanded={expandedSections.includes("access")}
-      onToggle={() => toggleSection("access")}
-    >
-      {(["viewOnly", "canComment", "canEdit"] satisfies ShareAccess[]).map((option) => (
-        <ShareRadioOption key={option} label={accessLabels[option]} selected={linkAccess === option} onSelect={() => selectAccess(option)} />
-      ))}
-    </ShareOptionSection> : <p className="share-link-access-static label-xs">Link access: {accessLabels[linkAccess]}</p>}
-
-    <p className="share-link-explanation label-xs">Anyone with this link can {linkAccessVerb} {linkScopeSubject}. No password required.</p>
+    {canChooseProjectScope ? <div className="share-scope-toggle" role="group" aria-label="Link scope">
+      <button className={`label-xs-semibold ${selectedLinkScope === "current" ? "is-active" : ""}`} type="button" aria-pressed={selectedLinkScope === "current"} onClick={() => { setSelectedLinkScope("current"); setHasCopied(false); }}>{resolvedScopeType === "version" ? resolvedShareTitle : stageLabel} only</button>
+      <button className={`label-xs-semibold ${selectedLinkScope === "project" ? "is-active" : ""}`} type="button" aria-pressed={selectedLinkScope === "project"} onClick={() => { setSelectedLinkScope("project"); setHasCopied(false); }}>Whole project</button>
+    </div> : null}
+    <div className="share-link-permission">
+      <span className="label-s">Anyone with the link</span>
+      {canConfigureLink ? <BriskSelect<ShareAccess>
+        ariaLabel="Permission for anyone with the link"
+        clearable={false}
+        options={shareAccessOptions}
+        placeholder="Choose permission"
+        value={linkAccess}
+        onChange={(value) => { if (value) selectAccess(value); }}
+      /> : <span className="label-s-semibold">{accessLabels[linkAccess]}</span>}
+    </div>
 
     {sharePanelPresentation === "popover" ? shareCopyAction : null}
     {clientTeamWithAccess.length > 0 ? <section className="share-client-team" aria-label={`${account.company.name} team with access: ${clientTeamWithAccess.map((member) => member.name).join(", ")}`}>
@@ -977,21 +955,16 @@ export function ShareActionRow({
       ) : null}
 
       {isPopoverOpen ? sharePanelPresentation === "dialog" ? <EditingDialog
-        title={`${linkScopeTitle} link access`}
-        description={resolvedScopeType === "project" ? "Whole project" : resolvedShareTitle}
+        title={panelTitle}
         onCancel={() => setIsPopoverOpen(false)}
         actions={<><Button size="S" variant="secondary" onClick={() => setIsPopoverOpen(false)}>Close</Button>{shareCopyAction}</>}
       ><div className="share-link-dialog-content">{shareLinkOptions}</div></EditingDialog> : (
-        <aside className="share-popover" aria-label={`${linkScopeTitle} link access`} onPointerDown={(event) => event.stopPropagation()}>
+        <aside className="share-popover" aria-label={panelTitle} onPointerDown={(event) => event.stopPropagation()}>
           <header className="share-panel-heading">
-            <div>
-              <h2 className="headings-xs-bold">{linkScopeTitle} link access</h2>
-              {canChooseProjectScope ? <div className="share-scope-toggle" role="group" aria-label="Link scope">
-                <button className={`label-xs-semibold ${selectedLinkScope === "current" ? "is-active" : ""}`} type="button" aria-pressed={selectedLinkScope === "current"} onClick={() => { setSelectedLinkScope("current"); setHasCopied(false); }}>{resolvedScopeType === "version" ? resolvedShareTitle : stageLabel} only</button>
-                <button className={`label-xs-semibold ${selectedLinkScope === "project" ? "is-active" : ""}`} type="button" aria-pressed={selectedLinkScope === "project"} onClick={() => { setSelectedLinkScope("project"); setHasCopied(false); }}>Whole project</button>
-              </div> : <p className="label-xs">{resolvedScopeType === "project" ? "Whole project" : resolvedScopeType === "stage" ? `${stageLabel} only` : resolvedScopeType === "version" ? "Selected version" : resolvedScopeType === "selection" ? "Selected files" : "This item only"}</p>}
-            </div>
-            <button className="share-panel-close" type="button" aria-label="Close share panel" onClick={() => setIsPopoverOpen(false)}><DsIcon name="x-close-cross" size={16} /></button>
+            <h2 className="headings-xs-bold">{panelTitle}</h2>
+            <IconButton tooltipAlign="end" tooltipPlacement="bottom" aria-label="Close share panel" onClick={() => setIsPopoverOpen(false)}>
+              <DsIcon name="x-close-cross" size={16} />
+            </IconButton>
           </header>
 
           {shareLinkOptions}
@@ -1082,10 +1055,10 @@ export function ShareActionRow({
 }
 
 /** Header-only sharing reuses the same link/access panel as the review footer. */
-export function StageShareControl(props: Omit<ShareActionRowProps, "showSend" | "showApprove" | "showCopyLink" | "stageDecisionActions" | "presentation" | "shareTrigger">) {
+export function StageShareControl({ prominentLabel, ...props }: Omit<ShareActionRowProps, "showSend" | "showApprove" | "showCopyLink" | "stageDecisionActions" | "presentation" | "shareTrigger"> & { prominentLabel?: string }) {
   return <ShareActionRow {...props} density="compact" showSend={false} showApprove={false}
-    shareTrigger={(triggerProps) => <Button {...triggerProps} size="S" variant="ghost" aria-label={`Share ${props.stageLabelOverride ?? stageLabels[props.context]}`}>
-      <DsIcon name="share-network" size={16} />Share
+    shareTrigger={(triggerProps) => <Button {...triggerProps} size="S" variant={prominentLabel ? "primary" : "ghost"} aria-label={prominentLabel ?? `Share ${props.stageLabelOverride ?? stageLabels[props.context]}`}>
+      <DsIcon name="share-network" size={16} />{prominentLabel ?? "Share"}
     </Button>}
   />;
 }
@@ -1177,59 +1150,5 @@ export function StageApprovalControl({
         </aside>
       ) : null}
     </span>
-  );
-}
-
-function ShareOptionSection({
-  title,
-  value,
-  isExpanded,
-  onToggle,
-  children,
-}: {
-  title: string;
-  value: string;
-  isExpanded: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className={`share-option-section ${isExpanded ? "expanded" : ""}`}>
-      <button className="share-option-summary" type="button" aria-expanded={isExpanded} onClick={onToggle}>
-        <span className="share-option-title label-s-semibold">
-          {title}: <strong>{value}</strong>
-        </span>
-        <span className="share-option-toggle label-s-semibold" aria-hidden="true">
-          {isExpanded ? "Hide" : "Change"}
-        </span>
-      </button>
-      {isExpanded ? <div className="share-radio-list">{children}</div> : null}
-    </section>
-  );
-}
-
-function ShareRadioOption({
-  label,
-  selected,
-  disabled = false,
-  onSelect,
-}: {
-  label: string;
-  selected: boolean;
-  disabled?: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <button
-      className={`share-radio-option label-s ${selected ? "selected" : ""}`}
-      type="button"
-      role="radio"
-      aria-checked={selected}
-      disabled={disabled}
-      onClick={onSelect}
-    >
-      <span className="share-radio-control" aria-hidden="true" />
-      <span>{label}</span>
-    </button>
   );
 }

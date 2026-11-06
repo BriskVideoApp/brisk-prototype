@@ -265,7 +265,7 @@ export function ScriptPage({
   const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
   const [deleteCandidateVersionId, setDeleteCandidateVersionId] = useState<string | null>(null);
   const [, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
-  const [areVisualsVisible, setAreVisualsVisible] = useState(false);
+  const [visualsOverride, setVisualsOverride] = useState<boolean | null>(null);
   const [, setHasEditedThisSession] = useState(false);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
   const [confirmingDeleteRowId, setConfirmingDeleteRowId] = useState<string | null>(null);
@@ -304,6 +304,8 @@ export function ScriptPage({
   const applyAiDraftRef = useRef<(draft: string) => boolean>(() => false);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const visibleRows = rows.filter((row) => !row.deletedMeta);
+  const hasVisuals = visibleRows.some((row) => row.visuals.trim() || row.media.length > 0);
+  const areVisualsVisible = visualsOverride ?? hasVisuals;
   const hasScriptContent = visibleRows.some((row) => row.words.trim() || row.visuals.trim() || row.media.length > 0);
   const aiSelectionContext = {
     activeRowLabel:
@@ -373,6 +375,10 @@ export function ScriptPage({
     : null;
   const isPreviewingVersion = previewVersion !== null;
   const dropdownVersion = previewVersion ?? selectedVersion;
+  useEffect(() => {
+    setVisualsOverride(null);
+  }, [dropdownVersion.id]);
+
   const activeVersionName = getVersionDisplayName(dropdownVersion, defaultVersionName);
   const canConvertScriptToStoryboard = isScriptApproved
     && selectedVersion.approvedSnapshot
@@ -518,7 +524,7 @@ export function ScriptPage({
   useEffect(() => {
     wordInputRefs.current.forEach(resizeTextAreaToContent);
     visualInputRefs.current.forEach(resizeTextAreaToContent);
-  }, [rows, density]);
+  }, [rows, density, areVisualsVisible]);
 
   useEffect(() => {
     if (isRenamingScriptTitle) {
@@ -1655,7 +1661,7 @@ export function ScriptPage({
     updateRows((currentRows) =>
       currentRows.map((row) => (row.id === activeRowId ? { ...row, visuals } : row)),
     );
-    setAreVisualsVisible(true);
+    setVisualsOverride(true);
     setToastMessage("Visual direction inserted.");
   };
 
@@ -2189,7 +2195,14 @@ export function ScriptPage({
             onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
             onCaptureSelectionAnchor={captureSelectionAnchor}
             onDeleteRow={deleteRowById}
-            onToggleVisuals={() => setAreVisualsVisible((isVisible) => !isVisible)}
+            visualsActionLabel={hasVisuals || isScriptApproved || isPreviewingVersion ? "Show visuals" : "Add visuals"}
+            onToggleVisuals={() => {
+              setVisualsOverride(!areVisualsVisible);
+              if (!areVisualsVisible && !isScriptApproved && !isPreviewingVersion) {
+                const firstRowId = visibleRows[0]?.id ?? emptyScriptRowId;
+                requestAnimationFrame(() => visualInputRefs.current.get(firstRowId)?.focus());
+              }
+            }}
             onDragEnd={() => {
               setDraggingRowId(null);
               setDropRowId(null);

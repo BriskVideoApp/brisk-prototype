@@ -665,7 +665,10 @@ export function inviteClientToProjectState(
   const normalisedEmail = input.email.trim().toLocaleLowerCase("en-AU");
   const existingUser = state.users.find((user) => user.workspaceId === workspaceId
     && user.clientId === client.id && user.email.toLocaleLowerCase("en-AU") === normalisedEmail);
-  const userId = existingUser?.id ?? makeUniqueId(`${client.id}-contact`, state.users.map((user) => user.id));
+  const existingContact = client.contacts.find((contact) => contact.email.trim().toLocaleLowerCase("en-AU") === normalisedEmail);
+  const userId = existingUser?.id ?? existingContact?.id ?? makeUniqueId(`${client.id}-contact`, [
+    ...state.users.map((user) => user.id), ...client.contacts.map((contact) => contact.id),
+  ]);
   const contact: ClientContact = {
     id: userId,
     name: input.name.trim(),
@@ -693,7 +696,7 @@ export function inviteClientToProjectState(
       primaryContactId: candidate.primaryContactId ?? contact.id,
       contacts: candidate.contacts.some((candidateContact) => candidateContact.id === contact.id)
         ? candidate.contacts.map((candidateContact) => candidateContact.id === contact.id
-          ? { ...candidateContact, membershipRole: input.role ?? candidateContact.membershipRole, projectIds: [...new Set([...candidateContact.projectIds, project.id])] }
+          ? { ...candidateContact, name: contact.name, membershipRole: input.role ?? candidateContact.membershipRole, projectIds: [...new Set([...candidateContact.projectIds, project.id])] }
           : candidateContact)
         : [...candidate.contacts, contact],
       latestActivity: { label: `Invite sent to ${contact.name}`, occurredAt: sentAt },
@@ -756,6 +759,7 @@ export function updateProjectBriefState(
   return {
     ...state,
     projectBriefSnapshots: state.projectBriefSnapshots.map((snapshot) => snapshot.projectId === projectId
+      && snapshot.workspaceId === state.session.activeWorkspaceId
       ? { ...snapshot, fields: cloneBriefFields(fields) }
       : snapshot),
   };

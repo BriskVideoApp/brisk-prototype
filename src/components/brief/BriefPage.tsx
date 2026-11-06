@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { captureVideoPoster } from "@/lib/video-poster";
 import { useBriskAi, useBriefAiState } from "@/components/ai/BriskAiContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { canViewProject, canActOnProject } from "@/data/prototype-access";
@@ -27,6 +28,7 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
+import { BriefApprovalConfetti, briefCelebrationDurationMs } from "@/components/brief/BriefApprovalConfetti";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
@@ -128,7 +130,7 @@ type BriefReviewAuditEntry = {
 
 type BriefActionAuditEntry =
   | BriefReviewAuditEntry
-  | { id: string; action: "approved" | "unapproved"; actor: string; occurredAt: string };
+  | { id: string; action: "approved" | "unapproved"; actor: string; actorId?: string; occurredAt: string };
 
 type BriefMode = "landing" | "steps";
 
@@ -140,7 +142,7 @@ type BriefAiSubmit = {
 const maxBriefWords = 1000;
 const landingIntroPlaceholder = "__landing_intro_placeholder__";
 const summaryMissingSelector =
-  ".brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-written-slot.is-guess, .brief-summary-page .brief-summary-static-chip.is-missing, .brief-summary-page .brief-summary-static-chip.is-guess, .brief-summary-page .brief-summary-deadline-value.is-missing, .brief-summary-page .brief-summary-deadline-value.is-guess";
+  ".brief-summary-page .brief-summary-reference-caption .is-guess, .brief-summary-page .brief-summary-add-references.is-missing, .brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-written-slot.is-guess, .brief-summary-page .brief-summary-static-chip.is-missing, .brief-summary-page .brief-summary-static-chip.is-guess, .brief-summary-page .brief-summary-deadline-value.is-missing, .brief-summary-page .brief-summary-deadline-value.is-guess";
 
 const placeholderStepCopy: Record<Exclude<BriefStepId, "basics" | "summary">, string> = {
   videoType: "The video format, production category and primary platform will be shaped here.",
@@ -638,7 +640,8 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     : getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields)[0].id);
   const activeStepId = savedActiveStepId === "deadline" ? "deliverablesTiming" : savedActiveStepId;
   const { regionRef: stepRegionRef, selectStep } = useBriefStepNavigation(activeStepId, setActiveStepId);
-  const [briefFields, setBriefFields] = useBriefAiState(project.id, "fields", () => cloneBriefFields(initialFields ?? initialBriefFields));
+  const [draftFields, setBriefFields] = useBriefAiState(project.id, "fields", () => cloneBriefFields(initialFields ?? initialBriefFields));
+  const briefFields = initialFields ?? draftFields;
   const [searchFieldFocus, setSearchFieldFocus] = useState<BriefFieldId | null>(null);
   const revealSearchField = (fieldId: BriefFieldId) => {
     const step = Object.entries(briefStepFields).find(([, fieldIds]) => fieldIds?.includes(fieldId))?.[0] as BriefStepId | undefined;
@@ -729,6 +732,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const timingSuggestion = finalDeadline || !showDeliveryDates ? undefined
     : <BriefTimingSuggestion projectId={project.id} requestedDate={timingRequestedDate} />;
   const briefFieldsRef = useRef(briefFields);
+  useEffect(() => { briefFieldsRef.current = briefFields; }, [briefFields]);
   const [logline, setLogline] = useBriefAiState(project.id, "logline", { text: "", status: "not_generated" });
   const [chatMessages, setChatMessages] = useBriefAiState(project.id, "messages", []);
   const [hasStartedClarifying, setHasStartedClarifying] = useBriefAiState(project.id, "started", false);
@@ -737,6 +741,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const [hasDraftedBrief, setHasDraftedBrief] = useBriefAiState(project.id, "drafted", false);
   const [sourcePrompt, setSourcePrompt] = useBriefAiState(project.id, "sourcePrompt", "");
   const [briefAudit, setBriefAudit] = useState<BriefActionAuditEntry[]>([]);
+  const [approvalRemovalToast, setApprovalRemovalToast] = useState<{ scope: string } | null>(null);
   const [briefShareAccess, setBriefShareAccess] = useState<ShareAccess>("viewOnly");
   const [isApprovalConfirmationOpen, setIsApprovalConfirmationOpen] = useState(false);
   const [isApprovalCelebrationVisible, setIsApprovalCelebrationVisible] = useState(false);
@@ -774,7 +779,15 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       setProjectStageStatus(project.id, "brief", { state: "in_progress", daysAgo: 0 });
     }
   }, [hasHydrated, hasBriefContent, isBriefApproved, project.id, setProjectStageStatus]);
-  const lastBriefAudit = briefAudit[briefAudit.length - 1];
+  useEffect(() => {
+    if (!approvalRemovalToast) return;
+    const timeout = window.setTimeout(() => setApprovalRemovalToast(null), 4000);
+    return () => window.clearTimeout(timeout);
+  }, [approvalRemovalToast]);
+
+  const lastBriefAudit = briefAudit.at(-1);
+  const latestInlineReview = lastBriefAudit?.action === "sent" || lastBriefAudit?.action === "reminded" || lastBriefAudit?.action === "updated"
+    ? lastBriefAudit : undefined;
   const reviewCompany = selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName;
   const latestReviewRequest = [...briefAudit].reverse().find((entry): entry is BriefReviewAuditEntry => entry.action === "sent" && entry.company === reviewCompany);
   const pendingReviewRequest = !isBriefApproved && briefStageStatus.assignedTo === reviewCompany ? latestReviewRequest : undefined;
@@ -821,8 +834,8 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       return nextFields[fieldId].value !== briefFieldsRef.current[fieldId].value;
     })) unapproveBrief();
     briefFieldsRef.current = nextFields;
-    setBriefFields(nextFields);
-    onFieldsChange?.(cloneBriefFields(nextFields));
+    if (onFieldsChange) onFieldsChange(cloneBriefFields(nextFields));
+    else setBriefFields(nextFields);
   }
 
   function appendChatMessages(nextMessages: ChatMessage[]) {
@@ -1096,7 +1109,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     });
   }
 
-  function checkBriefClientAccess(destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) {
+  function checkBriefClientAccess(destination: SubmitDestination, message: string) {
     if (!hasBriefContent || !canSendBrief) return false;
     if (destination !== "customer") return true;
 
@@ -1119,9 +1132,10 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       clientId: project.clientId,
       projectId: project.id,
       purpose: "brief-send",
+      briefMessage: message,
       ...(contactToInvite ? { name: contactToInvite.name, email: contactToInvite.email } : {}),
-    }, (person) => {
-      sendBrief("customer", message, [...new Set([...notifiedPeople, person.name])]);
+    }, (person, submission) => {
+      sendBrief("customer", submission.briefMessage ?? message, [person.name]);
     });
     return false;
   }
@@ -1209,7 +1223,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       return;
     }
     setIsApprovalCelebrationVisible(true);
-    const celebrationDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 700 : 3800;
+    const celebrationDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 700 : briefCelebrationDurationMs;
     approvalNavigationTimeoutRef.current = window.setTimeout(goToNextStageAfterApproval, celebrationDuration);
   }
 
@@ -1233,9 +1247,11 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     recordBriefAudit({
       id: `brief-unapproval-${project.id}-${now.getTime()}`,
       action: "unapproved",
-      actor: briefActorName,
+      actor: viewer?.name ?? briefActorName,
+      actorId: viewer?.id,
       occurredAt: now.toISOString(),
     });
+    setApprovalRemovalToast({ scope: auditStorageKey });
   }
 
   function goToRelativeStep(direction: -1 | 1) {
@@ -1335,7 +1351,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       approvedBy={briefStageStatus.approvedBy ?? briefActorName}
       isApproved={isBriefApproved}
       onSubmit={sendBrief}
-      onBeforeSubmit={checkBriefClientAccess}
+      ensureReviewAccess={checkBriefClientAccess}
       onApprove={requestApproveBrief}
       onUnapprove={unapproveBrief}
     />
@@ -1365,12 +1381,15 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             shareUrl={`/projects/${project.id}/stages/brief`}
           />}
         />
-        {lastBriefAudit ? <p
+        {approvalRemovalToast?.scope === auditStorageKey && !isBriefApproved ? (
+          <div className="brief-approval-toast label-s-semibold" role="status">Brief approval removed</div>
+        ) : null}
+        {latestInlineReview ? <p
           className="brief-action-audit brief-action-audit-inline label-xs"
           role="status"
-          title={describeBriefAuditEntry(lastBriefAudit)}
-          aria-label={describeBriefAuditEntry(lastBriefAudit)}
-        >{summariseBriefAuditEntry(lastBriefAudit)}</p> : null}
+          title={describeBriefAuditEntry(latestInlineReview)}
+          aria-label={describeBriefAuditEntry(latestInlineReview)}
+        >{summariseBriefAuditEntry(latestInlineReview)}</p> : null}
         {briefMode === "landing" ? (
           <BriefLandingScreen
             footerShare={briefActionsRow}
@@ -1501,7 +1520,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "summary" ? (
               <BriefSummaryPage
-                timingSuggestion={timingSuggestion}
                 agreedDeadline={finalDeadline}
                 showDeliveryDates={showDeliveryDates}
                 deadlineReadOnly={deadlineReadOnly}
@@ -1704,42 +1722,31 @@ function BriefApprovalCelebration({
   nextStageLabel: string;
   onContinue: () => void;
 }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    return () => dialog?.close();
+  }, []);
+
   return (
-    <div className="brief-approval-celebration">
-      <div className="brief-approval-confetti" aria-hidden="true">
-        {Array.from({ length: 420 }, (_, index) => (
-          <span
-            key={index}
-            style={{
-              "--confetti-index": index,
-              "--confetti-x": `${2 + (index * 37) % 96}%`,
-              "--confetti-delay": `${(index % 32) * 15}ms`,
-              "--confetti-duration": `${2600 + (index % 6) * 150}ms`,
-              "--confetti-drift": (index * 29) % 31 - 15,
-            } as CSSProperties}
-          />
-        ))}
-      </div>
-      <section
-        className="brief-approval-celebration-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="brief-approval-celebration-title"
-        aria-describedby="brief-approval-celebration-description"
-      >
+    <dialog
+      ref={dialogRef}
+      className="brief-approval-celebration"
+      aria-labelledby="brief-approval-celebration-title"
+      onCancel={(event) => { event.preventDefault(); onContinue(); }}
+    >
+      <BriefApprovalConfetti />
+      <div className="brief-approval-celebration-card">
         <span className="brief-approval-celebration-icon" aria-hidden="true">
           <DsIcon name="check" size={28} />
         </span>
-        <span className="label-xs-semibold brief-approval-celebration-kicker">BRIEF APPROVED</span>
-        <h2 className="headings-m-bold" id="brief-approval-celebration-title">On to {nextStageLabel}</h2>
-        <p className="paragraph-s" id="brief-approval-celebration-description">
-          Your Brief is approved. Taking you to the next Stage.
-        </p>
-        <Button size="S" type="button" variant="primary" onClick={onContinue}>
+        <h2 className="headings-m-bold" id="brief-approval-celebration-title">Brief approved</h2>
+        <Button size="S" type="button" variant="secondary" onClick={onContinue}>
           Continue to {nextStageLabel}
         </Button>
-      </section>
-    </div>
+      </div>
+    </dialog>
   );
 }
 
@@ -1773,7 +1780,7 @@ function formatBriefAuditDate(value: string) {
   }).format(date);
 }
 
-function describeBriefAuditEntry(entry: BriefActionAuditEntry) {
+function describeBriefAuditEntry(entry: BriefReviewAuditEntry) {
   const date = formatBriefAuditDate(entry.occurredAt);
   if (entry.action === "sent") {
     return `${entry.actor} submitted the Brief to ${entry.company} at ${date}. ${entry.recipients.length ? `Notified ${entry.recipients.join(", ")}.` : "No one was directly notified."}`;
@@ -1781,16 +1788,10 @@ function describeBriefAuditEntry(entry: BriefActionAuditEntry) {
   if (entry.action === "reminded") {
     return `${entry.actor} reminded ${entry.company} to review the Brief at ${date}.${entry.message ? ` Message: ${entry.message}` : ""}`;
   }
-  if (entry.action === "updated") {
-    return `${entry.actor} sent the updated Brief to ${entry.company} at ${date}.${entry.message ? ` Message: ${entry.message}` : ""}`;
-  }
-
-  return entry.action === "approved"
-    ? `Approved by ${entry.actor} at ${date}.`
-    : `Brief approval removed by ${entry.actor} at ${date}.`;
+  return `${entry.actor} sent the updated Brief to ${entry.company} at ${date}.${entry.message ? ` Message: ${entry.message}` : ""}`;
 }
 
-function summariseBriefAuditEntry(entry: BriefActionAuditEntry) {
+function summariseBriefAuditEntry(entry: BriefReviewAuditEntry) {
   const date = formatBriefAuditDate(entry.occurredAt);
   if (entry.action === "sent") {
     return `${entry.actor} submitted Brief to ${entry.company} · ${date}`;
@@ -1798,13 +1799,7 @@ function summariseBriefAuditEntry(entry: BriefActionAuditEntry) {
   if (entry.action === "reminded") {
     return `${entry.actor} reminded ${entry.company} to review the Brief · ${date}`;
   }
-  if (entry.action === "updated") {
-    return `${entry.actor} sent the updated Brief to ${entry.company} · ${date}`;
-  }
-
-  return entry.action === "approved"
-    ? `Approved by ${entry.actor} · ${date}`
-    : `Approval removed by ${entry.actor} · ${date}`;
+  return `${entry.actor} sent the updated Brief to ${entry.company} · ${date}`;
 }
 
 function BriefStepShell({
@@ -3760,9 +3755,11 @@ function BriefVoiceoverControl({
 }
 
 function BriefReferenceVideosField({
+  autoFocus = false,
   onChange,
   value,
 }: {
+  autoFocus?: boolean;
   onChange: (value: string) => void;
   value: string;
 }) {
@@ -3798,7 +3795,9 @@ function BriefReferenceVideosField({
     const file = event.target.files?.[0];
 
     if (file && canAddMore) {
-      addVideo(createReferenceVideoFromFile(file));
+      const video = createReferenceVideoFromFile(file);
+      addVideo(video);
+      void saveReferencePoster(video.id, file);
     }
 
     event.target.value = "";
@@ -3807,11 +3806,12 @@ function BriefReferenceVideosField({
   return (
     <div className="brief-reference-videos">
       <div className="brief-reference-actions">
-        <label className="brief-reference-link-entry label-s" aria-label="Paste reference video URL">
+        <label className="brief-reference-link-entry label-s" aria-label="Paste a YouTube, Vimeo or other video link">
           <DsIcon name="link-simple-horizontal" size={16} />
           <input
+            autoFocus={autoFocus}
             value={linkValue}
-            placeholder="Paste YouTube, Vimeo or Loom URL"
+            placeholder="Paste a YouTube, Vimeo or other video link"
             disabled={!canAddMore}
             onChange={(event) => setLinkValue(event.target.value)}
             onKeyDown={(event) => {
@@ -4616,7 +4616,6 @@ function BriefSummaryPage({
   onGoToStep,
   studioName,
   summaryMissingCount,
-  timingSuggestion,
   approvalGuidance,
 }: {
   agreedDeadline?: string;
@@ -4634,7 +4633,6 @@ function BriefSummaryPage({
   onGoToStep: (stepId: BriefStepId) => void;
   studioName: string;
   summaryMissingCount?: number;
-  timingSuggestion?: ReactNode;
   approvalGuidance?: string;
 }) {
   const [editingFieldId, setEditingFieldId] = useState<BriefSummaryEditTarget | null>(null);
@@ -4703,11 +4701,8 @@ function BriefSummaryPage({
 
   return (
     <section className="brief-summary-page" aria-labelledby="brief-summary-title" ref={summaryRef}>
-      <BriefSectionIntro
-        intro={intro}
-        titleId="brief-summary-title"
-      />
       <BriefSummaryLogline
+        intro={intro}
         deliverableRows={deliverableRows}
         editingFieldId={editingFieldId}
         fields={fields}
@@ -4726,12 +4721,8 @@ function BriefSummaryPage({
         onDeadlineChange={onDeadlineChange ?? ((deadline) => {
           if (!deadlineReadOnly) onFieldChange("deliverables", serialiseDeliverables(deliverableRows.map((row) => row.id === primaryDeliverable.id ? { ...row, deadline, usesProjectDeadline: false } : row)));
         })} />
-      {showDeliveryDates ? timingSuggestion : null}
-      <div className="brief-summary-deliverables-panel">
-        <BriefSummaryCardHead
-          index="03"
-          title="Additional versions"
-        />
+      <section className="brief-summary-deliverables-panel" aria-labelledby="brief-summary-versions-title">
+        <h2 id="brief-summary-versions-title" className="brief-summary-heading headings-2xs-bold">Additional versions</h2>
         <BriefSummaryDeliverablesTable
           versionAgreements={versionAgreements}
           onVersionDeadlineChange={onVersionDeadlineChange}
@@ -4743,8 +4734,8 @@ function BriefSummaryPage({
           onEditCell={setEditingDeliverableCell}
           value={fields.deliverables.value}
         />
-      </div>
-      {summaryMissingCount && summaryMissingCount > 0 ? (
+      </section>
+      {summaryMissingCount !== undefined && summaryMissingCount > 0 ? (
         <BriefSummaryConfirmationNote
           missingCount={summaryMissingCount}
           approvalGuidance={approvalGuidance}
@@ -4769,50 +4760,37 @@ function BriefSummaryConfirmationNote({
 }) {
   return (
     <div className="brief-summary-confirmation-note label-s-semibold">
-      <span className="brief-summary-confirmation-note-text">
-        <span className="brief-summary-confirmation-note-count">
-          <strong>{missingCount}</strong> {missingCount === 1 ? "detail" : "details"}
-        </span>{" "}
-        {missingCount === 1 ? "hasn't" : "haven't"} been confirmed. {approvalGuidance}
-        <span className="brief-summary-review-detail label-xs-semibold" role="status" aria-atomic="true">{reviewDetail}</span>
-      </span>
-      <span className="brief-summary-confirmation-cycler" aria-label="Cycle unconfirmed details">
-        <button
-          className="brief-summary-confirmation-arrow"
-          type="button"
-          aria-label="Review previous unconfirmed detail"
-          onClick={() => onCycle("previous")}
-        >
-          <DsIcon name="caret-left" size={14} />
-        </button>
-        <button
-          className="brief-summary-confirmation-arrow"
-          type="button"
-          aria-label="Review next unconfirmed detail"
-          onClick={() => onCycle("next")}
-        >
-          <DsIcon name="caret-right" size={14} />
-        </button>
-      </span>
-    </div>
-  );
-}
-
-function BriefSummaryCardHead({
-  index,
-  title,
-}: {
-  index: string;
-  title: string;
-}) {
-  return (
-    <div className="brief-summary-card-head">
-      <span className="brief-summary-card-title">
-        <span className="brief-summary-card-number label-xs-semibold" aria-hidden="true">
-          {index}
-        </span>
-        <span className="brief-summary-section-label label-xs-semibold">{title}</span>
-      </span>
+      {reviewDetail ? (
+        <span>{missingCount} unconfirmed {missingCount === 1 ? "detail" : "details"}</span>
+      ) : (
+        <Button variant="ghost" size="S" onClick={() => onCycle("next")}>
+          Review {missingCount} unconfirmed {missingCount === 1 ? "detail" : "details"}
+        </Button>
+      )}
+      {approvalGuidance ? <span className="paragraph-s">{approvalGuidance}</span> : null}
+      <div className="brief-summary-review-progress">
+        <span className="brief-summary-review-detail label-s-semibold" role="status" aria-atomic="true">{reviewDetail}</span>
+        {reviewDetail ? (
+          <span className="brief-summary-confirmation-cycler" aria-label="Cycle unconfirmed details">
+            <button
+              className="brief-summary-confirmation-arrow"
+              type="button"
+              aria-label="Review previous unconfirmed detail"
+              onClick={() => onCycle("previous")}
+            >
+              <DsIcon name="caret-left" size={14} />
+            </button>
+            <button
+              className="brief-summary-confirmation-arrow"
+              type="button"
+              aria-label="Review next unconfirmed detail"
+              onClick={() => onCycle("next")}
+            >
+              <DsIcon name="caret-right" size={14} />
+            </button>
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -4905,11 +4883,8 @@ function BriefSummarySpecStrip({
     .sort((first, second) => specOrder.indexOf(first.id) - specOrder.indexOf(second.id));
 
   return (
-    <section className="brief-summary-spec-groups" aria-label="Main Video Details">
-      <BriefSummaryCardHead
-        index="02"
-        title="Main Video Details"
-      />
+    <section className="brief-summary-spec-groups" aria-labelledby="brief-summary-main-title">
+      <h2 id="brief-summary-main-title" className="brief-summary-heading headings-xs-bold">Main video details</h2>
       <BriefTableViewport className="brief-summary-spec-table-wrap" label="Main Video Details specifications">
         <table className="brief-deliverables-table brief-deliverables-table-summary brief-summary-spec-table">
           <thead>
@@ -4921,6 +4896,7 @@ function BriefSummarySpecStrip({
             <tr>
               {specs.map((spec) => (
                 <td key={spec.id}>
+                  <span className="brief-summary-narrow-label label-s" aria-hidden="true">{getSummarySpecHeading(spec.id)}</span>
                   {spec.id === "deadline" ? <div className="brief-delivery-date-stack"><span
                     className={`brief-summary-deadline-value${!spec.value ? " is-missing" : spec.confidence === "guess" ? " is-guess" : ""}`}
                     data-review-key="deadline" data-review-label="Main Video · Delivery date" tabIndex={-1}>
@@ -4963,76 +4939,102 @@ function getSummarySpecHeading(id: BriefSummarySpecId) {
   return headings[id];
 }
 
-function BriefSummaryReferenceLink({
-  field,
-  onConfirm,
-  video,
-}: {
-  field: BriefField;
-  onConfirm: (fieldId: BriefFieldId) => void;
+function referencePosterKey(id: string) {
+  return `brisk-brief-reference-poster:${id}`;
+}
+
+async function saveReferencePoster(id: string, file: File) {
+  const frame = await captureVideoPoster(file, 480);
+  if (frame) {
+    const key = referencePosterKey(id);
+    try {
+      window.localStorage.setItem(key, frame);
+      window.dispatchEvent(new Event(key));
+    } catch { /* The original reference still works when local storage is full. */ }
+  }
+  return frame;
+}
+
+function BriefSummaryReferenceVideo({ video, needsConfirmation, onConfirm }: {
   video: ReferenceVideoCard;
+  needsConfirmation: boolean;
+  onConfirm: () => void;
 }) {
-  const title = getReferenceDisplayTitle(video);
-  const href = getReferenceExternalHref(video.source) || "#brief-summary-reference-video";
-  const isExternal = href.startsWith("http");
-  const isGuess = field.confidence === "guess";
-
-  return (
-    <a
-      className={`brief-written-slot hero brief-summary-reference-link ${isGuess ? "is-guess" : ""}`}
-      data-review-key="referenceTitleSlot"
-      data-review-label="Logline · Reference"
-      href={href}
-      rel={isExternal ? "noreferrer" : undefined}
-      target={isExternal ? "_blank" : undefined}
-      onClick={(event) => {
-        if (!isGuess) {
-          return;
-        }
-
-        event.preventDefault();
-        onConfirm(field.id);
-      }}
-    >
-      {title}
-    </a>
-  );
-}
-
-function BriefSummaryReferenceVideos({ videos }: { videos: ReferenceVideoCard[] }) {
-  return (
-    <div id="brief-summary-reference-video" className="brief-summary-reference-videos" aria-label="Reference videos">
-      {videos.map((video, index) => (
-        <BriefSummaryReferenceVideo video={video} index={index} key={video.id} />
-      ))}
-    </div>
-  );
-}
-
-function BriefSummaryReferenceVideo({ index, video }: { index: number; video: ReferenceVideoCard }) {
   const embedUrl = getReferenceEmbedUrl(video.source);
   const videoUrl = getReferenceVideoUrl(video.source);
+  const href = getReferenceExternalHref(video.source);
   const title = getReferenceDisplayTitle(video);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [poster, setPoster] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const key = referencePosterKey(video.id);
+    const refresh = () => {
+      try { setPoster(window.localStorage.getItem(key) ?? ""); } catch { setPoster(""); }
+    };
+    refresh();
+    window.addEventListener(key, refresh);
+    return () => window.removeEventListener(key, refresh);
+  }, [video.id]);
+
+  async function restorePreview(file?: File) {
+    if (!file) return;
+    if (file.name !== video.source) {
+      setFeedback(`Choose ${video.source} to preview this reference.`);
+      return;
+    }
+    setLoading(true);
+    setFeedback("");
+    const frame = await saveReferencePoster(video.id, file);
+    if (frame) setPoster(frame);
+    else setFeedback("This file could not be previewed.");
+    setLoading(false);
+  }
+
   return (
-    <article className="brief-summary-reference-video" aria-label={`Reference video ${index + 1}: ${title}`}>
-      <div className="brief-summary-reference-media">
-        {embedUrl ? (
-          <iframe
-            title={title}
-            src={embedUrl}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        ) : videoUrl ? (
-          <video controls preload="metadata" src={videoUrl} aria-label={title} />
-        ) : (
-          <div className="brief-summary-reference-placeholder">
-            <DsIcon name="play" size={20} />
+    <div className="brief-summary-reference-item">
+      {embedUrl || videoUrl ? (
+        <div className="brief-summary-reference-video">
+          <div className="brief-summary-reference-media">
+            {embedUrl ? (
+              <iframe title={title} src={embedUrl} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
+            ) : <video controls preload="metadata" src={videoUrl} aria-label={title} />}
           </div>
-        )}
+        </div>
+      ) : poster ? (
+        <img className="brief-summary-reference-poster" src={poster} alt={`Frame from ${title}`} />
+      ) : (
+        <div className="brief-reference-thumb brief-summary-file-preview">
+          <DsIcon name="film-strip" size={40} />
+          {href ? <a href={href} className="brief-summary-reference-link label-s-semibold" target="_blank" rel="noreferrer">Open video</a> : (
+            <>
+              <Button size="S" variant="secondary" disabled={loading} onClick={() => inputRef.current?.click()}>
+                {loading ? "Loading preview…" : "Load preview"}
+              </Button>
+              <input ref={inputRef} type="file" accept="video/*" hidden aria-label={`Load preview for ${title}`}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  void restorePreview(file);
+                }} />
+              {feedback ? <span className="label-xs" role="status">{feedback}</span> : null}
+            </>
+          )}
+        </div>
+      )}
+      <div className="brief-summary-reference-caption label-xs">
+        {needsConfirmation ? (
+          <button type="button" className="is-guess" onClick={onConfirm}
+            data-review-key="referenceTitleSlot" data-review-label="Video concept · Reference"
+            aria-label={`Confirm reference video ${title}`}>{title}</button>
+        ) : href ? (
+          <a href={href} target="_blank" rel="noreferrer">{title}</a>
+        ) : <span>{title}</span>}
       </div>
-    </article>
+    </div>
   );
 }
 
@@ -5115,7 +5117,7 @@ function BriefWrittenSlot({
     <Slot
       className={`brief-written-slot ${className ?? ""} ${isGuess ? "is-guess" : ""} ${isMissing ? "is-missing" : ""}`}
       data-review-key={editTarget}
-      data-review-label={`${className === "hero" ? "Logline · " : ""}${label}`}
+      data-review-label={`${className === "hero" ? "Video concept · " : ""}${label}`}
       type={Slot === "button" ? "button" : undefined}
       role={Slot === "span" ? "button" : undefined}
       tabIndex={Slot === "span" ? 0 : undefined}
@@ -5198,7 +5200,7 @@ function createWrittenSummaryModel(
     audience: proseCase(joinWithAnd(audiences)),
     brandKit: fields.brandKit.value,
     brandKitProse: proseCase(fields.brandKit.value),
-    callToAction: proseCase(getShortOptionLabel(fields.callToAction.value)),
+    callToAction: sentenceCase(getShortOptionLabel(fields.callToAction.value)),
     deadline,
     deadlineCountdown,
     deliverablesInline: formatDeliverablesInline(deliverableRows),
@@ -5272,7 +5274,7 @@ function createWrittenSummaryModel(
     ],
     versionsLabel: `${deliverableRows.length} ${deliverableRows.length === 1 ? "version" : "versions"}`,
     videoType,
-    videoTypeProse: proseCase(videoType),
+    videoTypeProse: proseCase(videoType).replace(/\bshort-form \/ reels\b/gi, "reel"),
   };
 }
 
@@ -5532,6 +5534,7 @@ function BriefSummaryLogline({
   deliverableRows,
   editingFieldId,
   fields,
+  intro,
   logline,
   model,
   onChange,
@@ -5543,6 +5546,7 @@ function BriefSummaryLogline({
   deliverableRows: DeliverableRow[];
   editingFieldId: BriefSummaryEditTarget | null;
   fields: BriefFields;
+  intro: BriefSectionIntroModel;
   logline: Logline;
   model: WrittenSummaryModel;
   onChange: (fieldId: BriefFieldId, value: string) => void;
@@ -5551,9 +5555,10 @@ function BriefSummaryLogline({
   onStopEditing: () => void;
   primaryDeliverable: DeliverableRow;
 }) {
-  const referenceVideos = parseReferenceVideos(fields.referenceVideos.value).slice(0, 3);
-  const referenceVideo = referenceVideos[0];
-  const extraReferenceCount = Math.max(referenceVideos.length - 1, 0);
+  const referenceVideos = parseReferenceVideos(fields.referenceVideos.value);
+  const editingReferences = editingFieldId === "referenceTitleSlot";
+  const referencesId = useId();
+  const referenceActionRef = useRef<HTMLButtonElement>(null);
   const selectedVideoType = parseMultiSelectValue(fields.videoType.value)[0] ?? "";
 
   function updatePrimaryDeliverable(updates: Partial<DeliverableRow>) {
@@ -5564,132 +5569,157 @@ function BriefSummaryLogline({
   }
 
   return (
-    <section className="brief-summary-logline" aria-label="Logline">
-      <BriefSummaryCardHead index="01" title="Logline" />
-      <div className="brief-summary-logline-prose">
-        <div>
-          A{" "}
-          <BriefWrittenSlot
-            className="hero"
-            editTarget="durationSlot"
-            editingFieldId={editingFieldId}
-            field={fields.deliverables}
-            label="Duration"
-            value={formatDurationModifier(model.duration)}
-            onConfirm={onConfirm}
-            onEdit={onEdit}
-            onStopEditing={onStopEditing}
-            editor={
-              <BriefDeliverableDurationControl
-                autoOpen
-                row={primaryDeliverable}
-                onChange={(updates) => {
-                  updatePrimaryDeliverable(updates);
-
-                  if (updates.duration !== "Custom") {
-                    onStopEditing();
-                  }
-                }}
-              />
-            }
-          />{" "}
-          <BriefWrittenSlot
-            className="hero"
-            editTarget="videoType"
-            editingFieldId={editingFieldId}
-            field={fields.videoType}
-            label="Video type"
-            value={model.videoTypeProse}
-            onConfirm={onConfirm}
-            onEdit={onEdit}
-            onStopEditing={onStopEditing}
-            editor={
-              <BriefInlineSelect
-                autoOpen
-                ariaLabel="Choose video type"
-                options={briefVideoTypeDetails.map((videoType) => videoType.name)}
-                placeholder="Choose video type"
-                value={selectedVideoType}
-                onChange={(value) => onChange("videoType", value)}
-                onCommit={onStopEditing}
-              />
-            }
-          />{" "}
-          for{" "}
-          <BriefWrittenSlot
-            className="hero"
-            editTarget="audience"
-            editingFieldId={editingFieldId}
-            field={fields.audience}
-            label="Audience"
-            value={model.audience}
-            onConfirm={onConfirm}
-            onEdit={onEdit}
-            onStopEditing={onStopEditing}
-            editor={
-              <BriefAudienceList
-                autoOpen
-                value={fields.audience.value}
-                onChange={(value) => onChange("audience", value)}
-              />
-            }
-          />
-          {", designed to "}
-          <BriefWrittenSlot
-            className="hero"
-            editTarget="callToAction"
-            editingFieldId={editingFieldId}
-            field={fields.callToAction}
-            label="Goal"
-            value={model.callToAction}
-            onConfirm={onConfirm}
-            onEdit={onEdit}
-            onStopEditing={onStopEditing}
-            editor={
-              <BriefInlineSelect
-                autoOpen
-                ariaLabel="Choose call to action"
-                getOptionLabel={getBriefCallToActionDisplayLabel}
-                options={briefCallToActionOptions}
-                placeholder="Choose call to action"
-                value={fields.callToAction.value}
-                onChange={(value) => onChange("callToAction", value)}
-                onCommit={onStopEditing}
-              />
-            }
-          />
-          . Styled after{" "}
-          {referenceVideo ? (
-            <>
-              <BriefSummaryReferenceLink field={fields.referenceVideos} onConfirm={onConfirm} video={referenceVideo} />
-              {extraReferenceCount > 0
-                ? ` and ${extraReferenceCount} more reference${extraReferenceCount === 1 ? "" : "s"}`
-                : null}
-            </>
-          ) : (
+    <div className="brief-summary-logline">
+      <div className="brief-summary-logline-prose paragraph-m">
+        <div className="brief-summary-concept-copy">
+          <BriefSectionIntro intro={intro} titleId="brief-summary-title" />
+          <div>
+            A{" "}
             <BriefWrittenSlot
               className="hero"
-              editTarget="referenceTitleSlot"
+              editTarget="durationSlot"
               editingFieldId={editingFieldId}
-              field={fields.referenceVideos}
-              label="Reference"
-              value={model.referenceTitle}
+              field={fields.deliverables}
+              label="Duration"
+              value={formatDurationModifier(model.duration)}
               onConfirm={onConfirm}
               onEdit={onEdit}
               onStopEditing={onStopEditing}
               editor={
-                <BriefReferenceVideosField
-                  value={fields.referenceVideos.value}
-                  onChange={(value) => onChange("referenceVideos", value)}
+                <BriefDeliverableDurationControl
+                  autoOpen
+                  row={primaryDeliverable}
+                  onChange={(updates) => {
+                    updatePrimaryDeliverable(updates);
+
+                    if (updates.duration !== "Custom") {
+                      onStopEditing();
+                    }
+                  }}
+                />
+              }
+            />{" "}
+            <BriefWrittenSlot
+              className="hero"
+              editTarget="videoType"
+              editingFieldId={editingFieldId}
+              field={fields.videoType}
+              label="Video type"
+              value={model.videoTypeProse}
+              onConfirm={onConfirm}
+              onEdit={onEdit}
+              onStopEditing={onStopEditing}
+              editor={
+                <BriefInlineSelect
+                  autoOpen
+                  ariaLabel="Choose video type"
+                  options={briefVideoTypeDetails.map((videoType) => videoType.name)}
+                  placeholder="Choose video type"
+                  value={selectedVideoType}
+                  onChange={(value) => onChange("videoType", value)}
+                  onCommit={onStopEditing}
+                />
+              }
+            />{" "}
+            for{" "}
+            <BriefWrittenSlot
+              className="hero"
+              editTarget="audience"
+              editingFieldId={editingFieldId}
+              field={fields.audience}
+              label="Audience"
+              value={model.audience}
+              onConfirm={onConfirm}
+              onEdit={onEdit}
+              onStopEditing={onStopEditing}
+              editor={
+                <BriefAudienceList
+                  autoOpen
+                  value={fields.audience.value}
+                  onChange={(value) => onChange("audience", value)}
                 />
               }
             />
-          )}
-          .
+            .
+          </div>
+          <div className="brief-summary-call-to-action paragraph-s">
+            Call to action:{" "}
+            <BriefWrittenSlot
+              className="hero"
+              editTarget="callToAction"
+              editingFieldId={editingFieldId}
+              field={fields.callToAction}
+              label="Call to action"
+              value={model.callToAction}
+              onConfirm={onConfirm}
+              onEdit={onEdit}
+              onStopEditing={onStopEditing}
+              editor={
+                <BriefInlineSelect
+                  autoOpen
+                  ariaLabel="Choose call to action"
+                  getOptionLabel={getBriefCallToActionDisplayLabel}
+                  options={briefCallToActionOptions}
+                  placeholder="Choose call to action"
+                  value={fields.callToAction.value}
+                  onChange={(value) => onChange("callToAction", value)}
+                  onCommit={onStopEditing}
+                />
+              }
+            />
+          </div>
         </div>
-        {referenceVideos.length > 0 ? <BriefSummaryReferenceVideos videos={referenceVideos} /> : null}
+        <div className="brief-summary-reference-manager" id="brief-summary-reference-video">
+          <div className="brief-summary-reference-header">
+            <span className="label-s">Reference videos</span>
+            <button
+              ref={referenceActionRef}
+              hidden={editingReferences}
+              type="button"
+              className={`brief-summary-reference-link label-xs-semibold${referenceVideos.length || editingReferences ? "" : " brief-summary-add-references is-missing"}`}
+              aria-label={referenceVideos.length ? "Edit reference videos" : "Add reference videos"}
+              aria-controls={referencesId}
+              aria-expanded={editingReferences}
+              data-review-key="referenceTitleSlot"
+              data-review-label="Video concept · Reference"
+              onClick={() => onEdit("referenceTitleSlot")}
+            >
+              {referenceVideos.length ? "Edit" : "Add reference videos"}
+            </button>
+          </div>
+          <div id={referencesId}>
+            {editingReferences ? (
+              <BriefReferenceVideosField
+                autoFocus
+                value={fields.referenceVideos.value}
+                onChange={(value) => onChange("referenceVideos", value)}
+              />
+            ) : referenceVideos.length > 0 ? (
+              <div className="brief-summary-reference-videos">
+                {referenceVideos.slice(0, 3).map((video, index) => (
+                  <BriefSummaryReferenceVideo key={video.id} video={video}
+                    needsConfirmation={index === 0 && fields.referenceVideos.confidence === "guess"}
+                    onConfirm={() => onConfirm("referenceVideos")} />
+                ))}
+              </div>
+            ) : null}
+          </div>
+          {editingReferences && (
+            <div className="brief-summary-reference-footer">
+              <span className="paragraph-s" role="status">
+                {referenceVideos.length} {referenceVideos.length === 1 ? "reference" : "references"} in this brief
+              </span>
+              <Button size="S" variant="primary" onClick={() => {
+                onStopEditing();
+                requestAnimationFrame(() => referenceActionRef.current?.focus());
+              }}>
+                Done
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 

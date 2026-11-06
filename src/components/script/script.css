@@ -1201,10 +1201,15 @@ body:has(.script-shell.script-ai-entry-active) .brisk-ai-launcher {
   align-items: center;
 }
 
-.script-visual-empty {
-  width: 28px;
-  min-height: 28px;
-  padding: 0;
+@media (hover: hover) {
+  .script-row:not(:hover):not(:focus-within) .script-visual-empty-wrap:not(:has([aria-expanded="true"])) {
+    opacity: 0;
+  }
+}
+
+.script-visual-empty-wrap:first-child {
+  /* Align the centred 16px glyph with the text above its 44px target. */
+  margin-inline-start: calc((var(--brisk-space-l) - var(--brisk-space-3xl) - var(--brisk-space-xs)) / 2);
 }
 
 .script-media-thumb {
@@ -2984,7 +2989,8 @@ button.script-version-row-body:focus-visible {
   gap: var(--brisk-space-s);
 }
 
-.script-toast {
+.script-toast,
+.brief-approval-toast {
   position: fixed;
   right: var(--brisk-space-2xl);
   bottom: 72px;

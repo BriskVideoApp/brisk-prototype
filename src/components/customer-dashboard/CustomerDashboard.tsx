@@ -72,10 +72,6 @@ type DashboardPreferences = {
   expandedSeriesIds: string[];
 };
 
-type DashboardSharedState = {
-  statuses: Record<string, CustomerDashboardStatus>;
-};
-
 type CustomerDashboardProps = {
   activity?: CustomerDashboardActivity[];
   clientId?: string;
@@ -151,7 +147,6 @@ export function CustomerDashboard({
     [initialProjects, initialSeries],
   );
   const initialExpandedSeriesIds = initialSeries.some((series) => series.id === "wacf-cc") ? ["wacf-cc"] : [];
-  const [projects, setProjects] = useState<CustomerDashboardProject[]>(initialProjects);
   const [selectedTab, setSelectedTab] = useState<QueueTab>("All");
   const [queueScope, setQueueScope] = useState<QueueScope>("All videos");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -168,7 +163,6 @@ export function CustomerDashboard({
   const [isActivityOpen, setIsActivityOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [loadedPreferenceRole, setLoadedPreferenceRole] = useState<string | null>(null);
-  const [hasLoadedSharedState, setHasLoadedSharedState] = useState(false);
 
   useEffect(() => {
     if (samplePreview || !isStudioPreview || selectedRole !== "Studio Staff" || !scopedClient
@@ -184,41 +178,6 @@ export function CustomerDashboard({
   }, [clientName, isStudioPreview, prototypeState.onboarding.clientId, samplePreview, scopedClient?.id, searchParams, selectedRole]);
 
   const preferenceStorageKey = `brisk-customer-dashboard-preferences-v1:${storageScopeKey}:${selectedRole}`;
-  const sharedStateStorageKey = `brisk-customer-dashboard-shared-state-v1:${storageScopeKey}`;
-
-  useEffect(() => {
-    if (samplePreview) return;
-    const storedSharedState = window.localStorage.getItem(sharedStateStorageKey);
-
-    if (storedSharedState) {
-      try {
-        const sharedState = JSON.parse(storedSharedState) as Partial<DashboardSharedState>;
-        const storedStatuses = sharedState.statuses ?? {};
-
-        setProjects(
-          initialProjects.map((project) => {
-            const storedStatus = storedStatuses[project.id];
-
-            if (!isCustomerDashboardStatus(storedStatus) || storedStatus === project.status) {
-              return project;
-            }
-
-            return {
-              ...project,
-              status: storedStatus,
-              statusDetail: getDefaultStatusDetail(storedStatus),
-            };
-          }),
-        );
-      } catch {
-        window.localStorage.removeItem(sharedStateStorageKey);
-        setProjects(initialProjects);
-      }
-    }
-
-    setHasLoadedSharedState(true);
-  }, []);
-
   useEffect(() => {
     if (samplePreview) return;
     setLoadedPreferenceRole(null);
@@ -281,19 +240,6 @@ export function CustomerDashboard({
   }, [expandedSeriesIds, loadedPreferenceRole, preferenceStorageKey, queueOrder, selectedRole, seriesChildOrder]);
 
   useEffect(() => {
-    if (samplePreview) return;
-    if (!hasLoadedSharedState) {
-      return;
-    }
-
-    const sharedState: DashboardSharedState = {
-      statuses: Object.fromEntries(projects.map((project) => [project.id, project.status])),
-    };
-
-    window.localStorage.setItem(sharedStateStorageKey, JSON.stringify(sharedState));
-  }, [hasLoadedSharedState, projects]);
-
-  useEffect(() => {
     if (chatProjectId === undefined && !isActivityOpen) {
       return;
     }
@@ -354,7 +300,7 @@ export function CustomerDashboard({
     return () => window.removeEventListener("mousedown", closeMenus);
   }, [openMenuProjectId, openStatusProjectId]);
 
-  const visibleProjects = previewState === "empty" ? [] : projects;
+  const visibleProjects = previewState === "empty" ? [] : initialProjects;
   const displayProjects = visibleProjects.map((project) => {
     const scopedProject = prototypeState.projects.find((candidate) => candidate.id === project.id
       && candidate.workspaceId === prototypeState.session.activeWorkspaceId);
@@ -457,13 +403,6 @@ export function CustomerDashboard({
         icon: projectStatusActions[status].icon,
         href: getProjectEntryHref(project),
       });
-      setProjects((current) =>
-        current.map((candidate) =>
-          candidate.id === projectId
-            ? { ...candidate, status, statusDetail: getDefaultStatusDetail(status) }
-            : candidate,
-        ),
-      );
       notify(`${project.code} status changed to ${status.toLowerCase()}`);
     }
 
@@ -1639,10 +1578,6 @@ function normaliseSeriesChildOrder(
       ];
     }),
   );
-}
-
-function isCustomerDashboardStatus(value: unknown): value is CustomerDashboardStatus {
-  return value === "Queued" || value === "In Production" || value === "Completed" || value === "Paused" || value === "Archived";
 }
 
 function getDefaultStatusDetail(status: CustomerDashboardStatus): CustomerDashboardProject["statusDetail"] {

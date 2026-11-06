@@ -7,7 +7,7 @@ import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CustomerDashboard } from "@/components/customer-dashboard/CustomerDashboard";
 import { ClientPortalPreviewBanner } from "@/components/client-portal/ClientPortalPreviewBanner";
 import { ClientAvatar } from "@/components/clients/ClientPrimitives";
-import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { useClientNamingContextKey, usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { getClientPortalAccess } from "@/data/prototype-access";
 import { getActiveClientPortalDestination } from "@/components/navigation/prototypeNavigation";
@@ -38,6 +38,12 @@ export function ClientPortalScreen({ workspaceId, clientId, embedded = false }: 
     access,
   );
 
+  const namingContextKey = useClientNamingContextKey();
+  const portalUserId = portal && viewer?.role === "Customer" ? viewer.id : null;
+  useEffect(() => {
+    if (portalUserId) window.sessionStorage.setItem(namingContextKey, portalUserId);
+  }, [portalUserId, namingContextKey]);
+
   if (!portal) return <ClientPortalUnavailable embedded={embedded} />;
 
   const inProduction = portal.projects.filter((project) => project.status === "In Production");
@@ -60,7 +66,7 @@ export function ClientPortalScreen({ workspaceId, clientId, embedded = false }: 
         clientName={portal.client.name}
         initialProjects={dashboardProjects}
         initialSeries={dashboardSeries}
-        key={`${workspaceId}:${clientId}`}
+        key={JSON.stringify([workspaceId, clientId, viewer?.role, viewer?.id, [...dashboardProjectIds]])}
         studioPreview={isStudioPreview}
         storageScopeKey={`${workspaceId}:${clientId}`}
         studioName={portal.workspace.name}

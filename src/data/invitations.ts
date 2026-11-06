@@ -3,6 +3,7 @@ export type InvitationStatus = "Pending" | "Accepted" | "Expired";
 
 export type InvitePersonPrefill = {
   purpose?: "brief-send";
+  briefMessage?: string;
   role?: InvitationRole;
   studioPermission?: import("@/data/people").StudioPermission;
   clientMembershipRole?: import("@/data/client-account-settings").ClientMembershipRole;

@@ -6,6 +6,7 @@ import { ConfirmationDialog, useConfirmation } from "../../../Brisk DS/src/app/c
 
 import Image from "next/image";
 import Link from "next/link";
+import { shootDownloadProps, storeShootFile } from "@/lib/shoot-files";
 import { useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
@@ -26,9 +27,10 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+
 import type { Project } from "@/components/active-videos/types";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
-import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
+import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useShootGlobalActions, type ShootGlobalActions } from "@/components/navigation/ShootGlobalActionsContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
@@ -48,7 +50,8 @@ import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/sc
 import { ShareActionRow, StageShareControl } from "@/components/share/ShareActionRow";
 import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
-import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
+import { ShootCommandMenu } from "./ShootCommandMenu";
+import { CallSheetRowName, CallSheetSectionTitle, SharedCallSheetPage, ShootDayControls, ShootDaySwitcher, scheduleTypeMeta } from "@/components/shoot/SharedCallSheetPage";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import type { ShootSetupOwner, ShootSetupState } from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -64,10 +67,20 @@ import {
   callSheetStorageKey,
   ensureShotNumbers,
   existingPeople,
+  defaultShotGroupId,
+  inferShotGroupDescription,
+  inferShotGroupName,
+  normaliseDefaultShotGroups,
+  normaliseShootDocuments,
+  shootGroupFingerprintName,
   formatTime,
   getEmptyCallSheet,
   getInitialCallSheet,
   getShootDayShots,
+  updateShootDayShot,
+  type TrackShot,
+  getShotListTopLevelOrder,
+  getShootShotNumbers,
   getMapsLinkLabel,
   getMapsUrl,
   isAssignedToDay,
@@ -141,47 +154,26 @@ type AiScheduleReadiness = {
   missingSteps: AiScheduleGuideStep[];
   shotCount: number;
 };
-type ScheduleReadinessSummary = {
-  dateSummary: string;
-  issues: string[];
-  shotGroupCount: number;
-  shotCount: number;
-  unscheduledShotCount: number;
-};
-type ReadyShootSection = "shots" | "questions" | "references" | "schedule" | "locations" | "people";
-type StoredReadyShootSection = Exclude<ReadyShootSection, "schedule">;
-type PlanningReadinessRecord = {
-  confirmedAt: string;
-  confirmedFingerprint: string;
-};
-type PlanningReadinessState = {
-  version: 1;
-  projectId: string;
-  sections: Partial<Record<StoredReadyShootSection, PlanningReadinessRecord>>;
-};
-type PlanningReadinessSummary = {
-  issues: string[];
-  passedMessage: string;
-  summary: string;
-};
-type PlanningReadinessStatus = {
-  hasChanges: boolean;
-  isReady: boolean;
-  wasConfirmed: boolean;
-};
 type ShootNavigationItem = {
   id: ShootWorkspaceSection;
   label: string;
   icon: DsIconName;
   meta?: string;
-  ready?: boolean;
-  changed?: boolean;
 };
 type DayDraftMode = "add" | "edit";
 type ShootDetailKey = "callTime" | "location" | "wrap" | "contact";
 type EntryTimeMode = "unscheduled" | "set";
-type EntryDraft = Omit<ProductionEntry, "id" | "dayId"> & { id?: string; dayId?: string; timeMode?: EntryTimeMode };
-type EntryModalView = "schedule" | "shot-details";
+type EntryDraft = Omit<ProductionEntry, "id" | "dayId"> & { id?: string; dayId?: string; assignmentDayId?: string; timeMode?: EntryTimeMode };
+type EntryModalView = "schedule" | "shot-details" | "day-add";
+const dayAddOptions = [
+  { value: "shot", ...scheduleTypeMeta.shot },
+  { value: "group", label: "Shot group", icon: scheduleTypeMeta.coverage.icon },
+  { value: "setup", ...scheduleTypeMeta.setup },
+  { value: "lunch", ...scheduleTypeMeta.lunch },
+  { value: "break", ...scheduleTypeMeta.break },
+  { value: "travel", ...scheduleTypeMeta.travel },
+] as const;
+type DayAddKind = (typeof dayAddOptions)[number]["value"];
 type PersonDraft = Omit<ShootPerson, "id"> & { id?: string; sourceContact?: boolean };
 type InterviewQuestionDraft = Pick<InterviewQuestion, "id" | "question" | "personId" | "shootDayIds"> & { isNew: boolean };
 type LocationDraft = Omit<ShootLocation, "id"> & { id?: string };
@@ -203,24 +195,12 @@ type ShootAccessSettings = {
   client: ShootAccessLevel;
 };
 
-const planningReadinessConfig: Record<ReadyShootSection, {
-  icon: DsIconName;
-  label: string;
-  markLabel: string;
-  readyLabel: string;
-}> = {
-  shots: { icon: "video-camera-ds", label: "Shot List", markLabel: "Mark shot list ready", readyLabel: "Shot List ready" },
-  questions: { icon: "quotes", label: "Interview Questions", markLabel: "Mark questions ready", readyLabel: "Questions ready" },
-  references: { icon: "image-square", label: "Visual References", markLabel: "Mark references reviewed", readyLabel: "References reviewed" },
-  schedule: { icon: "clock-clockwise", label: "Schedule", markLabel: "Mark schedule ready", readyLabel: "Schedule ready" },
-  locations: { icon: "push-pin-simple", label: "Locations", markLabel: "Mark locations ready", readyLabel: "Locations ready" },
-  people: { icon: "users-three", label: "People", markLabel: "Mark people ready", readyLabel: "People ready" },
-};
 type QuickStartCapture = "interviews" | "scripted" | "b-roll" | "not-confirmed";
 type ConfirmedQuickStartCapture = Exclude<QuickStartCapture, "not-confirmed">;
 type QuickStartStepId = "capture" | "people" | "location" | "date" | "must-haves" | "workflow";
 type QuickStartAnswers = {
   captures: QuickStartCapture[];
+  capturesEdited: boolean;
   people: string;
   peopleNotConfirmed: boolean;
   locationName: string;
@@ -238,7 +218,7 @@ type SuggestionUndo =
   | { kind: "accept-all"; shotIds: string[]; questionIds: string[]; groupIds: string[] };
 
 const scheduleTypeOptions: Array<{ value: ScheduleType; label: string; icon: DsIconName }> = [
-  { value: "coverage", label: "Coverage", icon: "video-camera-ds" },
+  { value: "coverage", ...scheduleTypeMeta.coverage },
   { value: "setup", label: "Setup", icon: "settings" },
   { value: "lunch", label: "Lunch", icon: "fork-knife" },
   { value: "travel", label: "Travel", icon: "car-simple" },
@@ -273,6 +253,7 @@ const shotCategoryAbbreviations: Record<string, string> = {
   "Scene / action": "SCN",
   "Product / detail": "PROD",
 };
+const durationMinutesOptions = Array.from({ length: 48 }, (_, index) => (index + 1) * 5);
 const shotSizeOptions: ShotSize[] = ["Extreme close-up", "Close-up", "Medium close-up", "Medium", "Medium wide", "Wide", "Extreme wide"];
 const shotSizeAbbreviations: Record<ShotSize, string> = {
   "Extreme close-up": "ECU",
@@ -362,7 +343,9 @@ export function ShootStagePage({ project }: { project: Project }) {
   const projectFlow = getProjectFlow(project);
   const shootStageIndex = projectFlow.stages.indexOf("shoot");
   const scriptStageIndex = projectFlow.stages.indexOf("script");
-  const isInterviewLed = briefIncludesInterviews(projectBrief?.fields.liveFootage.value ?? "")
+  const liveFootage = projectBrief?.fields.liveFootage.value ?? "";
+  const briefCaptures = useMemo(() => getBriefShootCaptures(liveFootage), [liveFootage]);
+  const isInterviewLed = Boolean(briefCaptures?.includes("interviews"))
     || (shootStageIndex >= 0 && scriptStageIndex >= 0 && shootStageIndex < scriptStageIndex);
   const studioCompanyName = useStudioCompanyName();
   const { createPerson, people: directoryPeople, updatePersonIdentity } = usePeople();
@@ -374,10 +357,13 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [suggestionUndo, setSuggestionUndo] = useState<SuggestionUndo | null>(null);
   const [entryDraft, setEntryDraft] = useState<EntryDraft | null>(null);
   const [entryModalView, setEntryModalView] = useState<EntryModalView>("schedule");
+  const [dayAddKind, setDayAddKind] = useState<DayAddKind>("shot");
+  const dayAddDrafts = useRef<Partial<Record<DayAddKind, EntryDraft>>>({});
   const [quickEntryDraft, setQuickEntryDraft] = useState<EntryDraft | null>(null);
   const [personDraft, setPersonDraft] = useState<PersonDraft | null>(null);
-  const [attachCreatedPersonToQuickEntry, setAttachCreatedPersonToQuickEntry] = useState(false);
+  const [attachCreatedPersonToEntry, setAttachCreatedPersonToEntry] = useState(false);
   const [assignNewPersonAsContact, setAssignNewPersonAsContact] = useState(false);
+  const [rosterPickerDayId, setRosterPickerDayId] = useState<string | null>(null);
   const [isExistingPersonOpen, setIsExistingPersonOpen] = useState(false);
   const [existingPersonAnchor, setExistingPersonAnchor] = useState<HTMLButtonElement | null>(null);
   const [questionPersonTargetId, setQuestionPersonTargetId] = useState<string | null>(null);
@@ -478,7 +464,8 @@ export function ShootStagePage({ project }: { project: Project }) {
     .filter((person) => person.status !== "Archived" && (person.type !== "Client contact" || person.clientId === project.clientId))
     .map((person) => personToShootPerson(person, currentDay?.generalCallTime ?? "", studioCompanyName));
   const availableDirectoryPeople = directoryShootPeople.filter((person) => !callSheet.people.some((existing) => isSameShootPerson(existing, person)));
-  const peopleDatabase = [
+  const peopleDatabase = selectedRole === "Customer" ? callSheet.people.map((person) =>
+    person.showContactDetails ? person : { ...person, phone: "", email: "" }) : [
     ...callSheet.people,
     ...availableDirectoryPeople,
     ...existingPeople.filter((person) => !callSheet.people.some((existing) => isSameShootPerson(existing, person))
@@ -512,14 +499,14 @@ export function ShootStagePage({ project }: { project: Project }) {
       const nextSetupState = storedSetupState ?? createInitialShootSetupState(nextCallSheet, initialSetupRoleRef.current);
       const isApprovedShoot = !isEmptyPlanFixture
         && (nextSetupState.status === "released" || project.stages.shoot.state === "done");
-      const nextWorkflowSetup = isApprovedShoot
+      const nextWorkflowSetup = storedWorkflowSetup ?? (isApprovedShoot
         ? {
           version: 1 as const,
           isComplete: true,
           mode: "planned" as const,
           modules: getDefaultShootPlanningModules(isInterviewLed || nextCallSheet.questions.length > 0),
         }
-        : storedWorkflowSetup ?? createInitialShootWorkflowSetup(nextCallSheet, isInterviewLed);
+        : createInitialShootWorkflowSetup(nextCallSheet, isInterviewLed));
       const hasStarted = isApprovedShoot || nextSetupState.scheduleStarted || nextSetupState.shotListStarted || configuredCallSheet || hasEntries || storedPreferences?.hasStarted === true;
       const callSheetEnabled = nextSetupState.scheduleStarted || storedPreferences?.callSheetEnabled
         || configuredCallSheet || (storedPreferences?.hasStarted === true && storedPreferences.scheduleView === "schedule");
@@ -714,8 +701,6 @@ export function ShootStagePage({ project }: { project: Project }) {
       scheduleComplete: true,
       scheduleSkipped: false,
       scheduleStep: Math.max(current.scheduleStep, 4),
-      scheduleConfirmedFingerprint: getScheduleFingerprint(callSheet),
-      scheduleConfirmedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }));
     setProjectStageStatus(project.id, "shoot", {
@@ -756,8 +741,6 @@ export function ShootStagePage({ project }: { project: Project }) {
       scheduleComplete: true,
       scheduleSkipped: false,
       scheduleStep: Math.max(current.scheduleStep, 4),
-      scheduleConfirmedFingerprint: getScheduleFingerprint(callSheet),
-      scheduleConfirmedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }));
     setProjectStageStatus(project.id, "shoot", {
@@ -797,16 +780,14 @@ export function ShootStagePage({ project }: { project: Project }) {
   useEffect(() => {
     if (!hasLoaded || setupState.status !== "released") return;
 
-    if (!setupState.approvedCallSheetFingerprint || !setupState.scheduleConfirmedFingerprint) {
-      setSetupState((current) => current.status === "released" && (!current.approvedCallSheetFingerprint || !current.scheduleConfirmedFingerprint)
+    if (!setupState.approvedCallSheetFingerprint) {
+      setSetupState((current) => current.status === "released" && !current.approvedCallSheetFingerprint
         ? {
           ...current,
           approvedCallSheetFingerprint: current.approvedCallSheetFingerprint ?? callSheetApprovalFingerprint,
           scheduleComplete: true,
           scheduleSkipped: false,
           scheduleStep: Math.max(current.scheduleStep, 4),
-          scheduleConfirmedFingerprint: current.scheduleConfirmedFingerprint ?? getScheduleFingerprint(callSheet),
-          scheduleConfirmedAt: current.scheduleConfirmedAt ?? current.updatedAt,
         }
         : current);
       return;
@@ -829,7 +810,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       assignedTo: "Studio",
     });
     showToast("Changes made - approval required again.");
-  }, [callSheet, callSheetApprovalFingerprint, hasLoaded, project.id, setProjectStageStatus, setupState.approvedCallSheetFingerprint, setupState.scheduleConfirmedFingerprint, setupState.status]);
+  }, [callSheetApprovalFingerprint, hasLoaded, project.id, setProjectStageStatus, setupState.approvedCallSheetFingerprint, setupState.status]);
 
   useEffect(() => {
     if (!hasLoaded || isEmptyPlanFixture) return;
@@ -838,7 +819,8 @@ export function ShootStagePage({ project }: { project: Project }) {
       return;
     }
     setSaveStatus("saving");
-    const timeoutId = window.setTimeout(() => {
+    const save = () => {
+      window.removeEventListener("pagehide", save);
       try {
         window.localStorage.setItem(callSheetStorageKey(project.id), JSON.stringify(callSheet));
         if (hadSaveErrorRef.current) {
@@ -853,8 +835,13 @@ export function ShootStagePage({ project }: { project: Project }) {
         hadSaveErrorRef.current = true;
         setSaveStatus("error");
       }
-    }, 450);
-    return () => window.clearTimeout(timeoutId);
+    };
+    const timeoutId = window.setTimeout(save, 450);
+    window.addEventListener("pagehide", save);
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.removeEventListener("pagehide", save);
+    };
   }, [callSheet, hasLoaded, isEmptyPlanFixture, project.id]);
 
   useEffect(() => () => {
@@ -896,7 +883,8 @@ export function ShootStagePage({ project }: { project: Project }) {
     }, 2800);
   };
 
-  const openExistingPersonPicker = (event?: ReactMouseEvent<HTMLButtonElement>) => {
+  const openExistingPersonPicker = (event?: ReactMouseEvent<HTMLButtonElement>, dayId?: string) => {
+    setRosterPickerDayId(dayId ?? null);
     const activeButton = document.activeElement instanceof HTMLButtonElement ? document.activeElement : null;
     setQuestionPersonTargetId(null);
     setExistingPersonAnchor(event?.currentTarget ?? activeButton);
@@ -904,6 +892,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   const openQuestionPersonPicker = (questionId: string, anchor: HTMLButtonElement | null) => {
+    setRosterPickerDayId(null);
     setQuestionPersonTargetId(questionId);
     setExistingPersonAnchor(anchor);
     setIsExistingPersonOpen(true);
@@ -1018,11 +1007,11 @@ export function ShootStagePage({ project }: { project: Project }) {
     if ((!canBeUntimed || draft.timeMode === "set") && !startTime) return;
     if (!currentDay && (!canBeUntimed || Boolean(startTime))) return;
     const existingEntry = draft.id ? callSheet.entries.find((entry) => entry.id === draft.id) : undefined;
-    const { timeMode: _timeMode, dayId, ...entryFields } = draft;
+    const { timeMode: _timeMode, assignmentDayId, dayId, ...entryFields } = draft;
     const entryBase: ProductionEntry = {
       ...entryFields,
       id: draft.id ?? `entry-${Date.now()}`,
-      dayId: dayId || existingEntry?.dayId || activeDayId,
+      dayId: isShot && !startTime ? dayId ?? existingEntry?.dayId ?? "" : dayId || existingEntry?.dayId || activeDayId,
       description: draft.description.trim(),
       startTime,
       captured: isShot ? Boolean(draft.captured) : undefined,
@@ -1041,8 +1030,29 @@ export function ShootStagePage({ project }: { project: Project }) {
         shotNumber: isShot ? draft.shotNumber ?? nextShotNumber : undefined,
         shotListOrder: isShot ? draft.shotListOrder ?? current.entries.filter((item) => item.type === "shot").length : undefined,
       };
+      // Preserve other days' assignments when editing a shared shot from its call sheet.
+      const removed = assignmentDayId && existingEntry?.removedAssignmentsByDay?.[assignmentDayId];
+      if (removed && assignmentDayId && existingEntry) {
+        const stillRemoved = removed.personIds?.filter((id) => existingEntry.personIds.includes(id) && !draft.personIds.includes(id));
+        entry.personIds = [...new Set([...draft.personIds, ...(stillRemoved ?? [])])];
+        const keepLocation = removed.locationId && existingEntry.locationId === removed.locationId && !draft.locationId;
+        if (keepLocation) entry.locationId = existingEntry.locationId;
+        const byDay = { ...existingEntry.removedAssignmentsByDay };
+        if (stillRemoved?.length || keepLocation) byDay[assignmentDayId] = {
+          personIds: stillRemoved?.length ? stillRemoved : undefined,
+          locationId: keepLocation ? removed.locationId : undefined,
+        };
+        else delete byDay[assignmentDayId];
+        entry.removedAssignmentsByDay = Object.keys(byDay).length ? byDay : undefined;
+      }
       return {
         ...current,
+        people: isShot ? [
+          ...current.people,
+          ...peopleDatabase.filter((person) => draft.personIds.includes(person.id) && !current.people.some((item) => item.id === person.id))
+            .map((person) => ({ ...person, shootDayIds: [entry.dayId] })),
+        ].map((person) => draft.personIds.includes(person.id) && entry.dayId && person.shootDayIds !== "all" && !person.shootDayIds.includes(entry.dayId)
+          ? { ...person, shootDayIds: [...person.shootDayIds, entry.dayId] } : person) : current.people,
         entries: draft.id
           ? current.entries.map((item) => item.id === draft.id ? entry : item)
           : [...current.entries, entry],
@@ -1102,11 +1112,11 @@ export function ShootStagePage({ project }: { project: Project }) {
     showToast("Brisk question suggestion dismissed.", "undo-suggestion");
   };
 
-  const acceptAllSuggestions = () => {
-    const shotIds = callSheet.entries.filter((entry) => entry.suggestionStatus).map((entry) => entry.id);
-    const questionIds = callSheet.questions.filter((question) => question.suggestionStatus).map((question) => question.id);
+  const acceptAllSuggestions = (scope: "all" | "shots" = "all") => {
+    const shotIds = callSheet.entries.filter((entry) => entry.type === "shot" && entry.suggestionStatus).map((entry) => entry.id);
+    const questionIds = scope === "shots" ? [] : callSheet.questions.filter((question) => question.suggestionStatus).map((question) => question.id);
     const groupIds = (callSheet.shotGroups ?? []).filter((group) => group.suggestionStatus).map((group) => group.id);
-    const suggestionCount = shotIds.length + questionIds.length;
+    const suggestionCount = shotIds.length + questionIds.length + groupIds.length;
     if (!suggestionCount) return;
     setSuggestionUndo({ kind: "accept-all", shotIds, questionIds, groupIds });
     mutateCallSheet((current) => ({
@@ -1276,7 +1286,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       : undefined;
     const directoryPerson = matchingDirectoryPerson ?? createdDirectoryPerson;
     const personId = draft.id ?? directoryPerson?.id ?? `person-${Date.now()}`;
-    const draftAssignments = draft.assignments?.length ? draft.assignments : [{ id: `assignment-${personId}`, type: draft.type, role: draft.role.trim(), callTime: draft.callTime, shootDayIds: draft.shootDayIds }];
+    const draftAssignments = rosterAssignments({ ...personFields, id: personId }, draft.shootDayIds);
     const assignments = questionPersonTargetId && !draftAssignments.some((assignment) => assignment.type === "talent")
       ? [...draftAssignments, { id: `assignment-talent-${personId}`, type: "talent" as const, role: "Interviewee", callTime: draft.callTime, shootDayIds: draft.shootDayIds }]
       : draftAssignments;
@@ -1304,47 +1314,57 @@ export function ShootStagePage({ project }: { project: Project }) {
     }
     mutateCallSheet((current) => ({
       ...current,
-      onTheDayContact: assignNewPersonAsContact ? formatPersonContact(person) : current.onTheDayContact,
-      people: draft.id && current.people.some((item) => item.id === draft.id)
-        ? current.people.map((item) => item.id === draft.id ? person : item)
+      onTheDayContact: assignNewPersonAsContact || current.people.some((item) =>
+        item.id === person.id && item.name === current.onTheDayContact.split(" · ")[0])
+        ? formatPersonContact(person) : current.onTheDayContact,
+      people: current.people.some((item) => item.id === person.id)
+        ? current.people.map((item) => item.id === person.id ? person : item)
         : [...current.people, person],
       questions: questionPersonTargetId
-        ? current.questions.map((question) => question.id === questionPersonTargetId ? { ...question, personId: person.id } : question)
+        ? current.questions.map((question) => question.id === questionPersonTargetId ? { ...question, personId: person.id, unassignedDayIds: undefined } : question)
         : current.questions,
     }));
-    if (attachCreatedPersonToQuickEntry && !draft.id) {
-      setQuickEntryDraft((current) => current && !current.personIds.includes(person.id)
+    if (attachCreatedPersonToEntry && !draft.id) {
+      const updateDraft = entryDraft ? setEntryDraft : setQuickEntryDraft;
+      updateDraft((current) => current && !current.personIds.includes(person.id)
         ? { ...current, personIds: [...current.personIds, person.id] }
         : current);
     }
-    setAttachCreatedPersonToQuickEntry(false);
+    setAttachCreatedPersonToEntry(false);
     setAssignNewPersonAsContact(false);
     setQuestionPersonTargetId(null);
     setPersonDraft(null);
-    showToast(draft.id ? "Person updated." : matchingDirectoryPerson ? `${matchingDirectoryPerson.name} reused from People.` : "Person added to the Call Sheet.");
+    showToast(draft.sourceContact ? `${person.name} added to the selected days.` : draft.id ? "Person updated." : matchingDirectoryPerson ? `${matchingDirectoryPerson.name} reused from People.` : "Person added to the Call Sheet.");
   };
 
   const removePerson = (id: string) => {
-    mutateCallSheet((current) => {
-      const removedPerson = current.people.find((person) => person.id === id);
-      return {
-        ...current,
-        onTheDayContact: removedPerson && current.onTheDayContact.startsWith(removedPerson.name) ? "" : current.onTheDayContact,
-        people: current.people.filter((person) => person.id !== id),
-        entries: current.entries.map((entry) => ({
-          ...entry,
-          personIds: entry.personIds.filter((personId) => personId !== id),
-        })),
-        questions: current.questions.map((question) => question.personId === id
-          ? { ...question, personId: undefined }
-          : question),
-      };
-    });
+    mutateCallSheet((current) => withoutShootPerson(current, id));
     setPersonDraft(null);
     showToast("Person removed from the Call Sheet.");
   };
 
   const addExistingPerson = (person: ShootPerson) => {
+    if (rosterPickerDayId) {
+      const day = callSheet.days.find((item) => item.id === rosterPickerDayId);
+      if (!day) return;
+      if (!person.name.trim()) {
+        const existing = callSheet.people.find((item) => item.id === person.id);
+        const assigned = existing?.shootDayIds ?? [];
+        setPersonDraft({ ...person, sourceContact: true, shootDayIds: assigned === "all" ? assigned : [...new Set([...assigned, day.id])] });
+        return;
+      }
+      mutateCallSheet((current) => {
+        const existing = current.people.find((item) => item.id === person.id);
+        if (existing && isAssignedToDay(existing.shootDayIds, day.id)) return current;
+        const days = existing?.shootDayIds ?? [];
+        const shootDayIds = days === "all" ? days : [...days, day.id];
+        const updated = { ...(existing ?? person), callTime: (existing ?? person).callTime || day.generalCallTime, shootDayIds };
+        updated.assignments = rosterAssignments(updated, shootDayIds);
+        return { ...current, people: existing ? current.people.map((item) => item.id === updated.id ? updated : item) : [...current.people, updated] };
+      });
+      showToast(`${person.name} added to ${day.label}.`);
+      return;
+    }
     mutateCallSheet((current) => {
       const existing = current.people.find((item) => item.id === person.id);
       const baseAssignments = getShootAssignments(existing ?? person).map((assignment) => ({ ...assignment, shootDayIds: "all" as const }));
@@ -1358,7 +1378,7 @@ export function ShootStagePage({ project }: { project: Project }) {
           ? current.people.map((item) => item.id === existing.id ? addedPerson : item)
           : [...current.people, addedPerson],
         questions: questionPersonTargetId
-          ? current.questions.map((question) => question.id === questionPersonTargetId ? { ...question, personId: addedPerson.id } : question)
+          ? current.questions.map((question) => question.id === questionPersonTargetId ? { ...question, personId: addedPerson.id, unassignedDayIds: undefined } : question)
           : current.questions,
       };
     });
@@ -1410,7 +1430,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       id: draft.id ?? `location-${Date.now()}`,
       name: draft.name.trim() || deriveLocationName(locationInput),
       address: locationInputIsLink ? "" : locationInput,
-      mapLink: locationInputIsLink ? locationInput : undefined,
+      mapLink: locationInputIsLink ? locationInput : draft.mapLink?.trim() || undefined,
       wifi: draft.wifi?.trim() ?? "",
       accessibility: draft.accessibility?.trim() ?? "",
       parking: draft.parking.trim(),
@@ -1428,7 +1448,10 @@ export function ShootStagePage({ project }: { project: Project }) {
         : current.entries,
       days: current.days.map((day) => {
         const becomesPrimary = !draft.id && (assignNewLocationAsPrimary || current.locations.length === 0) && day.id === activeDayId;
-        const primaryAddressChanged = Boolean(draft.id && day.primaryLocationId === location.id && current.locations.some((item) => item.id === location.id && item.address !== location.address));
+        const primaryAddressChanged = Boolean(draft.id && day.primaryLocationId === location.id && current.locations.some((item) => item.id === location.id && (item.address !== location.address || item.mapLink !== location.mapLink)));
+        if (day.primaryLocationId === location.id && !isAssignedToDay(location.shootDayIds, day.id)) {
+          return { ...day, primaryLocationId: "", safetyEmergency: markEmergencyDetailsForReview(day.safetyEmergency) };
+        }
         if (!becomesPrimary && !primaryAddressChanged) return day;
         return {
           ...day,
@@ -1445,34 +1468,29 @@ export function ShootStagePage({ project }: { project: Project }) {
     showToast(draft.id ? "Location updated." : "Location added to the Call Sheet.");
   };
 
-  const openNewLocation = (asPrimary = false) => {
+  const openNewLocation = (asPrimary = false, dayId = activeDayId) => {
     setAssignNewLocationAsPrimary(asPrimary);
-    setLocationDraft(emptyLocationDraft(activeDayId));
+    setLocationDraft(emptyLocationDraft(dayId));
   };
 
-  const selectPrimaryLocation = (locationId: string) => {
+  const selectPrimaryLocation = (locationId: string, dayId: string) => {
     mutateCallSheet((current) => ({
       ...current,
-      days: current.days.map((day) => day.id === activeDayId ? {
+      days: current.days.map((day) => day.id === dayId ? {
         ...day,
         primaryLocationId: locationId,
         safetyEmergency: day.primaryLocationId !== locationId
           ? markEmergencyDetailsForReview(day.safetyEmergency)
           : day.safetyEmergency,
       } : day),
-      locations: current.locations.map((location) => location.id !== locationId || location.shootDayIds === "all" || location.shootDayIds.includes(activeDayId)
+      locations: current.locations.map((location) => location.id !== locationId || location.shootDayIds === "all" || location.shootDayIds.includes(dayId)
         ? location
-        : { ...location, shootDayIds: [...location.shootDayIds, activeDayId] }),
+        : { ...location, shootDayIds: [...location.shootDayIds, dayId] }),
     }));
   };
 
   const removeLocation = (locationId: string) => {
-    mutateCallSheet((current) => ({
-      ...current,
-      locations: current.locations.filter((location) => location.id !== locationId),
-      days: current.days.map((day) => day.primaryLocationId === locationId ? { ...day, primaryLocationId: "", safetyEmergency: markEmergencyDetailsForReview(day.safetyEmergency) } : day),
-      entries: current.entries.map((entry) => entry.locationId === locationId ? { ...entry, locationId: undefined } : entry),
-    }));
+    mutateCallSheet((current) => withoutShootLocation(current, locationId));
     setLocationDraft(null);
     setAssignNewLocationAsPrimary(false);
     showToast("Location removed from the Call Sheet.");
@@ -1621,9 +1639,10 @@ export function ShootStagePage({ project }: { project: Project }) {
     showToast("Shoot day deleted.");
   };
 
-  const updatePlanWithBrisk = (answers: QuickStartAnswers) => {
-    const result = createBriskShootPlan(callSheet, project, answers, isInterviewLed);
+  const applySetupAnswers = (answers: QuickStartAnswers, source: "manual" | "ai") => {
+    const result = createShootPlanFromAnswers(callSheet, project, answers, isInterviewLed, source);
     mutateCallSheet(() => result.callSheet);
+    if (source === "manual") return;
     setHasStartedShootPlan(true);
     setIsShotListEnabled(true);
     setSetupState((current) => ({
@@ -1707,23 +1726,30 @@ export function ShootStagePage({ project }: { project: Project }) {
 
   if (hasCallSheet && !currentDay && workflowSetup.isComplete) return null;
 
+  const showCallSheetShare = hasLoaded && workflowSetup.isComplete && (workflowSetup.mode === "simple" || activeSection === "call-sheet") && activeSection !== "quick-start";
+  const sharingCallSheet = showCallSheetShare || requestedShootMode === "on-set";
+  const shootShareControl = <StageShareControl key={sharingCallSheet ? "call-sheet" : "shoot"}
+    context="shoot" userRole={selectedRole} projectId={project.id}
+    projectName={project.name} studioName={studioCompanyName} customerName={project.clientName}
+    initialAccess={sharingCallSheet || accessLevel === "viewOnly" ? "viewOnly" : "canEdit"} initialLinkOpens="stageOnly"
+    allowProjectScope prominentLabel={showCallSheetShare ? "Share call sheet" : undefined}
+    shareTitle={sharingCallSheet ? "Call Sheet" : "Shoot"} scopeType="stage"
+    stageLabelOverride={sharingCallSheet ? "Call Sheet" : "Shoot"}
+    shareUrl={sharingCallSheet ? sharedCallSheetHref : `/projects/${project.id}/stages/shoot`}
+  />;
+
   return (
     <main className={`shoot-shell ${activeSection === "quick-start" ? "is-setup-screen" : ""}`}>
       <div className="shoot-main">
         <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} showProjectShare={false}
-          actions={<StageShareControl context="shoot" userRole={selectedRole} projectId={project.id}
-            projectName={project.name} studioName={studioCompanyName} customerName={project.clientName}
-            initialAccess={accessLevel === "viewOnly" ? "viewOnly" : "canEdit"} initialLinkOpens="stageOnly"
-            allowProjectScope shareTitle={requestedShootMode === "on-set" ? "Call Sheet" : "Shoot"} scopeType="stage"
-            stageLabelOverride={requestedShootMode === "on-set" ? "Call Sheet" : "Shoot"}
-            shareUrl={requestedShootMode === "on-set" ? `/projects/${project.id}/stages/shoot?section=call-sheet&view=on-set&day=${encodeURIComponent(currentDay?.id ?? "")}` : `/projects/${project.id}/stages/shoot`}
-          />}
+          actions={showCallSheetShare ? undefined : shootShareControl}
         />
         {!hasLoaded ? <ShootSetupLoading /> : <ShootPreProductionWorkspace
           accessLevel={accessLevel}
           activeSection={activeSection}
           callSheet={callSheet}
-          briefCaptures={getBriefShootCaptures(projectBrief?.fields.liveFootage.value ?? "", isInterviewLed)}
+          briefCaptures={briefCaptures}
+          callSheetShare={shootShareControl}
           contactOptions={peopleDatabase}
           existingPlan={existingPlan}
           isInterviewLed={isInterviewLed}
@@ -1737,7 +1763,7 @@ export function ShootStagePage({ project }: { project: Project }) {
           workflowSetup={workflowSetup}
           studioName={studioCompanyName}
           onApprove={approveShootPlan}
-          onBuildWithBrisk={updatePlanWithBrisk}
+          onApplySetupAnswers={applySetupAnswers}
           onCallSheetChange={mutateCallSheet}
           onAcceptAllSuggestions={acceptAllSuggestions}
           onDeleteDay={setDeleteDayId}
@@ -1749,11 +1775,16 @@ export function ShootStagePage({ project }: { project: Project }) {
             setEntryModalView("schedule");
             setEntryDraft({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" });
           }}
-          onEditShotDetails={(draft) => {
+          onEditShotDetails={(draft, view) => {
+            if (view === "day-add") {
+              dayAddDrafts.current = { shot: draft };
+              setDayAddKind("shot");
+            }
             setDeleteEntryId(null);
-            setEntryModalView("shot-details");
+            setEntryModalView(view ?? "shot-details");
             setEntryDraft(draft);
           }}
+          onSelectPrimaryLocation={selectPrimaryLocation}
           onEditLocation={(location) => setLocationDraft(locationToDraft(location))}
           onEditPerson={(person) => setPersonDraft(personToDraft(person))}
           onAddQuestionPerson={openQuestionPersonPicker}
@@ -1764,11 +1795,17 @@ export function ShootStagePage({ project }: { project: Project }) {
               type: "talent",
             });
           }}
-          onNewLocation={(shotId) => {
+          onNewLocation={(shotId, asPrimary, dayId) => {
             setNewLocationShotTargetId(shotId ?? null);
-            openNewLocation();
+            openNewLocation(asPrimary, dayId);
           }}
           onNewPerson={openExistingPersonPicker}
+          onCompleteProductionContact={() => {
+            if (!isStudioInternal) return;
+            const person = crew.find((item) => item.id === selectedContactId);
+            setAssignNewPersonAsContact(true);
+            setPersonDraft(person ? personToDraft(person) : emptyPersonDraft(currentDay?.generalCallTime ?? "", activeDayId));
+          }}
           onNewScheduleItem={(dayId, startTime) => {
             const day = callSheet.days.find((item) => item.id === dayId) ?? currentDay;
             const scheduledStartTime = startTime || "07:00";
@@ -1805,10 +1842,10 @@ export function ShootStagePage({ project }: { project: Project }) {
             people={peopleDatabase}
             onCancel={closeQuickEntry}
             onChange={setQuickEntryDraft}
-            onCreatePerson={(name) => {
-              setAttachCreatedPersonToQuickEntry(true);
+            onCreatePerson={isStudioInternal ? (name) => {
+              setAttachCreatedPersonToEntry(true);
               setPersonDraft({ ...emptyPersonDraft(currentDay?.generalCallTime ?? "", activeDayId), name });
-            }}
+            } : undefined}
             onSelectPerson={selectPersonForQuickEntry}
             onSave={saveEntry}
           />
@@ -1827,23 +1864,45 @@ export function ShootStagePage({ project }: { project: Project }) {
         onToggleCompletion={toggleEntryCompletion}
       /> : null}
 
-      {entryDraft ? (
+      {entryDraft && !personDraft && !locationDraft ? (
         <EntryModal
           draft={entryDraft}
-          hideScheduling={activeSection === "shots" || entryModalView === "shot-details"}
-          compactShotDetails={entryModalView === "shot-details"}
+          addKind={entryModalView === "day-add" ? dayAddKind : undefined}
+          onAddKindChange={(kind) => {
+            if (kind === dayAddKind) return;
+            dayAddDrafts.current[dayAddKind] = entryDraft;
+            const next = dayAddDrafts.current[kind] ?? {
+              ...createNewEntryDraft("set", entryDraft.startTime || currentDay?.generalCallTime || "07:00"),
+              type: kind === "group" ? "coverage" : kind,
+              description: kind === "group" || kind === "shot" ? "" : scheduleTypeMeta[kind].label,
+              dayId: entryDraft.dayId,
+              locationId: entryDraft.locationId,
+              durationMinutes: entryDraft.durationMinutes || 30,
+            };
+            setEntryDraft(next);
+            setDayAddKind(kind);
+          }}
+          people={peopleDatabase}
+          onCreatePerson={isStudioInternal ? (name) => {
+            setAttachCreatedPersonToEntry(true);
+            setPersonDraft({ ...emptyPersonDraft(currentDay?.generalCallTime ?? "", entryDraft.dayId || activeDayId), name });
+          } : undefined}
+          hideScheduling={activeSection === "shots" || entryModalView === "shot-details" || (entryModalView === "day-add" && dayAddKind === "shot")}
+          detailedPlan={workflowSetup.mode === "planned"}
+          compactShotDetails={entryModalView === "shot-details" || (entryModalView === "day-add" && dayAddKind === "shot")}
           days={callSheet.days}
           entries={callSheet.entries}
           locations={callSheet.locations}
           projectId={project.id}
           shotGroups={callSheet.shotGroups ?? []}
+          shotNumbers={getShootShotNumbers(callSheet)}
           confirmDelete={deleteEntryId === entryDraft.id}
           onCancelDelete={() => setDeleteEntryId(null)}
           onChange={setEntryDraft}
           onClose={() => { setEntryDraft(null); setEntryModalView("schedule"); setDeleteEntryId(null); }}
           onDelete={() => entryDraft.id ? (deleteEntryId === entryDraft.id ? removeEntry(entryDraft.id) : setDeleteEntryId(entryDraft.id)) : undefined}
           onUnschedule={() => entryDraft.id ? unscheduleEntry(entryDraft.id) : undefined}
-          onCreateLocation={() => { setAssignNewLocationToEntryDraft(true); openNewLocation(); }}
+          onCreateLocation={() => { setAssignNewLocationToEntryDraft(true); openNewLocation(false, entryDraft.dayId || activeDayId); }}
           onAddGroupShot={(groupId) => {
             setDeleteEntryId(null);
             setEntryModalView("shot-details");
@@ -1862,29 +1921,38 @@ export function ShootStagePage({ project }: { project: Project }) {
             setEntryModalView("shot-details");
             setEntryDraft({ ...shot, timeMode: "unscheduled" });
           }}
-          onSave={saveEntry}
+          onSave={(draft) => {
+            if (entryModalView === "day-add" && dayAddKind === "group") {
+              mutateCallSheet((sheet) => appendNamedShotGroup(sheet, draft.description.trim()));
+              setEntryDraft(null);
+              setEntryModalView("schedule");
+            } else {
+              saveEntry(draft);
+            }
+          }}
         />
       ) : null}
-      {personDraft ? <PersonModal
+      {personDraft && isStudioInternal ? <PersonModal
         draft={personDraft}
         days={callSheet.days}
-        canDelete={Boolean(personDraft.id && callSheet.people.some((person) => person.id === personDraft.id))}
+        canDelete={Boolean(!personDraft.sourceContact && personDraft.id && callSheet.people.some((person) => person.id === personDraft.id))}
         onChange={setPersonDraft}
-        onClose={() => { setAttachCreatedPersonToQuickEntry(false); setAssignNewPersonAsContact(false); setQuestionPersonTargetId(null); setPersonDraft(null); }}
+        onClose={() => { setAttachCreatedPersonToEntry(false); setAssignNewPersonAsContact(false); setQuestionPersonTargetId(null); setPersonDraft(null); }}
         onDelete={() => personDraft.id ? removePerson(personDraft.id) : undefined}
         onSave={savePerson}
       /> : null}
       {isExistingPersonOpen ? (
         <ExistingPersonPopover
+          title={rosterPickerDayId ? `Add person to ${callSheet.days.find((day) => day.id === rosterPickerDayId)?.label ?? "shoot day"}` : "Add new contact"}
           anchor={existingPersonAnchor}
           existing={peopleDatabase}
-          addedPersonIds={callSheet.people.map((person) => person.id)}
+          addedPersonIds={callSheet.people.filter((person) => !rosterPickerDayId || isAssignedToDay(person.shootDayIds, rosterPickerDayId)).map((person) => person.id)}
           onAdd={addExistingPerson}
           onClose={() => { setIsExistingPersonOpen(false); setQuestionPersonTargetId(null); }}
           onCreate={() => {
             setIsExistingPersonOpen(false);
             const draft = emptyPersonDraft(currentDay?.generalCallTime ?? "", activeDayId);
-            setPersonDraft(questionPersonTargetId ? { ...draft, type: "talent" } : draft);
+            setPersonDraft(rosterPickerDayId ? { ...draft, shootDayIds: [rosterPickerDayId] } : questionPersonTargetId ? { ...draft, type: "talent" } : draft);
           }}
         />
       ) : null}
@@ -1893,13 +1961,8 @@ export function ShootStagePage({ project }: { project: Project }) {
         activeDayId={activeDayId}
         days={callSheet.days}
         documents={callSheet.documents}
-        onChange={(documents) => mutateCallSheet((current) => ({
-          ...current,
-          documents,
-          visibleOptionalSections: documents.length
-            ? current.visibleOptionalSections.includes("documents") ? current.visibleOptionalSections : [...current.visibleOptionalSections, "documents"]
-            : current.visibleOptionalSections.filter((section) => section !== "documents"),
-        }))}
+        isStudioInternal={isStudioInternal}
+        onChange={(update) => mutateCallSheet((current) => withShootDocuments(current, update(current.documents)))}
         onClose={() => setIsDocumentsOpen(false)}
       /> : null}
       {deleteDayId ? <DeleteShootDayModal
@@ -1910,7 +1973,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       /> : null}
       {deleteSetupShotId ? <DeleteShootShotModal
         entryId={deleteSetupShotId}
-        entries={callSheet.entries}
+        callSheet={callSheet}
         onCancel={() => setDeleteSetupShotId(null)}
         onConfirm={() => removeSetupShot(deleteSetupShotId)}
       /> : null}
@@ -1923,6 +1986,7 @@ export function ShootStagePage({ project }: { project: Project }) {
 }
 
 type ShootPreProductionWorkspaceProps = {
+  callSheetShare: ReactNode;
   accessLevel: ShootAccessLevel;
   activeSection: ShootWorkspaceSection;
   briefCaptures: ConfirmedQuickStartCapture[] | null;
@@ -1940,21 +2004,23 @@ type ShootPreProductionWorkspaceProps = {
   workflowSetup: ShootWorkflowSetup;
   studioName: string;
   onApprove: () => void;
-  onBuildWithBrisk: (answers: QuickStartAnswers) => void;
+  onApplySetupAnswers: (answers: QuickStartAnswers, source: "manual" | "ai") => void;
   onCallSheetChange: (updater: (current: CallSheet) => CallSheet) => void;
   onDeleteDay: (dayId: string) => void;
   onDeleteShot: (shotId: string) => void;
-  onAcceptAllSuggestions: () => void;
+  onAcceptAllSuggestions: (scope?: "all" | "shots") => void;
   onDismissQuestionSuggestion: (questionId: string) => void;
   onDismissShotSuggestion: (shotId: string) => void;
   onEditEntry: (entry: ProductionEntry) => void;
-  onEditShotDetails: (draft: EntryDraft) => void;
+  onEditShotDetails: (draft: EntryDraft, view?: "day-add") => void;
   onEditLocation: (location: ShootLocation) => void;
+  onSelectPrimaryLocation: (locationId: string, dayId: string) => void;
   onEditPerson: (person: ShootPerson) => void;
   onAddQuestionPerson: (questionId: string, anchor: HTMLButtonElement | null) => void;
   onCreatePerson: () => void;
-  onNewLocation: (shotId?: string) => void;
-  onNewPerson: (event?: ReactMouseEvent<HTMLButtonElement>) => void;
+  onNewLocation: (shotId?: string, asPrimary?: boolean, dayId?: string) => void;
+  onCompleteProductionContact: () => void;
+  onNewPerson: (event?: ReactMouseEvent<HTMLButtonElement>, dayId?: string) => void;
   onNewScheduleItem: (dayId: string, startTime?: string) => void;
   onUnscheduleEntry: (entryId: string) => void;
   onNotify: (message: string) => void;
@@ -1971,6 +2037,7 @@ type ShootPreProductionWorkspaceProps = {
 };
 
 function ShootPreProductionWorkspace({
+  callSheetShare,
   accessLevel,
   activeSection,
   briefCaptures,
@@ -1988,7 +2055,7 @@ function ShootPreProductionWorkspace({
   workflowSetup,
   studioName,
   onApprove,
-  onBuildWithBrisk,
+  onApplySetupAnswers,
   onCallSheetChange,
   onDeleteDay,
   onDeleteShot,
@@ -1998,11 +2065,13 @@ function ShootPreProductionWorkspace({
   onEditEntry,
   onEditShotDetails,
   onEditLocation,
+  onSelectPrimaryLocation,
   onEditPerson,
   onAddQuestionPerson,
   onCreatePerson,
   onNewLocation,
   onNewPerson,
+  onCompleteProductionContact,
   onNewScheduleItem,
   onUnscheduleEntry,
   onNotify,
@@ -2035,15 +2104,13 @@ function ShootPreProductionWorkspace({
   const runShootGlobalAction = useCallback((action: "onApprove" | "onUnapprove") => {
     shootGlobalActionHandlersRef.current[action]();
   }, []);
-  const [simpleDayDraft, setSimpleDayDraft] = useState<ShootDay | null>(null);
+  const [editingDayDetails, setEditingDayDetails] = useState(false);
   const [quickStartCaptures, setQuickStartCaptures] = useState<QuickStartCapture[]>(briefCaptures ?? ["not-confirmed"]);
   const shots = callSheet.entries.filter((entry) => entry.type === "shot").sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
   const references = callSheet.visualReferences ?? [];
   const currentDay = callSheet.days.find((day) => day.id === selectedDayId) ?? callSheet.days[0];
   const [readinessAction, setReadinessAction] = useState<ShootReadinessAction | null>(null);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
-  const [readinessReviewSection, setReadinessReviewSection] = useState<ReadyShootSection | null>(null);
-  const [planningReadiness, setPlanningReadiness] = useState<PlanningReadinessState>(() => createEmptyPlanningReadinessState(""));
   const [shootMode, setShootMode] = useState<ShootMode>(initialShootMode);
   const [isNavigationExpanded, setIsNavigationExpanded] = useState(true);
   const [scheduleGuide, setScheduleGuide] = useState<AiScheduleGuideState | null>(null);
@@ -2051,41 +2118,13 @@ function ShootPreProductionWorkspace({
   const searchParams = useSearchParams();
   const requestedFocusedCallSheetSection = searchParams.get("focus") || null;
   const [focusedCallSheetSection, setFocusedCallSheetSection] = useState<string | null>(requestedFocusedCallSheetSection);
-  const missingReadiness = getMissingCallSheetDetails(callSheet);
+  const missingReadiness = getMissingCallSheetDetails(callSheet, currentDay);
   const scheduleFingerprint = useMemo(() => getScheduleFingerprint(callSheet), [callSheet]);
-  const scheduleReadiness = useMemo(() => getScheduleReadiness(callSheet), [callSheet]);
-  const scheduleWasConfirmed = Boolean(setupState.scheduleConfirmedFingerprint);
-  const scheduleHasChanges = scheduleWasConfirmed && setupState.scheduleConfirmedFingerprint !== scheduleFingerprint;
-  const scheduleIsReady = scheduleWasConfirmed && !scheduleHasChanges;
   const scheduleWasSent = Boolean(setupState.scheduleSentAt);
   const scheduleNeedsSending = scheduleWasSent && setupState.scheduleSentFingerprint !== scheduleFingerprint;
-  const sectionFingerprints = useMemo(() => ({
-    shots: getPlanningSectionFingerprint(callSheet, "shots"),
-    questions: getPlanningSectionFingerprint(callSheet, "questions"),
-    references: getPlanningSectionFingerprint(callSheet, "references"),
-    locations: getPlanningSectionFingerprint(callSheet, "locations"),
-    people: getPlanningSectionFingerprint(callSheet, "people"),
-  }), [callSheet]);
   const selectedPlanningModules = new Set(workflowSetup.modules);
   const usesCallSheetOnSet = workflowSetup.mode === "planned" && selectedPlanningModules.has("call-sheet");
   const showInterviewQuestions = workflowSetup.mode === "planned" && selectedPlanningModules.has("interview-questions");
-
-  useEffect(() => {
-    if (!persistSetupAnswers) {
-      setPlanningReadiness(createEmptyPlanningReadinessState(project.id));
-      return;
-    }
-    const stored = window.localStorage.getItem(shootPlanningReadinessStorageKey(project.id));
-    setPlanningReadiness(parsePlanningReadinessState(stored, project.id));
-  }, [persistSetupAnswers, project.id]);
-
-  useEffect(() => {
-    if (!persistSetupAnswers || planningReadiness.projectId !== project.id) return;
-    window.localStorage.setItem(shootPlanningReadinessStorageKey(project.id), JSON.stringify({
-      version: planningReadiness.version,
-      sections: planningReadiness.sections,
-    }));
-  }, [persistSetupAnswers, planningReadiness, project.id]);
 
   useEffect(() => {
     setQuickStartCaptures(briefCaptures ?? ["not-confirmed"]);
@@ -2124,27 +2163,6 @@ function ShootPreProductionWorkspace({
     if (!showInterviewQuestions && activeSection === "questions") onSectionChange(shootMode === "on-set" ? "schedule" : getShootWorkflowLandingSection(workflowSetup.modules));
   }, [activeSection, onSectionChange, shootMode, showInterviewQuestions, workflowSetup.modules]);
 
-  const getPlanningReadinessStatus = (section: ReadyShootSection): PlanningReadinessStatus => {
-    if (section === "schedule") {
-      return {
-        hasChanges: scheduleHasChanges,
-        isReady: scheduleIsReady,
-        wasConfirmed: scheduleWasConfirmed,
-      };
-    }
-
-    const record = planningReadiness.projectId === project.id ? planningReadiness.sections[section] : undefined;
-    const wasConfirmed = Boolean(record);
-    const hasChanges = Boolean(record && record.confirmedFingerprint !== sectionFingerprints[section]);
-    return { hasChanges, isReady: wasConfirmed && !hasChanges, wasConfirmed };
-  };
-
-  const shotListReadiness = getPlanningReadinessStatus("shots");
-  const questionReadiness = getPlanningReadinessStatus("questions");
-  const referenceReadiness = getPlanningReadinessStatus("references");
-  const locationReadiness = getPlanningReadinessStatus("locations");
-  const peopleReadiness = getPlanningReadinessStatus("people");
-
   const dayScheduledCount = getVisibleOnSetDayEntries(callSheet, currentDay?.id ?? "").length;
   const hasStartedOnSetDay = shootMode === "on-set" && currentDay ? hasOnSetShootStarted(callSheet, currentDay) : false;
   const navigationGroups: Array<{ label: string; items: ShootNavigationItem[] }> = shootMode === "on-set"
@@ -2167,25 +2185,19 @@ function ShootPreProductionWorkspace({
             id: "shots" as const,
             label: "Shot List",
             icon: "video-camera-ds" as const,
-            meta: shotListReadiness.hasChanges ? "Updates to confirm" : shotListReadiness.isReady ? "Ready" : `${shots.length} ${shots.length === 1 ? "shot" : "shots"}`,
-            ready: shotListReadiness.wasConfirmed,
-            changed: shotListReadiness.hasChanges,
+            meta: `${shots.length} ${shots.length === 1 ? "shot" : "shots"}`,
           }] : []),
           ...(showInterviewQuestions ? [{
             id: "questions" as const,
             label: "Interview Questions",
             icon: "quotes" as const,
-            meta: questionReadiness.hasChanges ? "Updates to confirm" : questionReadiness.isReady ? "Ready" : `${callSheet.questions.length} ${callSheet.questions.length === 1 ? "question" : "questions"}`,
-            ready: questionReadiness.wasConfirmed,
-            changed: questionReadiness.hasChanges,
+            meta: `${callSheet.questions.length} ${callSheet.questions.length === 1 ? "question" : "questions"}`,
           }] : []),
           ...(selectedPlanningModules.has("visual-references") ? [{
             id: "references" as const,
             label: "Visual References",
             icon: "image-square" as const,
-            meta: referenceReadiness.hasChanges ? "Updates to confirm" : referenceReadiness.isReady ? "Ready" : `${references.length} ${references.length === 1 ? "reference" : "references"}`,
-            ready: referenceReadiness.wasConfirmed,
-            changed: referenceReadiness.hasChanges,
+            meta: `${references.length} ${references.length === 1 ? "reference" : "references"}`,
           }] : []),
         ],
       }] : []),
@@ -2196,30 +2208,20 @@ function ShootPreProductionWorkspace({
             id: "schedule" as const,
             label: "Schedule",
             icon: "clock-clockwise" as const,
-            meta: scheduleHasChanges
-              ? "Updates to confirm"
-              : scheduleIsReady
-                ? "Ready"
-                : `${callSheet.days.length} shoot ${callSheet.days.length === 1 ? "day" : "days"}`,
-            ready: scheduleWasConfirmed,
-            changed: scheduleHasChanges,
+            meta: `${callSheet.days.length} shoot ${callSheet.days.length === 1 ? "day" : "days"}`,
           }] : []),
           ...(selectedPlanningModules.has("locations-people") ? [
             {
               id: "locations" as const,
               label: "Locations",
               icon: "push-pin-simple" as const,
-              meta: locationReadiness.hasChanges ? "Updates to confirm" : locationReadiness.isReady ? "Ready" : callSheet.locations.length ? `${callSheet.locations.length} ${callSheet.locations.length === 1 ? "location" : "locations"}` : "Not confirmed",
-              ready: locationReadiness.wasConfirmed,
-              changed: locationReadiness.hasChanges,
+              meta: `${callSheet.locations.length} ${callSheet.locations.length === 1 ? "location" : "locations"}`,
             },
             {
               id: "people" as const,
               label: "People",
               icon: "users-three" as const,
-              meta: peopleReadiness.hasChanges ? "Updates to confirm" : peopleReadiness.isReady ? "Ready" : `${callSheet.people.length} ${callSheet.people.length === 1 ? "person" : "people"}`,
-              ready: peopleReadiness.wasConfirmed,
-              changed: peopleReadiness.hasChanges,
+              meta: `${callSheet.people.length} ${callSheet.people.length === 1 ? "person" : "people"}`,
             },
           ] : []),
           { id: "documents", label: "Documents", icon: "folder", meta: callSheet.documents.length ? `${callSheet.documents.length} ${callSheet.documents.length === 1 ? "document" : "documents"}` : "No documents" },
@@ -2235,8 +2237,13 @@ function ShootPreProductionWorkspace({
   const onSetLandingSection: ShootWorkspaceSection = usesCallSheetOnSet ? "call-sheet" : "schedule";
   const showSectionNavigation = shootMode === "planning";
 
+  const approvalIssues = useMemo(() => {
+    const usesSchedule = workflowSetup.mode === "simple" || workflowSetup.modules.includes("schedule") || workflowSetup.modules.includes("call-sheet");
+    return usesSchedule ? getShootApprovalIssues(callSheet) : [];
+  }, [callSheet, workflowSetup.mode, workflowSetup.modules]);
+
   const runReadinessAction = (action: ShootReadinessAction, next: () => void) => {
-    if (!missingReadiness.length) {
+    if (!(action === "approve" ? approvalIssues : missingReadiness).length) {
       next();
       return;
     }
@@ -2276,72 +2283,8 @@ function ShootPreProductionWorkspace({
     window.history.replaceState(window.history.state, "", url);
   };
 
-  const confirmSchedule = (notify = true) => {
-    const confirmedAt = new Date().toISOString();
-    onSetupStateChange((current) => ({
-      ...current,
-      scheduleComplete: true,
-      scheduleSkipped: false,
-      scheduleStep: Math.max(current.scheduleStep, 4),
-      scheduleConfirmedFingerprint: scheduleFingerprint,
-      scheduleConfirmedAt: confirmedAt,
-      status: current.status === "working" ? "ready_to_finalise" : current.status,
-      lastContributor: viewer?.name ?? selectedRole,
-      updatedAt: confirmedAt,
-    }));
-    setReadinessReviewSection(null);
-    if (notify) onNotify(scheduleHasChanges ? "Schedule updates confirmed." : "Schedule marked ready.");
-  };
-
-  const confirmPlanningSection = (section: ReadyShootSection) => {
-    if (section === "schedule") {
-      confirmSchedule();
-      return;
-    }
-
-    if (!canEdit) return;
-    const confirmedCallSheet = section === "shots" ? acceptShotListSuggestions(callSheet) : callSheet;
-    if (section === "shots") updateCallSheet(acceptShotListSuggestions);
-    const confirmedAt = new Date().toISOString();
-    setPlanningReadiness((current) => ({
-      version: 1,
-      projectId: project.id,
-      sections: {
-        ...(current.projectId === project.id ? current.sections : {}),
-        [section]: {
-          confirmedAt,
-          confirmedFingerprint: getPlanningSectionFingerprint(confirmedCallSheet, section),
-        },
-      },
-    }));
-    setReadinessReviewSection(null);
-    const status = getPlanningReadinessStatus(section);
-    onNotify(status.hasChanges ? `${planningReadinessConfig[section].label} updates confirmed.` : `${planningReadinessConfig[section].label} marked ready.`);
-  };
-
-  const markPlanningSectionUnready = (section: ReadyShootSection) => {
-    if (section === "schedule") {
-      onSetupStateChange((current) => ({
-        ...current,
-        scheduleComplete: false,
-        scheduleConfirmedFingerprint: undefined,
-        scheduleConfirmedAt: undefined,
-        status: current.status === "ready_to_finalise" ? "working" : current.status,
-        updatedAt: new Date().toISOString(),
-      }));
-    } else {
-      setPlanningReadiness((current) => {
-        const sections = { ...(current.projectId === project.id ? current.sections : {}) };
-        delete sections[section];
-        return { version: 1, projectId: project.id, sections };
-      });
-    }
-    onNotify(`${planningReadinessConfig[section].label} marked as not ready.`);
-  };
-
-  const recordScheduleSent = (recipient: RequestReviewRecipient, confirmUpdates = false) => {
+  const recordScheduleSent = (recipient: RequestReviewRecipient) => {
     const sentAt = new Date().toISOString();
-    if (confirmUpdates) confirmSchedule(false);
     onRequestReview(recipient === "customer" ? "client" : "studio");
     onSetupStateChange((current) => ({
       ...current,
@@ -2351,8 +2294,8 @@ function ShootPreProductionWorkspace({
     }));
   };
 
-  const sendSchedule = (confirmUpdates = false) => {
-    runReadinessAction("send", () => recordScheduleSent(selectedRole === "Customer" ? "studio" : "customer", confirmUpdates));
+  const sendSchedule = () => {
+    runReadinessAction("send", () => recordScheduleSent(selectedRole === "Customer" ? "studio" : "customer"));
   };
   shootGlobalActionHandlersRef.current = {
     beforeAction: beforeShootShareAction,
@@ -2453,6 +2396,95 @@ function ShootPreProductionWorkspace({
     if (!canEdit) return;
     onCallSheetChange(updater);
   };
+  const { confirm: confirmRemoval, confirmationDialog: removalDialog } = useConfirmation();
+  const removeFromDay = async (kind: "person" | "location", item: ShootPerson | ShootLocation, day: ShootDay) => {
+    if (!canEdit || !isStudioInternal) return;
+    const dayShots = new Set(getShootDayShots(callSheet, day.id).map((shot) => shot.id));
+    const entries = callSheet.entries.filter((entry) => {
+      if (entry.type === "shot" ? !dayShots.has(entry.id) : entry.dayId !== day.id) return false;
+      const removed = entry.removedAssignmentsByDay?.[day.id];
+      return kind === "person"
+        ? entry.personIds.includes(item.id) && !removed?.personIds?.includes(item.id)
+        : entry.locationId === item.id && removed?.locationId !== item.id;
+    });
+    const questions = kind === "person" ? callSheet.questions.filter((question) =>
+      question.personId === item.id && isAssignedToDay(question.shootDayIds, day.id) && !question.unassignedDayIds?.includes(day.id)) : [];
+    const primary = kind === "location" && day.primaryLocationId === item.id;
+    if (entries.length || questions.length || primary) {
+      const accepted = await confirmRemoval({
+        title: `Remove ${item.name} from ${day.label}?`,
+        confirmLabel: `Remove from ${day.label}`,
+        tone: "danger",
+        children: <>
+          {entries.length + questions.length > 0 && <><p>The following assignments will be cleared for {day.label}.</p>
+            <ul>{entries.map((entry) => <li key={entry.id}>{entry.description}</li>)}
+            {questions.map((question) => <li key={question.id}>{question.question}</li>)}</ul></>}
+          {primary && <p>{day.label} will need a new primary location.</p>}
+        </>,
+      });
+      if (!accepted) return;
+    }
+    const entryIds = new Set(entries.map((entry) => entry.id));
+    const questionIds = new Set(questions.map((question) => question.id));
+    updateCallSheet((current) => {
+      const otherDays = current.days.filter((candidate) => candidate.id !== day.id);
+      const otherShotIds = new Set(otherDays.flatMap((candidate) => getShootDayShots(current, candidate.id).map((shot) => shot.id)));
+      const remainingDays = (assignment: ShootDayAssignment) =>
+        otherDays.filter((candidate) => isAssignedToDay(assignment, candidate.id)).map((candidate) => candidate.id);
+      return {
+        ...current,
+        people: kind === "person" ? current.people.map((person) => {
+          if (person.id !== item.id) return person;
+          const shootDayIds = remainingDays(person.shootDayIds);
+          return { ...person, shootDayIds, assignments: getShootAssignments(person).map((assignment) => ({
+            ...assignment, shootDayIds: remainingDays(assignment.shootDayIds),
+          })) };
+        }) : current.people,
+        locations: kind === "location" ? current.locations.map((location) => location.id === item.id
+          ? { ...location, shootDayIds: remainingDays(location.shootDayIds) } : location) : current.locations,
+        days: primary ? current.days.map((candidate) => candidate.id === day.id && candidate.primaryLocationId === item.id
+          ? { ...candidate, primaryLocationId: "", safetyEmergency: markEmergencyDetailsForReview(candidate.safetyEmergency) } : candidate) : current.days,
+        entries: current.entries.map((entry) => {
+          if (!entryIds.has(entry.id)) return entry;
+          if (otherShotIds.has(entry.id)) {
+            const removed = { ...entry.removedAssignmentsByDay?.[day.id] };
+            if (kind === "location") removed.locationId = item.id;
+            else removed.personIds = [...new Set([...(removed.personIds ?? []), item.id])];
+            return { ...entry, removedAssignmentsByDay: { ...entry.removedAssignmentsByDay, [day.id]: removed } };
+          }
+          return kind === "location" ? { ...entry, locationId: undefined }
+            : { ...entry, personIds: entry.personIds.filter((id) => id !== item.id) };
+        }),
+        questions: current.questions.map((question) => {
+          if (!questionIds.has(question.id)) return question;
+          return remainingDays(question.shootDayIds).length
+            ? { ...question, unassignedDayIds: [...new Set([...(question.unassignedDayIds ?? []), day.id])] }
+            : { ...question, personId: undefined, unassignedDayIds: undefined };
+        }),
+      };
+    });
+    onNotify(`${item.name} removed from ${day.label}.`);
+  };
+  const locationActions = {
+    add: (day: ShootDay) => onNewLocation(undefined, false, day.id),
+    edit: onEditLocation,
+    makePrimary: onSelectPrimaryLocation,
+    removeFromDay: (location: ShootLocation, day: ShootDay) => removeFromDay("location", location, day),
+    addExisting: (location: ShootLocation, day: ShootDay) => {
+      updateCallSheet((current) => ({ ...current, locations: current.locations.map((item) =>
+        item.id === location.id && item.shootDayIds !== "all" && !item.shootDayIds.includes(day.id)
+          ? { ...item, shootDayIds: [...item.shootDayIds, day.id] } : item) }));
+      onNotify(`${location.name} added to ${day.label}.`);
+    },
+  };
+  const rosterActions = {
+    add: (dayId: string) => onNewPerson(undefined, dayId),
+    edit: onEditPerson,
+    removeFromDay: (person: ShootPerson, day: ShootDay) => removeFromDay("person", person, day),
+  };
+  const trackShot: TrackShot = (shotId, change) => {
+    if (currentDay) onCallSheetChange((sheet) => updateShootDayShot(sheet, currentDay.id, shotId, change));
+  };
   const toggleOnSetEntryCompletion = (entryId: string) => updateCallSheet((current) => ({
     ...current,
     entries: current.entries.map((entry) => entry.id === entryId
@@ -2515,9 +2547,10 @@ function ShootPreProductionWorkspace({
         briefCaptures={briefCaptures}
         callSheet={callSheet}
         canEdit={canEdit}
+        canManageRoster={canEdit && isStudioInternal}
         contactOptions={contactOptions}
         isInterviewRecommended={quickStartCaptures.includes("interviews") || isInterviewLed}
-        onBuild={onBuildWithBrisk}
+        onApplyAnswers={onApplySetupAnswers}
         onCallSheetChange={updateCallSheet}
         onCaptureChange={setQuickStartCaptures}
         onCreatePerson={onCreatePerson}
@@ -2529,25 +2562,70 @@ function ShootPreProductionWorkspace({
     </div>;
   }
 
+  const callSheetToolbar = <div className="shoot-simple-workspace-toolbar">
+    <h1 className="headings-xs-bold">Call sheet</h1>
+    <div className="shoot-simple-call-sheet-actions">
+      {workflowSetup.mode === "simple" && canEdit ? <Button size="S" variant="ghost" type="button" onClick={() => selectNavigationItem("quick-start")}>Edit setup</Button> : null}
+      {currentDay ? <a className="shoot-button secondary label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay.id)}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a> : null}
+      {callSheetShare}
+    </div>
+  </div>;
+  const dayDetailsDialog = editingDayDetails && currentDay && canEdit ? <ShootDayDetailsDialog
+    days={callSheet.days} initialDayId={currentDay.id} locations={callSheet.locations} canReviewEmergency={isStudioInternal}
+    onClose={() => setEditingDayDetails(false)}
+    onSave={(changes) => {
+      updateCallSheet((current) => ({ ...current, days: current.days.map((day) => {
+        const patch = changes[day.id];
+        if (!patch) return day;
+        return {
+          ...day, ...patch,
+          timelineStartTime: patch.generalCallTime ?? day.timelineStartTime,
+          timelineEndTime: patch.expectedWrapTime ?? day.timelineEndTime,
+          safetyEmergency: "safetyEmergency" in patch ? patch.safetyEmergency
+            : patch.primaryLocationId !== undefined && day.primaryLocationId !== patch.primaryLocationId
+              ? markEmergencyDetailsForReview(day.safetyEmergency) : day.safetyEmergency,
+        };
+      }) }));
+      setEditingDayDetails(false);
+    }}
+  /> : null;
+
+  const stageReadinessDialog = readinessAction ? <ShootReadinessModal
+      action={readinessAction}
+      missing={readinessAction === "approve" ? approvalIssues : missingReadiness}
+      onAddDetails={readinessAction !== "approve" && canEdit && (isStudioInternal || missingReadiness.some((item) => item !== "On-the-day contact and phone number")) ? () => {
+        setReadinessAction(null);
+        setPendingAction(null);
+        const destination: ShootWorkspaceSection = missingReadiness.includes("Shoot date") || missingReadiness.includes("General call time")
+          ? "schedule"
+          : missingReadiness.includes("Primary location")
+            ? "locations"
+            : "people";
+        if (destination === "people") onCompleteProductionContact();
+        else if (workflowSetup.mode === "simple") {
+          const primary = callSheet.locations.find((item) => item.id === currentDay?.primaryLocationId);
+          if (destination === "locations" && primary) onEditLocation(primary);
+          else if (destination === "locations" && !callSheet.locations.length) onNewLocation(undefined, true, currentDay?.id);
+          else setEditingDayDetails(true);
+        } else {
+          setShootMode("planning");
+          onSectionChange(destination);
+        }
+      } : undefined}
+      onCancel={() => { setReadinessAction(null); setPendingAction(null); }}
+      onContinue={() => {
+        const action = pendingAction;
+        setReadinessAction(null);
+        setPendingAction(null);
+        action?.();
+      }}
+    /> : null;
+
   if (workflowSetup.mode === "simple") {
-    return <div className="shoot-preproduction-shell is-mode-on-set shoot-simple-workspace">
-      <div className="shoot-simple-workspace-toolbar">
-        <h1 className="headings-xs-bold">Call sheet</h1>
-        <div className="shoot-simple-call-sheet-actions">
-          {canEdit ? <><Button size="S" variant="ghost" type="button" onClick={() => selectNavigationItem("quick-start")}>Edit setup</Button><Button size="S" variant="secondary" type="button" onClick={() => currentDay && setSimpleDayDraft({ ...currentDay })}><DsIcon name="pencil-simple-ds" size={16} />Edit day details</Button></> : null}
-          {currentDay ? <a className="shoot-button secondary label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay.id)}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a> : null}
-        </div>
-      </div>
-      {simpleDayDraft ? <EditingDialog title={`Edit ${simpleDayDraft.label}`} size="wide" onCancel={() => setSimpleDayDraft(null)} actions={<><Button size="S" variant="secondary" onClick={() => setSimpleDayDraft(null)}>Cancel</Button><Button size="S" variant="primary" disabled={JSON.stringify(simpleDayDraft) === JSON.stringify(currentDay) || Boolean(simpleDayDraft.generalCallTime && simpleDayDraft.expectedWrapTime && simpleDayDraft.expectedWrapTime <= simpleDayDraft.generalCallTime)} onClick={() => {
-        const draft = simpleDayDraft;
-        updateCallSheet((current) => ({ ...current, days: current.days.map((day) => day.id === draft.id ? {
-          ...day, ...draft,
-          timelineStartTime: draft.generalCallTime,
-          timelineEndTime: draft.expectedWrapTime,
-          safetyEmergency: day.primaryLocationId !== draft.primaryLocationId ? markEmergencyDetailsForReview(day.safetyEmergency) : day.safetyEmergency,
-        } : day) }));
-        setSimpleDayDraft(null);
-      }}>Save</Button></>}><ShootDayEditorFields draft={simpleDayDraft} locations={callSheet.locations} onChange={setSimpleDayDraft} className="shoot-day-dialog-fields" /></EditingDialog> : null}
+    return <div className="shoot-preproduction-shell is-mode-on-set shoot-simple-workspace shoot-call-sheet-workspace">
+      {callSheetToolbar}
+      {dayDetailsDialog}
+      {removalDialog}
       <div className="shoot-live-call-sheet-frame">
         <SharedCallSheetPage
           project={project}
@@ -2555,10 +2633,12 @@ function ShootPreProductionWorkspace({
           printMode={false}
           embedded
           compact
+          locationActions={locationActions}
+          rosterActions={rosterActions}
           embeddedCallSheet={callSheet}
           canEdit={canEdit}
           isStudioInternal={isStudioInternal}
-          onEditEssentials={() => currentDay && setSimpleDayDraft({ ...currentDay })}
+          onEditEssentials={() => setEditingDayDetails(true)}
           focusedSectionId={focusedCallSheetSection}
           onFocusSection={openCallSheetSectionFocus}
           onExitSectionFocus={closeCallSheetSectionFocus}
@@ -2570,10 +2650,11 @@ function ShootPreProductionWorkspace({
             else if (section === "locations") {
               const location = callSheet.locations.find((item) => item.id === currentDay?.primaryLocationId);
               if (location) onEditLocation(location);
-              else onNewLocation();
+              else onNewLocation(undefined, true);
             }
           } : undefined}
           renderRunOfDay={(day) => <PreProductionSchedule
+            onTrackShot={trackShot}
             aiScheduleOpenRequest={reopenAiScheduleRequest}
             callSheet={callSheet}
             canEdit={canEdit}
@@ -2591,19 +2672,16 @@ function ShootPreProductionWorkspace({
           />}
         />
       </div>
+      {!focusedCallSheetSection && <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">{shootDecisionActions}</footer>}
+      {stageReadinessDialog}
     </div>;
   }
-
-  const activeReadySection = shootMode === "planning" && isReadyShootSection(activeSection) ? activeSection : null;
-  const activePlanningReadiness = activeReadySection ? getPlanningReadinessStatus(activeReadySection) : null;
-  const activeReadinessConfig = activeReadySection ? planningReadinessConfig[activeReadySection] : null;
-  const nextReadinessDestination = activeReadySection
-    ? getNextReadinessDestination(activeReadySection, workflowSetup.modules, usesCallSheetOnSet)
-    : null;
 
   let sectionContent: ReactNode;
   if (activeSection === "shots") {
     sectionContent = <PreProductionShotList
+      onAcceptSuggestions={() => onAcceptAllSuggestions("shots")}
+      onTrackShot={trackShot}
       callSheet={callSheet}
       canEdit={canEdit}
       entries={shots}
@@ -2625,7 +2703,7 @@ function ShootPreProductionWorkspace({
       canEdit={canEdit}
       mode={shootMode}
       selectedDayId={currentDay?.id ?? ""}
-      onAddPerson={onAddQuestionPerson}
+      onAddPerson={isStudioInternal ? onAddQuestionPerson : undefined}
       onAcceptAllSuggestions={onAcceptAllSuggestions}
       onChange={updateCallSheet}
       onDismissSuggestion={onDismissQuestionSuggestion}
@@ -2636,11 +2714,12 @@ function ShootPreProductionWorkspace({
   } else if (activeSection === "references") {
     sectionContent = <PreProductionVisualReferences callSheet={callSheet} canEdit={canEdit} onChange={updateCallSheet} projectId={project.id} />;
   } else if (activeSection === "locations") {
-    sectionContent = <PreProductionLocations callSheet={callSheet} canEdit={canEdit} onEdit={onEditLocation} onNew={() => onNewLocation()} />;
+    sectionContent = <PreProductionLocations day={currentDay} onMakePrimary={onSelectPrimaryLocation} callSheet={callSheet} canEdit={canEdit} onEdit={onEditLocation} onNew={() => onNewLocation()} />;
   } else if (activeSection === "people") {
-    sectionContent = <PreProductionPeople callSheet={callSheet} canEdit={canEdit} isStudioInternal={isStudioInternal} onChange={updateCallSheet} onEdit={onEditPerson} onNew={onNewPerson} />;
+    sectionContent = <PreProductionPeople callSheet={callSheet} canEdit={canEdit && isStudioInternal} isStudioInternal={isStudioInternal} onChange={updateCallSheet} onEdit={onEditPerson} onNew={onNewPerson} />;
   } else if (activeSection === "schedule") {
     sectionContent = <PreProductionSchedule
+        onTrackShot={trackShot}
         aiScheduleOpenRequest={reopenAiScheduleRequest}
         callSheet={callSheet}
         canEdit={canEdit}
@@ -2658,15 +2737,10 @@ function ShootPreProductionWorkspace({
   } else if (activeSection === "documents") {
     sectionContent = <PreProductionDocuments callSheet={callSheet} canEdit={canEdit} onChange={updateCallSheet} onOpenDocuments={onOpenDocuments} />;
   } else {
-    sectionContent = <section className="shoot-preproduction-call-sheet">
-      {!focusedCallSheetSection ? <header className="shoot-call-sheet-utility" aria-label="Call Sheet actions">
-
-        {canEdit ? <a className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot?section=schedule&day=${encodeURIComponent(currentDay?.id ?? "")}`}><DsIcon name="pencil-simple-ds" size={16} />Edit</a> : null}
-        <a className="shoot-button secondary shoot-call-sheet-pdf label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a>
-        <ShootCommandMenu label="Call Sheet actions" trigger={<>More<DsIcon name="caret-down" size={14} /></>} actions={[
-          { label: "Download PDF", href: `/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`, target: "_blank", rel: "noreferrer" },
-        ]} />
-      </header> : null}
+    sectionContent = <section className="shoot-call-sheet-workspace">
+      {!focusedCallSheetSection && callSheetToolbar}
+      {dayDetailsDialog}
+      {removalDialog}
       {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
       {existingPlan ? <ExistingPlanCallSheetAttachment plan={existingPlan} onReplace={onOpenExistingPlan} /> : null}
       <div className="shoot-live-call-sheet-frame">
@@ -2675,6 +2749,9 @@ function ShootPreProductionWorkspace({
           previewMode={false}
           printMode={false}
           embedded
+          onEditEssentials={canEdit ? () => setEditingDayDetails(true) : undefined}
+          locationActions={locationActions}
+          rosterActions={rosterActions}
           embeddedCallSheet={callSheet}
           canEdit={canEdit}
           isStudioInternal={isStudioInternal}
@@ -2696,7 +2773,7 @@ function ShootPreProductionWorkspace({
               mode="on-set"
               selectedDayId={day.id}
               onAcceptAllSuggestions={onAcceptAllSuggestions}
-              onAddPerson={onAddQuestionPerson}
+              onAddPerson={isStudioInternal ? onAddQuestionPerson : undefined}
               onChange={updateCallSheet}
               onDismissSuggestion={onDismissQuestionSuggestion}
               onFocusChange={controls.onToggleFocus}
@@ -2708,6 +2785,7 @@ function ShootPreProductionWorkspace({
           ) : undefined}
           renderRunOfDay={shootMode === "on-set" ? (day, controls) => (
             <OnSetRunOfDay
+              onTrackShot={trackShot}
               callSheet={callSheet}
               canEdit={canEdit}
               currentDay={day}
@@ -2733,14 +2811,18 @@ function ShootPreProductionWorkspace({
   return <div className={`shoot-preproduction-shell is-mode-${shootMode}`}>
     <header className="shoot-preproduction-heading">
       <h1 className="sr-only">{shootMode === "on-set" ? "On set" : "Planning"}</h1>
-      <div className="shoot-workspace-mode-switch" role="tablist" aria-label="Shoot mode">
-        <button data-mode="planning" className={shootMode === "planning" ? "active" : ""} type="button" role="tab" aria-selected={shootMode === "planning"} onClick={() => changeShootMode("planning")}>
+      <div className="shoot-workspace-mode-switch" role="tablist" aria-label="Shoot mode" onKeyDown={(event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const next = event.key === "Home" ? "planning" : event.key === "End" ? "on-set" : shootMode === "planning" ? "on-set" : "planning";
+        changeShootMode(next);
+        event.currentTarget.querySelector<HTMLButtonElement>(`[data-mode="${next}"]`)?.focus();
+      }}>
+        <button data-mode="planning" tabIndex={shootMode === "planning" ? 0 : -1} className={shootMode === "planning" ? "active" : ""} type="button" role="tab" aria-selected={shootMode === "planning"} onClick={() => changeShootMode("planning")}>
           <span className="shoot-workspace-mode-title headings-s-bold">Planning</span>
-          <span className="shoot-workspace-mode-description label-xs">Build the shoot plan</span>
         </button>
-        <button data-mode="on-set" className={shootMode === "on-set" ? "active" : ""} type="button" role="tab" aria-selected={shootMode === "on-set"} onClick={() => changeShootMode("on-set")}>
+        <button data-mode="on-set" tabIndex={shootMode === "on-set" ? 0 : -1} className={shootMode === "on-set" ? "active" : ""} type="button" role="tab" aria-selected={shootMode === "on-set"} onClick={() => changeShootMode("on-set")}>
           <span className="shoot-workspace-mode-title headings-s-bold">On set</span>
-          <span className="shoot-workspace-mode-description label-xs">Run the shoot day</span>
         </button>
       </div>
     </header>
@@ -2777,10 +2859,10 @@ function ShootPreProductionWorkspace({
           <h2 className="label-xs-semibold">{group.label}</h2>
           <div>{group.items.map((item) => {
             const isActive = activeSection === item.id;
-            return <button className={`${isActive ? "active" : ""} ${item.ready ? "has-readiness" : ""} ${item.changed ? "has-readiness-changes" : ""}`.trim()} type="button" aria-current={isActive ? "page" : undefined} aria-label={`${item.label}${item.meta ? `, ${item.meta}` : ""}`} data-compact-tooltip={item.label} key={item.id} onClick={() => selectNavigationItem(item.id)}>
-            <span className="shoot-navigation-icon" aria-hidden="true"><DsIcon name={item.icon} size={17} /></span>
-            <span className="shoot-preproduction-navigation-copy"><strong className="label-s-semibold">{item.label}</strong><small className="label-xs">{item.meta}</small></span>
-          </button>;
+            return <button key={item.id} className={isActive ? "active" : undefined} type="button" aria-current={isActive ? "page" : undefined} aria-label={`${item.label}${item.meta ? `, ${item.meta}` : ""}`} data-compact-tooltip={item.label} onClick={() => selectNavigationItem(item.id)}>
+              <span className="shoot-navigation-icon" aria-hidden="true"><DsIcon name={item.icon} size={17} /></span>
+              <span className="shoot-preproduction-navigation-copy"><strong className="label-s-semibold">{item.label}</strong><small className="label-xs">{item.meta}</small></span>
+            </button>;
           })}</div>
         </section>)}
         {usesCallSheetOnSet ? <section className="shoot-preproduction-navigation-call-sheet"><div><button type="button" aria-label="View Call Sheet" data-compact-tooltip="View Call Sheet" onClick={() => changeShootMode("on-set")}><DsIcon name="file-text" size={17} /><span className="shoot-preproduction-navigation-copy"><strong className="label-s-semibold">View Call Sheet</strong></span></button></div></section> : null}
@@ -2792,10 +2874,7 @@ function ShootPreProductionWorkspace({
           {existingPlan.url ? <a className="shoot-button secondary label-xs-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}
           {canEdit ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onOpenExistingPlan}>Replace</Button> : null}
         </aside> : null}
-        {activeReadySection && activePlanningReadiness?.hasChanges && activeReadinessConfig ? <PlanningSectionChangesNotice
-          label={activeReadinessConfig.label}
-          wasSent={activeReadySection === "schedule" && scheduleWasSent}
-        /> : null}
+        {shootMode === "planning" && activeSection === "schedule" && scheduleNeedsSending ? <ScheduleChangesNotice onSendUpdated={canEdit ? sendSchedule : undefined} /> : null}
         {sectionContent}
       </div>
     </div>
@@ -2812,72 +2891,19 @@ function ShootPreProductionWorkspace({
       onUseGeneralCallForTalent={useGeneralCallForTalent}
     /> : null}
 
-    {shootMode === "on-set" && activeSection === "call-sheet" ? null : shootMode === "planning" && activeReadySection && activePlanningReadiness && activeReadinessConfig ? <PlanningReadinessFooter
-      canEdit={canEdit}
-      config={activeReadinessConfig}
-      hasChanges={activePlanningReadiness.hasChanges}
-      isReady={activePlanningReadiness.isReady}
-      needsSending={activeReadySection === "schedule" && scheduleNeedsSending}
-      nextAction={activeReadySection !== "shots" && nextReadinessDestination ? {
-        icon: nextReadinessDestination.icon,
-        label: nextReadinessDestination.label,
-        onSelect: () => nextReadinessDestination.section === "call-sheet"
-          ? changeShootMode("on-set")
-          : selectNavigationItem(nextReadinessDestination.section),
-      } : undefined}
-      wasConfirmed={activePlanningReadiness.wasConfirmed}
-      onMarkUnready={() => markPlanningSectionUnready(activeReadySection)}
-      onReviewReadiness={() => setReadinessReviewSection(activeReadySection)}
-      onSendUpdated={() => sendSchedule(true)}
-      decisions={shootDecisionActions}
-    /> : <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">{shootDecisionActions}</footer>}
-
-    {readinessReviewSection === "schedule" ? <ScheduleReadinessModal
-      isUpdate={scheduleHasChanges}
-      readiness={scheduleReadiness}
-      onCancel={() => setReadinessReviewSection(null)}
-      onConfirm={() => confirmSchedule()}
-    /> : null}
-
-    {readinessReviewSection && readinessReviewSection !== "schedule" ? <PlanningReadinessModal
-      config={planningReadinessConfig[readinessReviewSection]}
-      isUpdate={getPlanningReadinessStatus(readinessReviewSection).hasChanges}
-      readiness={getPlanningSectionReadiness(callSheet, readinessReviewSection)}
-      onCancel={() => setReadinessReviewSection(null)}
-      onConfirm={() => confirmPlanningSection(readinessReviewSection)}
-    /> : null}
-
-    {readinessAction ? <ShootReadinessModal
-      action={readinessAction}
-      missing={missingReadiness}
-      onAddDetails={() => {
-        setReadinessAction(null);
-        setPendingAction(null);
-        const destination: ShootWorkspaceSection = missingReadiness.includes("Shoot date") || missingReadiness.includes("General call time")
-          ? "schedule"
-          : missingReadiness.includes("Primary location")
-            ? "locations"
-            : "people";
-        onSectionChange(destination);
-      }}
-      onCancel={() => { setReadinessAction(null); setPendingAction(null); }}
-      onContinue={() => {
-        const action = pendingAction;
-        setReadinessAction(null);
-        setPendingAction(null);
-        action?.();
-      }}
-    /> : null}
+    {!(shootMode === "on-set" && activeSection === "call-sheet") && <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">{shootDecisionActions}</footer>}
+    {stageReadinessDialog}
   </div>;
 }
 
-function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, isInterviewRecommended, onBuild, onCallSheetChange, onCaptureChange, onCreatePerson, onWorkflowSetupChange, persistAnswers, projectId, workflowSetup }: {
+function ShootQuickStart({ canManageRoster, briefCaptures, callSheet, canEdit, contactOptions, isInterviewRecommended, onApplyAnswers, onCallSheetChange, onCaptureChange, onCreatePerson, onWorkflowSetupChange, persistAnswers, projectId, workflowSetup }: {
+  canManageRoster: boolean;
   briefCaptures: ConfirmedQuickStartCapture[] | null;
   callSheet: CallSheet;
   canEdit: boolean;
   contactOptions: ShootPerson[];
   isInterviewRecommended: boolean;
-  onBuild: (answers: QuickStartAnswers) => void;
+  onApplyAnswers: (answers: QuickStartAnswers, source: "manual" | "ai") => void;
   onCallSheetChange: (updater: (current: CallSheet) => CallSheet) => void;
   onCaptureChange: (captures: QuickStartCapture[]) => void;
   onCreatePerson: () => void;
@@ -2886,8 +2912,7 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
   projectId: string;
   workflowSetup: ShootWorkflowSetup;
 }) {
-  const [includeCaptureStep, setIncludeCaptureStep] = useState(briefCaptures === null);
-  const [activeStepId, setActiveStepId] = useState<QuickStartStepId>(() => workflowSetup.isComplete ? "workflow" : briefCaptures === null ? "capture" : "people");
+  const [activeStepId, setActiveStepId] = useState<QuickStartStepId>("workflow");
   const [answers, setAnswers] = useState<QuickStartAnswers>(() => createInitialQuickStartAnswers(briefCaptures));
   const [mustHaveShotDraft, setMustHaveShotDraft] = useState("");
   const [hasLoadedAnswers, setHasLoadedAnswers] = useState(false);
@@ -2898,12 +2923,12 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
     ? workflowSetup.modules
     : getDefaultShootPlanningModules(isInterviewRecommended));
   const questionSteps: Array<{ id: QuickStartStepId; label: string }> = [
-    ...(includeCaptureStep ? [{ id: "capture" as const, label: "What to capture" }] : []),
+    { id: "workflow", label: "Workflow" },
+    { id: "capture", label: "What to capture" },
     { id: "people", label: "People" },
     { id: "location", label: "Location" },
     { id: "date", label: "Date" },
     { id: "must-haves", label: "Must-have shots" },
-    { id: "workflow", label: "Workflow" },
   ];
   const activeStepIndex = Math.max(0, questionSteps.findIndex((step) => step.id === activeStepId));
   const existingTalent = callSheet.people.filter((person) => getShootAssignments(person).some((assignment) => assignment.type === "talent"));
@@ -2911,15 +2936,9 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
   const mustHaveShots = parseQuickStartList(answers.mustHaveShots);
 
   useEffect(() => {
-    if (!persistAnswers) {
-      setHasLoadedAnswers(true);
-      return;
-    }
-    const storedAnswers = parseQuickStartAnswers(window.localStorage.getItem(quickStartAnswersStorageKey(projectId)));
-    if (storedAnswers) {
-      setAnswers(storedAnswers);
-      setIncludeCaptureStep(briefCaptures === null || !areQuickStartCapturesEqual(storedAnswers.captures, briefCaptures));
-    }
+    const initial = createInitialQuickStartAnswers(briefCaptures);
+    const stored = persistAnswers ? parseQuickStartAnswers(window.localStorage.getItem(quickStartAnswersStorageKey(projectId))) : null;
+    setAnswers(stored ? { ...stored, captures: stored.capturesEdited ? stored.captures : initial.captures } : initial);
     setHasLoadedAnswers(true);
   }, [briefCaptures, persistAnswers, projectId]);
 
@@ -2948,6 +2967,7 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
     const confirmedCaptures = current.captures.filter((value): value is ConfirmedQuickStartCapture => value !== "not-confirmed");
     return {
       ...current,
+      capturesEdited: true,
       captures: confirmedCaptures.includes(capture)
         ? confirmedCaptures.filter((value) => value !== capture)
         : [...confirmedCaptures, capture],
@@ -3007,18 +3027,26 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
     });
     rememberQuickStartPerson(person.name);
   };
-  const removeQuickStartPerson = (person: ShootPerson) => {
+  const { confirm: confirmSetupRemoval, confirmationDialog: setupRemovalDialog } = useConfirmation();
+  const removeQuickStartPerson = async (person: ShootPerson) => {
+    const hasOtherRole = getShootAssignments(person).some((assignment) => assignment.type !== "talent");
+    if (!await confirmSetupRemoval({
+      title: hasOtherRole ? `Remove ${person.name}'s on-camera role?` : `Remove ${person.name} from the entire shoot?`,
+      description: hasOtherRole ? "They will keep their other shoot roles." : "This clears their shot and interview assignments across all shoot days.",
+      tone: "danger", cancelLabel: "Keep person", confirmLabel: hasOtherRole ? "Remove role" : "Remove from shoot",
+    })) return;
     onCallSheetChange((current) => {
       const matchingPerson = current.people.find((candidate) => isSameShootPerson(candidate, person));
       if (!matchingPerson) return current;
       const remainingAssignments = getShootAssignments(matchingPerson).filter((assignment) => assignment.type !== "talent");
+      if (!remainingAssignments.length) return withoutShootPerson(current, matchingPerson.id);
       return {
         ...current,
-        people: remainingAssignments.length
-          ? current.people.map((candidate) => candidate.id === matchingPerson.id
+        people: current.people.map((candidate) => candidate.id === matchingPerson.id
             ? { ...candidate, type: remainingAssignments[0].type, role: remainingAssignments[0].role, assignments: remainingAssignments }
-            : candidate)
-          : current.people.filter((candidate) => candidate.id !== matchingPerson.id),
+            : candidate),
+        questions: current.questions.map((question) => question.personId === matchingPerson.id
+          ? { ...question, personId: undefined, unassignedDayIds: undefined } : question),
       };
     });
     setAnswers((current) => ({
@@ -3029,13 +3057,10 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
         .join("; "),
     }));
   };
-  const removeQuickStartLocation = (location: ShootLocation) => {
-    onCallSheetChange((current) => ({
-      ...current,
-      days: current.days.map((day) => day.primaryLocationId === location.id ? { ...day, primaryLocationId: "" } : day),
-      entries: current.entries.map((entry) => entry.locationId === location.id ? { ...entry, locationId: undefined } : entry),
-      locations: current.locations.filter((candidate) => candidate.id !== location.id),
-    }));
+  const removeQuickStartLocation = async (location: ShootLocation) => {
+    if (await confirmSetupRemoval({ title: `Remove ${location.name} from the entire shoot?`, description: "This clears the venue from all shoot days and schedule items that use it.", tone: "danger", cancelLabel: "Keep location", confirmLabel: "Remove location" })) {
+      onCallSheetChange((current) => withoutShootLocation(current, location.id));
+    }
   };
   const addQuickStartLocation = (draft: LocationDraft) => {
     const locationInput = draft.address.trim();
@@ -3118,10 +3143,15 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
       ? current.filter((id) => id !== moduleId)
       : shootPlanningModules.filter((module) => current.includes(module.id) || module.id === moduleId).map((module) => module.id));
   };
-  const canFinishSetup = canEdit && (workflowMode === "simple" || workflowModules.length > 0);
+  const canFinishSetup = hasLoadedAnswers && canEdit && (workflowMode === "simple" || workflowModules.length > 0);
   const finishSetup = (source: "ai" | "manual") => {
-    if (!canEdit || (workflowMode === "planned" && !workflowModules.length)) return;
-    if (source === "ai") onBuild(answers);
+    if (!canFinishSetup) return;
+    const draft = mustHaveShotDraft.trim();
+    const finalAnswers = draft && !mustHaveShots.some((shot) => normaliseIdentity(shot) === normaliseIdentity(draft))
+      ? { ...answers, mustHaveShots: [...mustHaveShots, draft].join("\n"), letBriskSuggestShots: false }
+      : answers;
+    if (persistAnswers) window.localStorage.setItem(quickStartAnswersStorageKey(projectId), JSON.stringify(finalAnswers));
+    onApplyAnswers(finalAnswers, source);
     onWorkflowSetupChange({
       version: 1,
       isComplete: true,
@@ -3147,7 +3177,9 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
             onClick={() => toggleQuickStartCapture(option.value)}
           >
             <span className="shoot-quick-start-capture-icon" aria-hidden="true"><DsIcon name={option.icon} size={16} /></span>
-            <span>{option.label}</span>
+            <span>{option.label}{briefCaptures?.includes(option.value) && isSelected
+              ? <small className="shoot-workflow-data-note label-xs"> · From the Brief</small>
+              : null}</span>
           </button>;
         })}
       </div>
@@ -3157,7 +3189,7 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
         aria-pressed={answers.captures.includes("not-confirmed")}
         disabled={!canEdit}
         onClick={() => confirmAnswerAndAdvance("capture", "people", () => {
-          updateAnswers({ captures: ["not-confirmed"] });
+          updateAnswers({ captures: ["not-confirmed"], capturesEdited: true });
         })}
       >
         {advancingAnswerStepId === "capture" ? <span className="shoot-button-content"><DsIcon name="check" size={16} />Noted</span> : "Not sure yet - decide later"}
@@ -3168,7 +3200,7 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
       title="Who will be on camera?"
     >
       <PeoplePicker
-        disabled={!canEdit}
+        disabled={!canManageRoster}
         display="rows"
         label="People"
         people={contactOptions}
@@ -3272,8 +3304,8 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
           <strong>{shot}</strong>
           {canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${shot}`} onClick={() => removeQuickStartMustHaveShot(shot)}><DsIcon name="x-close-cross" size={14} /></button> : null}
         </li>)}
-      </ul> : <Button size="S" variant={answers.letBriskSuggestShots ? "tertiary" : "secondary"} aria-pressed={answers.letBriskSuggestShots} disabled={!canEdit} onClick={() => confirmAnswerAndAdvance("must-haves", "workflow", () => { setMustHaveShotDraft(""); updateAnswers({ mustHaveShots: "", letBriskSuggestShots: true }); })}>
-        {advancingAnswerStepId === "must-haves" ? <span className="shoot-button-content"><DsIcon name="check" size={16} />Noted</span> : "Not confirmed yet"}
+      </ul> : <Button size="S" variant={answers.letBriskSuggestShots ? "tertiary" : "secondary"} aria-pressed={answers.letBriskSuggestShots} disabled={!canEdit} onClick={() => { setMustHaveShotDraft(""); updateAnswers({ mustHaveShots: "", letBriskSuggestShots: true }); }}>
+        {answers.letBriskSuggestShots ? <span className="shoot-button-content"><DsIcon name="check" size={16} />Noted</span> : "Not confirmed yet"}
       </Button>}
     </QuickStartQuestion>;
   } else if (activeStepId === "workflow") {
@@ -3283,14 +3315,14 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
           <span className="shoot-workflow-choice-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={20} /></span>
           <span className="shoot-workflow-choice-copy">
             <strong className="headings-xs-bold">Simple shoot</strong>
-            <span className="paragraph-s">Keep all shoot details on one page, then add and tick off shots on the day.</span>
+            <span className="paragraph-s">Keep your shoot details and shots on one page. Tick off shots as you film.</span>
           </span>
         </button>
         <button className={"shoot-workflow-choice" + (workflowMode === "planned" ? " is-selected" : "")} type="button" aria-pressed={workflowMode === "planned"} disabled={!canEdit} onClick={() => chooseWorkflowMode("planned")}>
           <span className="shoot-workflow-choice-icon" aria-hidden="true"><DsIcon name="list-checks" size={20} /></span>
           <span className="shoot-workflow-choice-copy">
-            <strong className="headings-xs-bold">Plan the shoot</strong>
-            <span className="paragraph-s">Use the classic production workflow with separate creative and logistics documents.</span>
+            <strong className="headings-xs-bold">Detailed shoot plan</strong>
+            <span className="paragraph-s">Choose the tools you need, such as a shot list, schedule or call sheet.</span>
           </span>
         </button>
       </div>
@@ -3312,16 +3344,9 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
   }
 
   return <section className="shoot-preproduction-section shoot-quick-start-section">
-    <PreProductionSectionHeading
-      icon="sparkle"
-      title="Setup"
-      description={`Answer ${questionSteps.length} quick questions, then Brisk will prepare the shoot workspace you choose.`}
-    />
-    {briefCaptures && !includeCaptureStep ? <div className="shoot-quick-start-brief-source">
-      <span><strong className="label-xs-semibold">Brief answer:</strong><small className="label-s">{formatQuickStartCaptures(briefCaptures)}</small></span>
-      <Button size="S" variant="ghost" className="shoot-text-action" type="button" disabled={!canEdit} onClick={() => { setIncludeCaptureStep(true); setActiveStepId("capture"); }}>Change</Button>
-    </div> : null}
+    <PreProductionSectionHeading title="Shoot setup" />
     {questionContent}
+    {setupRemovalDialog}
     <footer className="shoot-quick-start-footer">
       <span className="shoot-quick-start-footer-side">
         {activeStepIndex > 0 ? <Button size="S" variant="secondary" onClick={() => goToRelativeStep(-1)}>Back</Button> : null}
@@ -3339,12 +3364,10 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
         </button>)}
       </nav>
       <span className="shoot-quick-start-footer-side right">
+        <Button size="S" variant="ghost" className="shoot-text-action" type="button" disabled={!canFinishSetup} onClick={() => finishSetup("manual")}>Open plan</Button>
         {activeStepIndex === questionSteps.length - 1
-          ? <>
-            <Button size="S" variant="ghost" className="shoot-text-action" type="button" disabled={!canFinishSetup} onClick={() => finishSetup("manual")}>Start manually</Button>
-            <Button size="S" variant="primary" disabled={!canFinishSetup} onClick={() => finishSetup("ai")}><span className="shoot-button-content"><DsIcon name="sparkle" size={16} />Create with Brisk AI</span></Button>
-          </>
-          : <Button size="S" variant="primary" onClick={() => goToRelativeStep(1)}>Next</Button>}
+          ? <Button size="S" variant="primary" disabled={!canFinishSetup} onClick={() => finishSetup("ai")}><span className="shoot-button-content"><DsIcon name="star-four" size={16} />Draft plan for me</span></Button>
+          : <Button size="S" variant="primary" disabled={activeStepId === "workflow" && workflowMode === "planned" && !workflowModules.length} onClick={() => goToRelativeStep(1)}>{activeStepId === "workflow" ? "Continue setup" : "Next"}</Button>}
       </span>
     </footer>
   </section>;
@@ -3374,7 +3397,7 @@ function SuggestedByBriskChip() {
 function ShootAiSuggestionBar({ callSheet, canEdit, onAcceptAll, scope = "all" }: { callSheet: CallSheet; canEdit: boolean; onAcceptAll?: () => void; scope?: "all" | "shots" }) {
   const shotCount = callSheet.entries.filter((entry) => entry.type === "shot" && entry.suggestionStatus).length;
   const questionCount = scope === "shots" ? 0 : callSheet.questions.filter((question) => question.suggestionStatus).length;
-  const groupCount = scope === "shots" ? (callSheet.shotGroups ?? []).filter((group) => group.suggestionStatus).length : 0;
+  const groupCount = (callSheet.shotGroups ?? []).filter((group) => group.suggestionStatus).length;
   const suggestionCount = shotCount + questionCount + groupCount;
   if (!suggestionCount) return null;
 
@@ -3389,56 +3412,29 @@ function ShootAiSuggestionBar({ callSheet, canEdit, onAcceptAll, scope = "all" }
           <p className="label-xs"><strong>Script</strong> - Shaped the story beats, demonstrations and supporting coverage.</p>
         </div>
       </details>
-      {canEdit && onAcceptAll ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onAcceptAll}><DsIcon name="check" size={14} />Accept all</Button> : null}
+      {canEdit && onAcceptAll ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => onAcceptAll()}><DsIcon name="check" size={14} />{scope === "shots" ? "Accept suggestions" : "Accept all"}</Button> : null}
     </div>
   </div>;
 }
 
-function PreProductionSectionHeading({ icon, title, description, count, action }: { icon?: DsIconName; title: string; description?: string; count?: ReactNode; action?: ReactNode }) {
+function PreProductionSectionHeading({ icon, title, description, count, action, heading }: { icon?: DsIconName; title: string; description?: string; count?: ReactNode; action?: ReactNode; heading?: ReactNode }) {
   return <header className="shoot-preproduction-section-heading">
-    <div>{icon ? <span className="shoot-preproduction-section-icon"><DsIcon name={icon} size={20} /></span> : null}<div><div className="shoot-preproduction-section-heading-title"><h2>{title}</h2>{count}</div>{description ? <p className="paragraph-s">{description}</p> : null}</div></div>
+    <div>{icon ? <span className="shoot-preproduction-section-icon"><DsIcon name={icon} size={20} /></span> : null}<div><div className="shoot-preproduction-section-heading-title">{heading ?? <h2>{title}</h2>}{count}</div>{description ? <p className="paragraph-s">{description}</p> : null}</div></div>
     {action ? <div>{action}</div> : null}
   </header>;
 }
 
-// Keep Shoot callbacks at their call sites while the DS owns all menu behaviour.
-function ShootCommandMenu({ label, actions, trigger, variant = "ghost", open, onOpenChange }: {
-  label: string;
-  actions: Array<Omit<BriskSelectOption<string>, "value"> & { onSelect?: () => void }>;
-  trigger?: ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}) {
-  return <BriskSelect className="shoot-command-menu" mode="action" value="" clearable={false} ariaLabel={label} placeholder={label}
-    open={open} onOpenChange={onOpenChange}
-    actionFallbackFocus={(anchor) => anchor?.closest('main')?.querySelector<HTMLButtonElement>('[role="tab"][aria-selected="true"]') ?? null}
-    options={actions.map((action, index) => ({ ...action, value: String(index) }))}
-    onChange={(value) => { if (value) actions[Number(value)]?.onSelect?.(); }}
-    actionTrigger={(props) => trigger
-      ? <Button {...props} size="S" variant={variant}>{trigger}</Button>
-      : <IconButton {...props} aria-label={label} tooltipAlign="end"><DsIcon name="dots-three" size={18} /></IconButton>}
-  />;
+function ShotGroupNameField({ value, onChange, onSubmit }: { value: string; onChange: (name: string) => void; onSubmit: () => void }) {
+  return <Field label="Group name"><input placeholder="e.g. Founder interview" value={value} onChange={(event) => onChange(event.target.value)} onKeyDown={(event) => {
+    if (event.key === "Enter" && value.trim()) { event.preventDefault(); onSubmit(); }
+  }} /></Field>;
 }
 
-function getShotListTopLevelOrder(callSheet: CallSheet) {
-  const groups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
-  const groupIds = new Set(groups.map((group) => group.id));
-  const standaloneShotIds = callSheet.entries
-    .filter((entry) => entry.type === "shot" && (!entry.shotGroupId || !groupIds.has(entry.shotGroupId)))
-    .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0))
-    .map((entry) => entry.id);
-  const validIds = new Set([...standaloneShotIds, ...groups.map((group) => group.id)]);
-  const nextOrder: string[] = [];
-  const addIfMissing = (id: string) => {
-    if (!validIds.has(id) || nextOrder.includes(id)) return;
-    nextOrder.push(id);
-  };
-
-  (callSheet.shotListTopLevelOrder ?? []).forEach(addIfMissing);
-  standaloneShotIds.forEach(addIfMissing);
-  groups.forEach((group) => addIfMissing(group.id));
-  return nextOrder;
+function appendNamedShotGroup(sheet: CallSheet, name: string) {
+  const id = `shot-group-${Date.now()}`;
+  const groups = sheet.shotGroups ?? [];
+  const group = { id, name, description: "", order: groups.length };
+  return applyShotListTopLevelOrder({ ...sheet, shotGroups: [...groups, group] }, [...getShotListTopLevelOrder(sheet), id]);
 }
 
 function applyShotListTopLevelOrder(callSheet: CallSheet, order: string[]) {
@@ -3454,7 +3450,36 @@ function applyShotListTopLevelOrder(callSheet: CallSheet, order: string[]) {
   };
 }
 
-function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDetails, onChange, onCommentChange, onDelete, onDismissSuggestion, onNotify, projectId, selectedDayId, selectedRole }: {
+function placeShotInGroup(current: CallSheet, sourceId: string, targetGroupId: string, targetShotId?: string, after = false) {
+  if (sourceId === targetShotId) return current;
+  const orderedShots = current.entries
+    .filter((entry) => entry.type === "shot")
+    .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
+  const sourceIndex = orderedShots.findIndex((entry) => entry.id === sourceId);
+  if (sourceIndex < 0) return current;
+
+  const nextShots = [...orderedShots];
+  const [sourceShot] = nextShots.splice(sourceIndex, 1);
+  const movedShot = { ...sourceShot, shotGroupId: targetGroupId };
+  const targetIndex = targetShotId
+    ? nextShots.findIndex((entry) => entry.id === targetShotId)
+    : nextShots.reduce((lastIndex, entry, index) => entry.shotGroupId === targetGroupId ? index : lastIndex, -1) + 1;
+  nextShots.splice(targetIndex < 0 ? nextShots.length : targetIndex + Number(after && Boolean(targetShotId)), 0, movedShot);
+  const shotById = new Map(nextShots.map((entry, index) => [entry.id, { ...entry, shotListOrder: index }]));
+  const nextCallSheet: CallSheet = {
+    ...current,
+    entries: current.entries.map((entry) => entry.type === "shot" ? shotById.get(entry.id) ?? entry : entry),
+  };
+  return applyShotListTopLevelOrder(nextCallSheet, getShotListTopLevelOrder(current).filter((id) => id !== sourceId));
+}
+
+function ShootDragHandle({ label, ...props }: Pick<ComponentProps<"button">, "onDragStart" | "onDragEnd" | "onKeyDown" | "title"> & { label: string }) {
+  return <button className="shoot-shot-table-drag" type="button" draggable aria-label={label} {...props}><DsIcon name="dots-six-vertical" size={16} /></button>;
+}
+
+function PreProductionShotList({ onAcceptSuggestions, onTrackShot, callSheet, canEdit, entries, mode, onEditShotDetails, onChange, onCommentChange, onDelete, onDismissSuggestion, onNotify, projectId, selectedDayId, selectedRole }: {
+  onAcceptSuggestions: () => void;
+  onTrackShot: TrackShot;
   callSheet: CallSheet;
   canEdit: boolean;
   entries: ProductionEntry[];
@@ -3473,7 +3498,6 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
   const [dropShotId, setDropShotId] = useState<string | null>(null);
   const [dropGroupId, setDropGroupId] = useState<string | null>(null);
   const [dropTopLevelId, setDropTopLevelId] = useState<string | null>(null);
-  const [previewShotId, setPreviewShotId] = useState<string | null>(null);
   const [openMenuShotId, setOpenMenuShotId] = useState<string | null>(null);
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const [commentShotId, setCommentShotId] = useState<string | null>(null);
@@ -3483,9 +3507,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
     .slice(1)
     .map((group) => group.id));
   const groupRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
-  const shotRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
   const pendingNewGroupIdRef = useRef<string | null>(null);
-  const pendingNewShotIdRef = useRef<string | null>(null);
   const groups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
   const groupIds = new Set(groups.map((group) => group.id));
   const standaloneShots = entries.filter((entry) => !entry.shotGroupId || !groupIds.has(entry.shotGroupId));
@@ -3504,10 +3526,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
     return sections;
   }, []);
   const topLevelNumberById = new Map(planningSections.map(({ id }, index) => [id, index + 1]));
-  const displayShotNumberById = new Map(planningSections.flatMap(({ id, group, shots }) => {
-    const topLevelNumber = topLevelNumberById.get(id) ?? 0;
-    return shots.map((shot, shotIndex) => [shot.id, group ? `${topLevelNumber}.${shotIndex + 1}` : String(topLevelNumber)] as const);
-  }));
+  const displayShotNumberById = getShootShotNumbers(callSheet);
   const getShotListStatus = (entry: ProductionEntry): "remaining" | "captured" | "skipped" | "pickup" | "not-required" => {
     if (entry.captureStatus === "pickup-needed") return "pickup";
     if (entry.captureStatus === "not-required") return "not-required";
@@ -3515,7 +3534,9 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
     if ((entry.captureStatus ?? (entry.captured ? "captured" : "to-capture")) === "captured") return "captured";
     return "remaining";
   };
-  const previewShot = entries.find((entry) => entry.id === previewShotId);
+  const formatPlanningTime = (entry: ProductionEntry) => entry.startTime
+    ? [callSheet.days.find((day) => day.id === entry.dayId)?.label, formatTime(entry.startTime), entry.durationMinutes ? `${entry.durationMinutes} min` : null].filter(Boolean).join(" · ")
+    : "";
   const commentShot = entries.find((entry) => entry.id === commentShotId);
   const commentShotNumber = commentShot ? displayShotNumberById.get(commentShot.id) ?? String(entries.indexOf(commentShot) + 1) : "";
   const currentCommentUserId = selectedRole === "Customer"
@@ -3527,32 +3548,19 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
     ? (entry.comments ?? []).filter((comment) => comment.visibility === "external")
     : entry.comments ?? [];
   const addShot = (targetGroupId?: string) => {
-    const id = `entry-${Date.now()}`;
-    const shotNumber = Math.max(0, ...entries.map((entry) => entry.shotNumber ?? 0)) + 1;
-    const shotListOrder = Math.max(-1, ...entries.map((entry) => entry.shotListOrder ?? -1)) + 1;
-    pendingNewShotIdRef.current = id;
     if (targetGroupId) setCollapsedGroupIds((current) => current.filter((groupId) => groupId !== targetGroupId));
-    onChange((current) => {
-      const currentTopLevelOrder = getShotListTopLevelOrder(current);
-      const nextCallSheet: CallSheet = {
-        ...current,
-        entries: [...current.entries, {
-        id,
-        dayId: "",
-        shotNumber,
-        shotListOrder,
-        startTime: "",
-        durationMinutes: 0,
-        description: "New shot",
-        type: "shot",
-        personIds: [],
-        captured: false,
-        priority: "Medium",
-        captureStatus: "to-capture",
-        shotGroupId: targetGroupId ?? null,
-      }],
-      };
-      return applyShotListTopLevelOrder(nextCallSheet, targetGroupId ? currentTopLevelOrder : [...currentTopLevelOrder, id]);
+    onEditShotDetails({
+      dayId: "",
+      startTime: "",
+      timeMode: "unscheduled",
+      durationMinutes: 0,
+      description: "",
+      type: "shot",
+      personIds: [],
+      captured: false,
+      priority: "Medium",
+      captureStatus: "to-capture",
+      shotGroupId: targetGroupId ?? null,
     });
   };
   const addGroup = () => {
@@ -3566,7 +3574,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
         shotGroups: [...(current.shotGroups ?? []), {
           id,
           name: "New Shot Group",
-          description: "Describe the coverage this group needs.",
+          description: "",
           order: current.shotGroups?.length ?? 0,
         }],
       };
@@ -3593,28 +3601,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
     });
   };
   const moveShotIntoGroup = (sourceId: string, targetGroupId: string, targetShotId?: string) => {
-    if (sourceId === targetShotId) return;
-    onChange((current) => {
-      const orderedShots = current.entries
-        .filter((entry) => entry.type === "shot")
-        .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
-      const sourceIndex = orderedShots.findIndex((entry) => entry.id === sourceId);
-      if (sourceIndex < 0) return current;
-
-      const nextShots = [...orderedShots];
-      const [sourceShot] = nextShots.splice(sourceIndex, 1);
-      const movedShot = { ...sourceShot, shotGroupId: targetGroupId };
-      const targetIndex = targetShotId
-        ? nextShots.findIndex((entry) => entry.id === targetShotId)
-        : nextShots.reduce((lastIndex, entry, index) => entry.shotGroupId === targetGroupId ? index : lastIndex, -1) + 1;
-      nextShots.splice(targetIndex < 0 ? nextShots.length : targetIndex, 0, movedShot);
-      const shotById = new Map(nextShots.map((entry, index) => [entry.id, { ...entry, shotListOrder: index }]));
-      const nextCallSheet: CallSheet = {
-        ...current,
-        entries: current.entries.map((entry) => entry.type === "shot" ? shotById.get(entry.id) ?? entry : entry),
-      };
-      return applyShotListTopLevelOrder(nextCallSheet, getShotListTopLevelOrder(current).filter((id) => id !== sourceId));
-    });
+    onChange((current) => placeShotInGroup(current, sourceId, targetGroupId, targetShotId));
   };
   const moveShotToTopLevel = (sourceId: string, targetId?: string, placement: "after-source-group" | "end" = "after-source-group") => {
     onChange((current) => {
@@ -3650,21 +3637,6 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
     });
   }, [groups]);
 
-  useEffect(() => {
-    const newShotId = pendingNewShotIdRef.current;
-    if (!newShotId || !entries.some((entry) => entry.id === newShotId)) return;
-
-    const newShotRow = shotRowRefs.current[newShotId];
-    if (!newShotRow) return;
-
-    pendingNewShotIdRef.current = null;
-    newShotRow.scrollIntoView({ behavior: "smooth", block: "center" });
-    window.requestAnimationFrame(() => {
-      const descriptionInput = newShotRow.querySelector<HTMLInputElement>(".shoot-shot-table-input");
-      descriptionInput?.focus({ preventScroll: true });
-      descriptionInput?.select();
-    });
-  }, [entries]);
   const updateShot = (id: string, patch: Partial<ProductionEntry>) => onChange((current) => ({
     ...current,
     entries: current.entries.map((entry) => entry.id === id ? { ...entry, ...patch, suggestionStatus: undefined } : entry),
@@ -3722,6 +3694,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
 
   if (mode === "on-set") {
     return <OnSetShotList
+      onTrackShot={onTrackShot}
       callSheet={callSheet}
       canEdit={canEdit}
       displayShotNumberById={displayShotNumberById}
@@ -3747,22 +3720,18 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
           </div> : null}
         </div>}
       />
-      <ShootAiSuggestionBar callSheet={callSheet} canEdit={canEdit} scope="shots" />
+      <ShootAiSuggestionBar callSheet={callSheet} canEdit={canEdit} onAcceptAll={onAcceptSuggestions} scope="shots" />
       {planningSections.length ? <div className="shoot-shot-table-wrap">
         <table className="shoot-shot-table shoot-planning-shot-table">
           <colgroup>
             <col className="shoot-shot-table-number-column" />
             <col className="shoot-shot-table-description-column" />
-            <col className="shoot-shot-table-reference-column" />
-            <col className="shoot-shot-table-notes-column" />
             <col className="shoot-shot-table-actions-column" />
           </colgroup>
           <thead data-shoot-guide-target="durations">
             <tr>
               <th scope="col"><span className="sr-only">Reorder and shot number</span></th>
               <th scope="col">Shot</th>
-              <th className="shoot-shot-reference-header" scope="col">Reference</th>
-              <th scope="col">Notes</th>
               <th className="shoot-shot-actions-header" scope="col">Actions</th>
             </tr>
           </thead>
@@ -3792,7 +3761,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
                   setDropGroupId(null);
                   setDropTopLevelId(null);
                 }}
-              ><td colSpan={5}><span /></td></tr>
+              ><td colSpan={3}><span /></td></tr>
               {group ? <tr
                 className={`shoot-shot-group-row ${draggedId === group.id ? "is-dragging" : ""} ${dropGroupId === sectionId ? "is-drop-target" : ""}`}
                 ref={(element) => { groupRowRefs.current[sectionId] = element; }}
@@ -3818,7 +3787,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
                   setDropTopLevelId(null);
                 }}
               >
-                <td colSpan={5}>
+                <td colSpan={3}>
                   <div className="shoot-shot-group-heading">
                     <div className="shoot-shot-group-disclosure">
                       <button className="shoot-shot-group-toggle" type="button" aria-label={`${collapsedGroupIds.includes(sectionId) ? "Expand" : "Collapse"} ${group.name}`} aria-expanded={!collapsedGroupIds.includes(sectionId)} onClick={() => toggleGroup(sectionId)}><DsIcon name="caret-down" size={15} /></button>
@@ -3843,22 +3812,24 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
                         ><DsIcon name="dots-six-vertical" size={16} /></button> : null}
                       </span>
                       <span className="shoot-shot-group-copy">
+                        <span className="shoot-planning-group-title"><DsIcon name="folder" size={16} />
                         {canEdit ? <input className="shoot-shot-group-name-input" aria-label="Shot Group name" value={group.name} onChange={(event) => updateGroup(group.id, { name: event.target.value })} /> : <strong>{group.name}</strong>}
-                        {canEdit ? <input className="shoot-shot-group-description-input" aria-label={`Description for ${group.name}`} value={group.description ?? ""} placeholder="Add a group description" onChange={(event) => updateGroup(group.id, { description: event.target.value })} /> : group.description ? <small>{group.description}</small> : null}
-                        <span className="shoot-shot-group-meta">
-                          <span className="shoot-shot-group-count label-xs-semibold">{shots.length} {shots.length === 1 ? "shot" : "shots"}</span>
-                          {group.suggestionStatus ? <SuggestedByBriskChip /> : null}
+                          <span className="label-xs">{shots.length} {shots.length === 1 ? "shot" : "shots"}</span>
                         </span>
+                        {canEdit ? <input className="shoot-shot-group-description-input" aria-label={`Description for ${group.name}`} value={group.description ?? ""} placeholder="Add a group description" onChange={(event) => updateGroup(group.id, { description: event.target.value })} /> : group.description ? <small>{group.description}</small> : null}
+                        {callSheet.entries.filter((item) => item.linkedShotGroupId === group.id && item.startTime).map((item) => <small className="label-xs" key={item.id}>{formatPlanningTime(item)}</small>)}
+                        {group.suggestionStatus ? <SuggestedByBriskChip /> : null}
                       </span>
                     </div>
                     <div className="shoot-shot-group-actions">
-                      {canEdit && !collapsedGroupIds.includes(sectionId) ? <Button size="S" variant="ghost" type="button" onClick={() => addShot(group.id)}><DsIcon name="plus" size={14} />Add shot</Button> : null}
+                      {canEdit && !collapsedGroupIds.includes(sectionId) ? <GroupAddShotButton group={group} onAdd={addShot} /> : null}
                     </div>
                   </div>
                 </td>
               </tr> : null}
               {group && collapsedGroupIds.includes(sectionId) ? null : shots.map((entry, shotIndex) => {
               const shotNumber = displayShotNumberById.get(entry.id) ?? String(shotIndex + 1);
+              const shotSummary = [!group && formatPlanningTime(entry), entry.shotCategory, entry.shotSize, entry.cameraMovement].filter(Boolean).join(" · ");
               const menuOpen = openMenuShotId === entry.id;
               const shotComments = visibleCommentsForShot(entry);
               const shotListStatus = getShotListStatus(entry);
@@ -3876,9 +3847,6 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
                   className={`shoot-shot-child-row ${canEdit ? "can-reorder" : ""} ${draggedId === entry.id ? "is-dragging" : ""} ${dropShotId === entry.id && draggedId !== entry.id ? "is-drop-target" : ""}`}
                   draggable={canEdit}
                   key={entry.id}
-                  ref={(element) => {
-                    shotRowRefs.current[entry.id] = element;
-                  }}
                   onDragStart={() => {
                     if (canEdit) setDraggedId(entry.id);
                   }}
@@ -3915,52 +3883,33 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
                   <td>
                     <div className="shoot-shot-table-order">
                       <span className="shoot-shot-table-number label-xs-semibold">{shotNumber}</span>
-                      {canEdit ? <button
-                        className="shoot-shot-table-drag"
-                        type="button"
-                        draggable
-                        aria-label={`Drag to reorder shot ${shotNumber}`}
-                        onClick={(event) => event.preventDefault()}
-                        onDragStart={(event) => {
-                          event.dataTransfer.effectAllowed = "move";
-                          setDraggedId(entry.id);
-                        }}
-                      ><DsIcon name="dots-six-vertical" size={16} /></button> : null}
+                      {canEdit ? <ShootDragHandle label={`Drag to reorder shot ${shotNumber}`} onDragStart={(event) => {
+                        event.dataTransfer.effectAllowed = "move";
+                        setDraggedId(entry.id);
+                      }} /> : null}
                     </div>
                   </td>
                   <td className="shoot-shot-table-primary-cell">
                     <div className="shoot-shot-table-description">
-                      <input className="shoot-shot-table-input label-s" disabled={!canEdit} aria-label={`Description for shot ${shotNumber}`} title={entry.description} value={entry.description} onChange={(event) => updateShot(entry.id, { description: event.target.value })} />
+                      <div className="shoot-simple-shot-title shoot-planning-title-line">
+                        <CallSheetRowName name={entry.description} onEdit={canEdit ? () => onEditShotDetails({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" }) : undefined} />
+                        {entry.imageReferenceUrl ? <ShotReferencePreview src={entry.imageReferenceUrl} description={entry.description} shotNumber={shotNumber} /> : canEdit ? <ShotReferenceImagePicker
+                      table
+                      entry={entry}
+                      projectId={projectId}
+                      onChange={(patch) => updateShot(entry.id, patch)}
+                    /> : null}
+                      </div>
                       <div className="shoot-planning-shot-details">
-                        {entry.shotCategory || entry.shotSize || entry.cameraMovement ? <span className="label-xs">{[entry.shotCategory, entry.shotSize, entry.cameraMovement].filter(Boolean).join(" · ")}</span> : null}
-                        {canEdit ? <Button size="S" variant="ghost" aria-label={`Edit details for shot ${shotNumber}`} onClick={() => onEditShotDetails({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" })}><DsIcon name="pencil-simple-ds" size={14} />Details</Button> : null}
+                        {shotSummary && <span className="label-xs">{shotSummary}</span>}
                         {entry.suggestionStatus ? <SuggestedByBriskChip /> : null}
                         {shotListStatusLabel ? <span className={`shoot-shot-status-label is-${shotListStatus} label-xs-semibold`}>{shotListStatusLabel}</span> : null}
                       </div>
                     </div>
                   </td>
                   <td>
-                    {entry.imageReferenceUrl ? <button className="shoot-shot-reference-thumbnail" type="button" aria-label={`Preview reference for shot ${shotNumber}`} onClick={() => setPreviewShotId(entry.id)}>
-                      <img src={entry.imageReferenceUrl} alt="" />
-                    </button> : canEdit ? <ShotReferenceImagePicker
-                      table
-                      entry={entry}
-                      projectId={projectId}
-                      onChange={(patch) => updateShot(entry.id, patch)}
-                    /> : <span className="shoot-shot-reference-indicator label-xs-semibold" role="img" aria-label={`No reference for shot ${shotNumber}`}><DsIcon name="image-square" size={16} /></span>}
-                  </td>
-                  <td className="shoot-shot-notes-cell">
-                    {canEdit ? <textarea
-                      className="shoot-shot-notes-input label-xs"
-                      aria-label={`Notes for shot ${shotNumber}`}
-                      placeholder="Add notes"
-                      rows={2}
-                      value={entry.notes ?? ""}
-                      onChange={(event) => updateShot(entry.id, { notes: event.target.value })}
-                    /> : <span className="shoot-shot-notes-static label-xs">{entry.notes || "No notes"}</span>}
-                  </td>
-                  <td>
                     <div className="shoot-shot-table-actions">
+                      {(canEdit || entry.notes?.trim()) ? <ShotNoteField shot={entry} shotNumber={shotNumber} onTrackShot={canEdit ? updateShot : undefined} /> : null}
                       <ScriptAnnotationPin
                         count={shotComments.length}
                         hasUnresolved={shotComments.some((comment) => !comment.resolved)}
@@ -4016,17 +3965,11 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
                 setDropGroupId(null);
                 setDropTopLevelId(null);
               }}
-            ><td colSpan={5}><span /></td></tr>
+            ><td colSpan={3}><span /></td></tr>
           </tbody>
         </table>
       </div> : canEdit ? <EmptyState illustrationSrc="/brisk-visuals/shoot-shot-list-empty.png" title="Start your Shot List" action="Add shot" onAction={() => addShot()} /> : <p className="shoot-preproduction-empty-copy">The Shot List has not been started.</p>}
     </section>
-    {previewShot?.imageReferenceUrl ? <ModalShell
-      wide
-      title={`Image for shot ${displayShotNumberById.get(previewShot.id) ?? entries.indexOf(previewShot) + 1}`}
-      onClose={() => setPreviewShotId(null)}
-      footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="primary" onClick={() => setPreviewShotId(null)}>Done</Button></div>}
-    ><div className="shoot-shot-image-preview"><img src={previewShot.imageReferenceUrl} alt={`Reference for ${previewShot.description}`} /></div></ModalShell> : null}
     {commentShot && commentPosition ? createPortal(<FloatingCommentShell
       anchor={{ kind: "row", label: `Shot ${commentShotNumber}`, rowId: commentShot.id } satisfies ScriptCommentAnchor}
       canPostInternal={selectedRole !== "Customer"}
@@ -4043,7 +3986,8 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onEditShotDe
   </>;
 }
 
-function OnSetShotList({ callSheet, canEdit, displayShotNumberById, entries, groups, onAddShot, onChange, selectedDayId }: {
+function OnSetShotList({ onTrackShot, callSheet, canEdit, displayShotNumberById, entries: allEntries, groups, onAddShot, onChange, selectedDayId }: {
+  onTrackShot: TrackShot;
   callSheet: CallSheet;
   canEdit: boolean;
   displayShotNumberById: Map<string, string>;
@@ -4053,6 +3997,8 @@ function OnSetShotList({ callSheet, canEdit, displayShotNumberById, entries, gro
   onChange: (updater: (current: CallSheet) => CallSheet) => void;
   selectedDayId: string;
 }) {
+  const dayShotIds = new Set(getShootDayShots(callSheet, selectedDayId).map((shot) => shot.id));
+  const entries = allEntries.filter((shot) => dayShotIds.has(shot.id));
   const [statusFilter, setStatusFilter] = useState<"all" | "remaining" | "captured">("all");
   const [showUnassigned, setShowUnassigned] = useState(false);
   const coverageEntries = callSheet.entries.filter((entry) => entry.type === "coverage" && entry.linkedShotGroupId);
@@ -4126,12 +4072,12 @@ function OnSetShotList({ callSheet, canEdit, displayShotNumberById, entries, gro
         const status = shot.captureStatus ?? (shot.captured ? "captured" : "to-capture");
         const shotNumber = displayShotNumberById.get(shot.id) ?? String(entries.indexOf(shot) + 1);
         return <div className={`shoot-on-set-row is-${status}`} role="row" key={shot.id}>
-          <div>{canEdit ? <BriskSelect className="shoot-on-set-status" ariaLabel={`Status for shot ${shotNumber}`} clearable={false} searchable={false} value={status} options={captureStatusOptions} placeholder="Choose status" onChange={(value) => { if (value) updateShot(shot.id, { captureStatus: value, captured: value === "captured" }); }} /> : <span className="label-xs-semibold">{captureStatusOptions.find((option) => option.value === status)?.label}</span>}</div>
+          <div>{canEdit ? <BriskSelect className="shoot-on-set-status" ariaLabel={`Status for shot ${shotNumber}`} clearable={false} searchable={false} value={status} options={captureStatusOptions} placeholder="Choose status" onChange={(value) => { if (value) updateShot(shot.id, { captureStatus: value, captured: value === "captured" }); }} /> : <OnSetCaptureControl shotNumber={shotNumber} status={status} onChange={(value) => onTrackShot(shot.id, { captured: value === "captured" })} />}</div>
           <span className="label-xs-semibold">{shotNumber}</span>
           <strong>{shot.description}</strong>
           <span className="shoot-on-set-priority label-s">{shot.priority === "Critical" ? <DsIcon name="fire-simple" size={15} /> : null}{shot.priority ?? "Medium"}</span>
           <span>{shot.imageReferenceUrl ? <img className="shoot-on-set-reference" src={shot.imageReferenceUrl} alt="" /> : <DsIcon name="image-square" size={16} />}</span>
-          <input disabled={!canEdit} aria-label={`Quick note for shot ${shotNumber}`} placeholder="Add note" value={shot.notes ?? ""} onChange={(event) => updateShot(shot.id, { notes: event.target.value })} />
+          <ShotNoteField shot={shot} shotNumber={shotNumber} onTrackShot={onTrackShot} />
         </div>;
       })}
     </div> : null}
@@ -4148,12 +4094,12 @@ function OnSetShotList({ callSheet, canEdit, displayShotNumberById, entries, gro
               const status = shot.captureStatus ?? (shot.captured ? "captured" : "to-capture");
               const shotNumber = displayShotNumberById.get(shot.id) ?? String(entries.indexOf(shot) + 1);
               return <div className={`shoot-on-set-row is-${status}`} role="row" key={shot.id}>
-                <div>{canEdit ? <BriskSelect className="shoot-on-set-status" ariaLabel={`Status for shot ${shotNumber}`} clearable={false} searchable={false} value={status} options={captureStatusOptions} placeholder="Choose status" onChange={(value) => { if (value) updateShot(shot.id, { captureStatus: value, captured: value === "captured" }); }} /> : <span className="label-xs-semibold">{captureStatusOptions.find((option) => option.value === status)?.label}</span>}</div>
+                <div>{canEdit ? <BriskSelect className="shoot-on-set-status" ariaLabel={`Status for shot ${shotNumber}`} clearable={false} searchable={false} value={status} options={captureStatusOptions} placeholder="Choose status" onChange={(value) => { if (value) updateShot(shot.id, { captureStatus: value, captured: value === "captured" }); }} /> : <OnSetCaptureControl shotNumber={shotNumber} status={status} onChange={(value) => onTrackShot(shot.id, { captured: value === "captured" })} />}</div>
                 <span className="label-xs-semibold">{shotNumber}</span>
                 <strong>{shot.description}</strong>
                 <span className="shoot-on-set-priority label-s">{shot.priority === "Critical" ? <DsIcon name="fire-simple" size={15} /> : null}{shot.priority ?? "Medium"}</span>
                 <span>{shot.imageReferenceUrl ? <img className="shoot-on-set-reference" src={shot.imageReferenceUrl} alt="" /> : <DsIcon name="image-square" size={16} />}</span>
-                <input disabled={!canEdit} aria-label={`Quick note for shot ${shotNumber}`} placeholder="Add note" value={shot.notes ?? ""} onChange={(event) => updateShot(shot.id, { notes: event.target.value })} />
+                <ShotNoteField shot={shot} shotNumber={shotNumber} onTrackShot={onTrackShot} />
               </div>;
             })}
           </div>
@@ -4227,7 +4173,7 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
   mode: ShootMode;
   selectedDayId: string;
   onAcceptAllSuggestions: () => void;
-  onAddPerson: (questionId: string, anchor: HTMLButtonElement | null) => void;
+  onAddPerson?: (questionId: string, anchor: HTMLButtonElement | null) => void;
   onChange: (updater: (current: CallSheet) => CallSheet) => void;
   onDismissSuggestion: (questionId: string) => void;
   onFocusChange?: () => void;
@@ -4257,12 +4203,12 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
     });
   }, [availablePeople, callSheet.questions]);
   const availableFilterPeople = mode === "on-set"
-    ? filterPeople.filter((person) => callSheet.questions.some((question) => question.personId === person.id && isAssignedToDay(question.shootDayIds, selectedDayId)))
+    ? filterPeople.filter((person) => callSheet.questions.some((question) => question.personId === person.id && !question.unassignedDayIds?.includes(selectedDayId) && isAssignedToDay(question.shootDayIds, selectedDayId)))
     : filterPeople;
   const visibleQuestions = activePersonFilter === "all"
     ? callSheet.questions
     : callSheet.questions.filter((question) => question.personId === activePersonFilter);
-  const updateQuestion = (id: string, patch: Partial<InterviewQuestion>) => onChange((current) => ({ ...current, questions: current.questions.map((question) => question.id === id ? { ...question, ...patch, suggestionStatus: undefined } : question) }));
+  const updateQuestion = (id: string, patch: Partial<InterviewQuestion>) => onChange((current) => ({ ...current, questions: current.questions.map((question) => question.id === id ? { ...question, ...patch, unassignedDayIds: "personId" in patch ? undefined : question.unassignedDayIds, suggestionStatus: undefined } : question) }));
   const acceptQuestionSuggestion = (questionId: string) => {
     onChange((current) => ({
       ...current,
@@ -4295,7 +4241,15 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
       ...current,
       questions: questionDraft.isNew
         ? [...current.questions, nextQuestion]
-        : current.questions.map((question) => question.id === questionDraft.id ? { ...question, ...nextQuestion, suggestionStatus: undefined } : question),
+        : current.questions.map((question) => {
+          if (question.id !== questionDraft.id) return question;
+          const removedHere = mode === "on-set" && question.unassignedDayIds?.includes(selectedDayId);
+          const personId = removedHere && !nextQuestion.personId ? question.personId : nextQuestion.personId;
+          let unassignedDayIds = question.unassignedDayIds;
+          if (personId !== question.personId) unassignedDayIds = undefined;
+          else if (removedHere && nextQuestion.personId) unassignedDayIds = unassignedDayIds?.filter((id) => id !== selectedDayId);
+          return { ...question, ...nextQuestion, personId, unassignedDayIds, suggestionStatus: undefined };
+        }),
     }));
     setActivePersonFilter("all");
     setQuestionDraft(null);
@@ -4332,7 +4286,8 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
 
   if (mode === "on-set") {
     const sectionTitle = "Interview";
-    const dayQuestions = callSheet.questions.filter((question) => isAssignedToDay(question.shootDayIds, selectedDayId));
+    const dayQuestions = callSheet.questions.filter((question) => isAssignedToDay(question.shootDayIds, selectedDayId))
+      .map((question) => question.unassignedDayIds?.includes(selectedDayId) ? { ...question, personId: undefined } : question);
     const askedCount = dayQuestions.filter((question) => question.asked).length;
     const visibleOnSetQuestions = dayQuestions.filter((question) => (
       activePersonFilter === "all" || question.personId === activePersonFilter
@@ -4344,13 +4299,17 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
     return <><section className={`shoot-preproduction-section shoot-on-set-questions shoot-call-sheet-focus-section ${isFocused ? "is-focused" : ""}`} role={isFocused ? "dialog" : undefined} aria-modal={isFocused ? "true" : undefined} aria-label={isFocused ? `Focused ${sectionTitle}` : undefined}>
       <PreProductionSectionHeading
         title={sectionTitle}
-        count={<span className="shoot-call-sheet-section-count label-xs-semibold">{askedCount} of {dayQuestions.length}</span>}
+        heading={<CallSheetSectionTitle
+          title={sectionTitle}
+          count={<span className="shoot-call-sheet-section-count label-xs-semibold">{askedCount} of {dayQuestions.length}</span>}
+          expanded={isExpanded}
+          onToggle={!isFocused ? onToggleCollapse : undefined}
+        />}
         action={<div className="shoot-preproduction-heading-inline-actions">
           {canEdit && isExpanded ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={addQuestion}><DsIcon name="plus" size={16} />Add question</Button> : null}
           {isFocused
             ? onFocusChange ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</Button> : null
             : <>
-              {onToggleCollapse ? <button className="shoot-icon-button shoot-call-sheet-collapse-button" type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} title={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} onClick={onToggleCollapse}><DsIcon name="caret-down" size={16} /></button> : null}
               {onFocusChange ? <button className="shoot-icon-button shoot-call-sheet-focus-button" type="button" aria-label={`Focus on ${sectionTitle}`} title={`Focus on ${sectionTitle}`} onClick={onFocusChange}><DsIcon name="frame-corners" size={18} /></button> : null}
             </>}
         </div>}
@@ -4463,7 +4422,7 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
               <td className="shoot-question-table-divider" aria-hidden="true" />
               <td className="shoot-shot-table-primary-cell">
                 <div className="shoot-question-person-cell">
-                  {canEdit ? <BriskSelect className="shoot-shot-table-select" ariaLabel={`Interviewee for question ${questionNumber}`} footerAction={{ label: "Add new contact", icon: "plus", onSelect: (anchor) => onAddPerson(question.id, anchor) }} value={question.personId ?? ""} options={peopleOptions} placeholder="+ Interviewee" onChange={(value) => {
+                  {canEdit ? <BriskSelect className="shoot-shot-table-select" ariaLabel={`Interviewee for question ${questionNumber}`} footerAction={onAddPerson ? { label: "Add new contact", icon: "plus", onSelect: (anchor) => onAddPerson(question.id, anchor) } : undefined} value={question.personId ?? ""} options={peopleOptions} placeholder="+ Interviewee" onChange={(value) => {
                     updateQuestion(question.id, { personId: value || undefined });
                   }} /> : <span className="shoot-shot-table-static label-s">{personName}</span>}
                   <small className="shoot-question-assignment label-xs">{formatDayAssignment(question.shootDayIds, callSheet.days)}</small>
@@ -4476,10 +4435,12 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
                     <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-label={`Accept question ${questionNumber}`} onClick={() => acceptQuestionSuggestion(question.id)}><DsIcon name="check" size={14} />Accept</Button>
                     <Button size="S" variant="danger" className="shoot-text-action danger" type="button" aria-label={`Dismiss question ${questionNumber}`} onClick={() => onDismissSuggestion(question.id)}><DsIcon name="x-close-cross" size={14} />Dismiss</Button>
                   </> : <>
-                    <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-label={`Duplicate question ${questionNumber}`} onClick={() => duplicateQuestion(question)}><DsIcon name="copy" size={16} />Duplicate</Button>
-                    <Button size="S" variant="danger" className="shoot-text-action danger" type="button" aria-label={`Delete question ${questionNumber}`} onClick={() => {
-                      onChange((current) => ({ ...current, questions: current.questions.filter((candidate) => candidate.id !== question.id) }));
-                    }}><DsIcon name="trash-simple" size={16} />Delete</Button>
+                    <ShootCommandMenu label={`More actions for question ${questionNumber}`} actions={[
+                      { label: "Duplicate question", onSelect: () => duplicateQuestion(question) },
+                      { label: "Delete question", tone: "danger", dividerAbove: true, onSelect: () => onChange((current) => ({
+                        ...current, questions: current.questions.filter((candidate) => candidate.id !== question.id),
+                      })) },
+                    ]} />
                   </>}
                 </div> : null}
               </td>
@@ -4684,14 +4645,17 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
   </section>;
 }
 
-function PreProductionLocations({ callSheet, canEdit, onEdit, onNew }: { callSheet: CallSheet; canEdit: boolean; onEdit: (location: ShootLocation) => void; onNew: () => void }) {
+function PreProductionLocations({ day, onMakePrimary, callSheet, canEdit, onEdit, onNew }: { day?: ShootDay; onMakePrimary: (locationId: string, dayId: string) => void; callSheet: CallSheet; canEdit: boolean; onEdit: (location: ShootLocation) => void; onNew: () => void }) {
   return <section className="shoot-preproduction-section">
-    <PreProductionSectionHeading icon="push-pin-simple" title="Where are you shooting?" description="Add locations and choose which shoot days use them." action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add location</Button> : null} />
+    <PreProductionSectionHeading icon="push-pin-simple" title="Locations" action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add location</Button> : null} />
     {callSheet.locations.length ? <div className="shoot-preproduction-location-list">{callSheet.locations.map((location) => {
       const mapValue = location.mapLink || location.address;
       return <article key={location.id}>
-        <div><strong>{location.name}</strong><p>{mapValue ? <a className="shoot-location-link" href={getMapsUrl(mapValue)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || mapValue)}</a> : "Address not confirmed"}</p><span className="label-xs">{formatDayAssignment(location.shootDayIds, callSheet.days)}</span></div>
-        {canEdit ? <div className="shoot-location-actions"><button className="shoot-icon-button" type="button" aria-label={`Edit ${location.name}`} onClick={() => onEdit(location)}><DsIcon name="pencil-simple-ds" size={16} /></button></div> : null}
+        <div><CallSheetRowName name={location.name} onEdit={canEdit ? () => onEdit(location) : undefined} /><p>{mapValue ? <a className="shoot-location-link" href={getMapsUrl(mapValue)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || mapValue)}</a> : "Address not confirmed"}</p><span className="label-xs">{formatDayAssignment(location.shootDayIds, callSheet.days)}</span></div>
+        {day?.primaryLocationId === location.id ? <span className="label-xs-semibold">Primary for {day.label}</span>
+          : canEdit && day && isAssignedToDay(location.shootDayIds, day.id) && <ShootCommandMenu compact label={`Actions for ${location.name}`} actions={[{ label: `Make primary for ${day.label}`, onSelect: () => onMakePrimary(location.id, day.id) }]}
+            fallbackFocus={(trigger) => trigger?.closest("article")?.querySelector<HTMLButtonElement>(".shoot-on-set-shot-copy") ?? null} />}
+
       </article>;
     })}</div> : <p className="shoot-preproduction-empty-copy">No shoot location is confirmed yet.</p>}
   </section>;
@@ -4699,22 +4663,21 @@ function PreProductionLocations({ callSheet, canEdit, onEdit, onNew }: { callShe
 
 function PreProductionPeople({ callSheet, canEdit, isStudioInternal, onChange, onEdit, onNew }: { callSheet: CallSheet; canEdit: boolean; isStudioInternal: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onEdit: (person: ShootPerson) => void; onNew: (event?: ReactMouseEvent<HTMLButtonElement>) => void }) {
   return <section className="shoot-preproduction-section">
-    <div data-shoot-guide-target="talent"><PreProductionSectionHeading icon="users-three" title="Who is involved?" description="Manage crew, talent and client roles for this shoot." action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add person</Button> : null} /></div>
+    <div data-shoot-guide-target="talent"><PreProductionSectionHeading icon="users-three" title="People" action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add person</Button> : null} /></div>
     {callSheet.people.length ? <div className="shoot-preproduction-people-list" role="table" aria-label="People involved in this shoot">
       <div className="shoot-preproduction-people-header label-s-semibold" role="row">
         <span role="columnheader">Person</span>
         <span role="columnheader">Shoot role</span>
         <span role="columnheader">Call time</span>
-        <span className="sr-only" role="columnheader">Actions</span>
       </div>
       {callSheet.people.map((person) => <article role="row" key={person.id}>
       <div className="shoot-person-identity" role="cell">
         <span className="shoot-avatar label-xs-semibold">{getInitials(person.name)}</span>
-        <span className="shoot-person-identity-copy"><strong className="label-m-semibold">{person.name}</strong><span className="label-xs">{person.email || "Details needed"}</span>{isStudioInternal && person.phone ? <span className="label-xs">{person.phone}</span> : null}</span>
+        <span className="shoot-person-identity-copy"><CallSheetRowName name={person.name} onEdit={canEdit ? () => onEdit(person) : undefined} />{(isStudioInternal || person.showContactDetails) && <span className="label-xs">{person.email || "Details needed"}</span>}{(isStudioInternal || person.showContactDetails) && person.phone ? <span className="label-xs">{person.phone}</span> : null}</span>
       </div>
       <ShootAssignmentEditor canEdit={canEdit} days={callSheet.days} person={person} onChange={onChange} />
       <div className="shoot-person-call" role="cell"><span className="label-xs">Call time</span><strong>{person.callTime ? formatTime(person.callTime) : "Not confirmed"}</strong></div>
-      <div className="shoot-person-edit" role="cell">{canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Edit ${person.name}'s contact and call details`} onClick={() => onEdit(person)}><DsIcon name="pencil-simple-ds" size={16} /></button> : null}</div>
+
     </article>)}</div> : <p className="shoot-preproduction-empty-copy">No people have been added. Search Brisk contacts or create a shoot contact.</p>}
   </section>;
 }
@@ -4785,7 +4748,7 @@ function getVisibleOnSetDayEntries(callSheet: CallSheet, dayId: string) {
     .filter((entry) => entry.type === "shot" && entry.shotGroupId)
     .map((entry) => entry.shotGroupId));
   return callSheet.entries
-    .filter((entry) => entry.type !== "shot" && entry.dayId === dayId && entry.startTime)
+    .filter((entry) => (entry.type !== "shot" || !entry.shotGroupId) && entry.dayId === dayId && entry.startTime)
     .filter((entry) => entry.type !== "coverage" || Boolean(entry.linkedShotGroupId && groupsWithShots.has(entry.linkedShotGroupId)))
     .sort((left, right) => left.startTime.localeCompare(right.startTime));
 }
@@ -4796,7 +4759,7 @@ function isShotSkippedForDay(entry: ProductionEntry, dayId: string | undefined) 
 
 function isOnSetScheduledEntryComplete(callSheet: CallSheet, entry: ProductionEntry, dayId: string) {
   const linkedGroupId = entry.linkedShotGroupId;
-  if (!linkedGroupId) return isEntryComplete(entry) || isShotSkippedForDay(entry, dayId);
+  if (!linkedGroupId) return isEntryComplete(entry) || entry.captureStatus === "not-required" || isShotSkippedForDay(entry, dayId);
   const groupShots = callSheet.entries.filter((shot) => shot.type === "shot" && shot.shotGroupId === linkedGroupId);
   const shotsForToday = groupShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) !== "not-required" && !isShotSkippedForDay(shot, dayId));
   return groupShots.length > 0 && shotsForToday.every((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) === "captured");
@@ -4862,8 +4825,30 @@ function OnSetNowNextStrip({ callSheet, day, onOpenCurrent, onSelectDay }: {
   </aside>;
 }
 
-function OnSetCaptureControl({ canEdit, shotNumber, status, onChange }: {
-  canEdit: boolean;
+function ShotNoteField({ shot, shotNumber, onTrackShot }: { shot: ProductionEntry; shotNumber: string; onTrackShot?: TrackShot }) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const note = shot.notes ?? "";
+  const hasNote = Boolean(note.trim());
+  const close = () => setDraft(null);
+  return <>
+    <span className={hasNote ? undefined : "shoot-add-empty-note"}>
+      <IconButton aria-label={`${hasNote ? "View" : "Add"} note for shot ${shotNumber}`} tooltip={hasNote ? "View shot note" : "Add shot note"} tooltipAlign="end" onClick={() => setDraft(note)}>
+        <DsIcon name={hasNote ? "file-text" : "pencil-simple-ds"} size={16} />
+      </IconButton>
+    </span>
+    {draft !== null ? <ModalShell title={`Note for shot ${shotNumber}`} description={shot.description} onClose={close} footer={
+      <div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={close}>{onTrackShot ? "Cancel" : "Close"}</Button>{onTrackShot && <Button size="S" variant="primary" disabled={draft === note} onClick={() => {
+        onTrackShot(shot.id, { notes: draft });
+        close();
+      }}>Save note</Button>}</div>
+    }>
+      <Field label="Shot note"><textarea readOnly={!onTrackShot} rows={8} value={draft} onChange={(event) => setDraft(event.target.value)} /></Field>
+    </ModalShell> : null}
+  </>;
+}
+
+function OnSetCaptureControl({ shotNumber, status, onChange, children }: {
+  children?: ReactNode;
   shotNumber: string;
   status: ShotCaptureStatus;
   onChange: (status: ShotCaptureStatus) => void;
@@ -4871,30 +4856,130 @@ function OnSetCaptureControl({ canEdit, shotNumber, status, onChange }: {
   const isCaptured = status === "captured";
   return <div className="shoot-on-set-capture-control">
     <label className="shoot-checkbox shoot-on-set-shot-check">
-      <input type="checkbox" disabled={!canEdit} checked={isCaptured} aria-label={`Mark shot ${shotNumber} as ${isCaptured ? "not captured" : "captured"}`} onChange={() => onChange(isCaptured ? "to-capture" : "captured")} />
+      <input type="checkbox" checked={isCaptured} aria-label={`Mark shot ${shotNumber} as ${isCaptured ? "not captured" : "captured"}`} onChange={() => onChange(isCaptured ? "to-capture" : "captured")} />
       <span aria-hidden="true"><DsIcon name="check" size={14} /></span>
     </label>
+    {children}
   </div>;
 }
 
-function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = false, isFocused = false, sectionTitle = "Shoot day", simpleMode = false, onAddScheduleItem, onAddShotGroup, onChange, onEditShotDetails, onFocusChange, onOpenPlanning, onToggleCollapse, onToggleCompletion }: {
+export function SharedShootRunOfDay({ callSheet, day, onTrackShot }: {
   callSheet: CallSheet;
-  canEdit: boolean;
+  day: ShootDay;
+  onTrackShot: TrackShot;
+}) {
+  return <OnSetRunOfDay
+    callSheet={callSheet}
+    currentDay={day}
+    entries={getVisibleOnSetDayEntries(callSheet, day.id)}
+    onTrackShot={onTrackShot}
+    publicSheet
+    sectionTitle="Run of day"
+  />;
+}
+
+function GroupAddShotButton({ group, onAdd }: { group: ShotGroup; onAdd: (id: string) => void }) {
+  return <IconButton className="shoot-group-add-shot" aria-label={`Add shot to ${group.name}`} tooltip="Add shot" tooltipAlign="end" onClick={() => onAdd(group.id)}><DsIcon name="plus" size={16} /></IconButton>;
+}
+
+function ShootDayType({ type, label }: { type: ScheduleType; label?: string }) {
+  const meta = scheduleTypeMeta[type];
+  return <span className="shoot-day-type label-xs-semibold"><DsIcon name={meta.icon} size={14} />{label ?? meta.label}</span>;
+}
+
+function ShootDayRowToggle({ title, detail, expanded, compact, onToggle }: {
+  title: string;
+  detail?: string;
+  expanded: boolean;
+  compact?: boolean;
+  onToggle: () => void;
+}) {
+  return <button className={compact ? "shoot-on-set-group-toggle" : "shoot-on-set-run-expand"} type="button" aria-expanded={expanded} onClick={onToggle}>
+    <DsIcon name="caret-right" size={15} />
+    <span className="shoot-on-set-run-copy"><strong>{title}</strong>{detail && <small className="label-xs">{detail}</small>}</span>
+  </button>;
+}
+
+type ShootDayDrop = { id: string; after: boolean };
+
+function groupScheduleEntry(sheet: CallSheet, group: ShotGroup, day: ShootDay, startTime: string): ProductionEntry {
+  const shots = sheet.entries.filter((entry) => entry.shotGroupId === group.id);
+  return {
+    id: sheet.entries.some((entry) => entry.id === `coverage-${group.id}-${day.id}`) ? `coverage-${group.id}-${Date.now()}` : `coverage-${group.id}-${day.id}`,
+    dayId: day.id,
+    startTime,
+    durationMinutes: 60,
+    type: "coverage",
+    description: group.name,
+    linkedShotGroupId: group.id,
+    locationId: group.locationId ?? day.primaryLocationId,
+    personIds: [...new Set(shots.flatMap((shot) => shot.personIds))],
+  };
+}
+
+// Keep later calls at their published time wherever the moved item fits in the gap.
+function planDayDrop(sheet: CallSheet, day: ShootDay, sourceId: string, target: ShootDayDrop) {
+  if (sourceId === target.id) return;
+  const group = sheet.shotGroups?.find((item) => item.id === sourceId);
+  const source = group
+    ? sheet.entries.find((item) => item.linkedShotGroupId === group.id && (!item.dayId || item.dayId === day.id))
+    : sheet.entries.find((item) => item.id === sourceId);
+  const anchor = sheet.entries.find((item) => item.id === target.id);
+  if (anchor?.shotGroupId) {
+    if (!source || source.shotGroupId !== anchor.shotGroupId) return;
+    return {
+      label: `${target.after ? "After" : "Before"} ${anchor.description}`,
+      sheet: placeShotInGroup(sheet, source.id, anchor.shotGroupId, anchor.id, target.after),
+    };
+  }
+  if (source?.shotGroupId || (!source && !group)) return;
+  const schedule = getVisibleOnSetDayEntries(sheet, day.id).filter((item) => item.id !== source?.id);
+  const index = schedule.findIndex((item) => item.id === target.id);
+  if (index < 0 && (target.id !== day.id || schedule.length)) return;
+  const insertAt = index < 0 ? 0 : index + Number(target.after);
+  const previous = schedule[insertAt - 1];
+  const previousEnd = previous ? timeToMinutes(previous.startTime) + previous.durationMinutes : 0;
+  const anchorTime = anchor ? timeToMinutes(anchor.startTime) : timeToMinutes(day.generalCallTime || "08:00");
+  const start = Math.max(previousEnd, anchorTime);
+  const base = source ?? (group && groupScheduleEntry(sheet, group, day, minutesToTime(start)));
+  if (!base) return;
+  const moved = { ...base, dayId: day.id, startTime: minutesToTime(start), durationMinutes: base.durationMinutes || 30 };
+  const changes = new Map([[moved.id, moved]]);
+  let end = start + moved.durationMinutes;
+  for (const item of schedule.slice(insertAt)) {
+    if (timeToMinutes(item.startTime) >= end) break;
+    changes.set(item.id, { ...item, startTime: minutesToTime(end) });
+    end += item.durationMinutes;
+  }
+  if (end > 24 * 60) return;
+  const shifted = changes.size - 1;
+  const entries = sheet.entries.map((item) => changes.get(item.id) ?? item);
+  if (!source) entries.push(moved);
+  return {
+    label: [formatTime(moved.startTime), shifted ? `${shifted} later ${shifted === 1 ? "item moves" : "items move"}` : ""].filter(Boolean).join(" · "),
+    sheet: { ...sheet, entries },
+  };
+}
+
+function OnSetRunOfDay({ callSheet: storedCallSheet, canEdit = false, onTrackShot, publicSheet = false, currentDay, entries, isCollapsed = false, isFocused = false, sectionTitle = "Shoot day", simpleMode = false, onChange, onEditShotDetails, onFocusChange, onOpenPlanning, onToggleCollapse, onToggleCompletion }: {
+  callSheet: CallSheet;
+  canEdit?: boolean;
+  onTrackShot: TrackShot;
+  publicSheet?: boolean;
   currentDay: ShootDay | undefined;
   entries: ProductionEntry[];
   isCollapsed?: boolean;
   isFocused?: boolean;
   sectionTitle?: string;
   simpleMode?: boolean;
-  onAddScheduleItem?: () => void;
-  onAddShotGroup?: () => void;
-  onChange: (updater: (current: CallSheet) => CallSheet) => void;
-  onEditShotDetails: (draft: EntryDraft) => void;
+  onChange?: (updater: (current: CallSheet) => CallSheet) => void;
+  onEditShotDetails?: (draft: EntryDraft, view?: "day-add") => void;
   onFocusChange?: () => void;
   onOpenPlanning?: () => void;
   onToggleCollapse?: () => void;
-  onToggleCompletion: (entryId: string) => void;
+  onToggleCompletion?: (entryId: string) => void;
 }) {
+  const callSheet = useMemo(() => normaliseDefaultShotGroups(storedCallSheet), [storedCallSheet]);
   const groups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
   const groupById = new Map(groups.map((group) => [group.id, group]));
   const shots = callSheet.entries
@@ -4911,24 +4996,67 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
     });
   const requiredShots = dayShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) !== "not-required");
   const capturedCount = requiredShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) === "captured").length;
-  const topLevelOrder = getShotListTopLevelOrder(callSheet);
-  const topLevelNumberById = new Map(topLevelOrder.map((id, index) => [id, index + 1]));
-  const displayShotNumberById = new Map<string, string>();
-  groups.forEach((group) => {
-    const groupNumber = topLevelNumberById.get(group.id);
-    shots.filter((shot) => shot.shotGroupId === group.id).forEach((shot, index) => {
-      displayShotNumberById.set(shot.id, groupNumber ? `${groupNumber}.${index + 1}` : String(index + 1));
-    });
-  });
-  shots.filter((shot) => !shot.shotGroupId || !groupById.has(shot.shotGroupId)).forEach((shot) => {
-    displayShotNumberById.set(shot.id, String(topLevelNumberById.get(shot.id) ?? shots.indexOf(shot) + 1));
-  });
-  const standaloneShots = dayShots.filter((shot) => !shot.shotGroupId || !groupById.has(shot.shotGroupId));
+  const displayShotNumberById = getShootShotNumbers(callSheet);
+  const standaloneShots = dayShots.filter((shot) => !shot.startTime && (!shot.shotGroupId || !groupById.has(shot.shotGroupId)));
   const visibleEntries = entries.filter((entry) => entry.type !== "coverage" || Boolean(entry.linkedShotGroupId && shots.some((shot) => shot.shotGroupId === entry.linkedShotGroupId)));
   const unscheduledShotGroups = groups.filter((group) => !scheduledGroupIds.has(group.id) && (
     dayShots.some((shot) => shot.shotGroupId === group.id)
     || (simpleMode && !shots.some((shot) => shot.shotGroupId === group.id))
   ));
+  const [movingId, setMovingId] = useState<string | null>(null);
+  const [drop, setDrop] = useState<ShootDayDrop | null>(null);
+  const canMove = canEdit && Boolean(onChange && currentDay);
+  const preview = movingId && drop && currentDay ? planDayDrop(callSheet, currentDay, movingId, drop) : undefined;
+  const clearMove = () => { setMovingId(null); setDrop(null); };
+  const applyMove = (id: string, destination: ShootDayDrop) => {
+    if (canMove && currentDay) onChange?.((sheet) => planDayDrop(sheet, currentDay, id, destination)?.sheet ?? sheet);
+    clearMove();
+  };
+  const moveHandle = (id: string, name: string, peers: string[]) => canMove ? <ShootDragHandle
+    label={`Move ${name}`} title="Drag to move, or use Alt and the up or down arrow"
+    onDragStart={(event) => {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", id);
+      setMovingId(id);
+    }}
+    onDragEnd={clearMove}
+    onKeyDown={(event) => {
+      if (!event.altKey || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
+      event.preventDefault();
+      const after = event.key === "ArrowDown";
+      const index = peers.indexOf(id);
+      const next = index < 0 ? (after ? peers.at(-1) : peers[0]) ?? currentDay?.id : peers[index + (after ? 1 : -1)];
+      if (next) applyMove(id, { id: next, after });
+    }}
+  /> : null;
+  const scheduleIds = visibleEntries.map((entry) => entry.id);
+  const rowDropProps = (id: string) => {
+    const destination = (event: DragEvent<HTMLElement>) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      return { id, after: event.clientY > rect.top + rect.height / 2 };
+    };
+    return {
+      onDragOver: (event: DragEvent<HTMLElement>) => {
+        if (!movingId || !currentDay || !canMove) return;
+        const next = destination(event);
+        if (!planDayDrop(callSheet, currentDay, movingId, next)) { setDrop(null); return; }
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+        if (drop?.id !== id || drop.after !== next.after) setDrop(next);
+      },
+      onDragLeave: (event: DragEvent<HTMLElement>) => {
+        if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+          setDrop((current) => current?.id === id ? null : current);
+        }
+      },
+      onDrop: (event: DragEvent<HTMLElement>) => {
+        if (!movingId || !canMove) return;
+        event.preventDefault();
+        applyMove(movingId, destination(event));
+      },
+    };
+  };
+  const dropHint = (id: string) => preview && drop?.id === id ? <span className={`shoot-timeline-drop-indicator shoot-day-drop-hint ${drop.after ? "at-end" : ""}`} role="status"><span className="label-xs-semibold">{preview.label}</span></span> : null;
   const isOnSetEntryComplete = (entry: ProductionEntry) => currentDay ? isOnSetScheduledEntryComplete(callSheet, entry, currentDay.id) : isEntryComplete(entry);
   const incompleteEntries = visibleEntries.filter((entry) => !isOnSetEntryComplete(entry));
   const currentEntry = incompleteEntries[0];
@@ -5033,7 +5161,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
     };
   }, [isProgressPopoverOpen]);
 
-  const updateShot = (shotId: string, patch: Partial<ProductionEntry>) => onChange((current) => ({
+  const updateShot = (shotId: string, patch: Partial<ProductionEntry>) => onChange?.((current) => ({
     ...current,
     entries: current.entries.map((entry) => entry.id === shotId ? { ...entry, ...patch } : entry),
   }));
@@ -5085,13 +5213,13 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
   };
   const moveSelectedShotsToDay = (targetDayId: string) => {
     if (!selectedProgressShotIds.length) return;
-    onChange((current) => moveShotsWithinCallSheet(current, selectedProgressShotIds, targetDayId));
+    onChange?.((current) => moveShotsWithinCallSheet(current, selectedProgressShotIds, targetDayId));
     setSelectedProgressShotIds([]);
   };
   const createShootDayForSelectedShots = () => {
     if (!selectedProgressShotIds.length) return;
     const nextDayId = `day-${Date.now()}`;
-    onChange((current) => {
+    onChange?.((current) => {
       const nextDay: ShootDay = {
         ...createEmptyShootDay(nextDayId),
         label: `Day ${current.days.length + 1}`,
@@ -5105,7 +5233,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
     if (!selectedProgressShotIds.length) return;
     const selectedIds = new Set(selectedProgressShotIds);
     const dayId = currentDay?.id;
-    onChange((current) => ({
+    onChange?.((current) => ({
       ...current,
       entries: current.entries.map((entry) => {
         if (!selectedIds.has(entry.id)) return entry;
@@ -5145,7 +5273,8 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
       ? [...new Set([...currentDayIds, dayId])]
       : currentDayIds.filter((id) => id !== dayId);
     updateShot(shot.id, {
-      captureStatus: !skipped && shot.captureStatus === "pickup-needed" ? "to-capture" : shot.captureStatus,
+      captured: false,
+      captureStatus: shot.captureStatus === "not-required" ? "not-required" : "to-capture",
       skippedShootDayIds: skippedShootDayIds.length ? skippedShootDayIds : undefined,
     });
   };
@@ -5158,44 +5287,21 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
       skippedShootDayIds: [...new Set([...(shot.skippedShootDayIds ?? []), dayId])],
     });
   };
-  const setScheduleEntrySkippedForToday = (entryId: string, skipped: boolean) => {
+  const returnScheduleEntryToToday = (entryId: string) => {
     const dayId = currentDay?.id;
     if (!dayId) return;
-    onChange((current) => ({
+    onChange?.((current) => ({
       ...current,
       entries: current.entries.map((entry) => {
         if (entry.id !== entryId) return entry;
-        const skippedShootDayIds = skipped
-          ? [...new Set([...(entry.skippedShootDayIds ?? []), dayId])]
-          : (entry.skippedShootDayIds ?? []).filter((id) => id !== dayId);
+        const skippedShootDayIds = entry.skippedShootDayIds?.filter((id) => id !== dayId) ?? [];
         return { ...entry, skippedShootDayIds: skippedShootDayIds.length ? skippedShootDayIds : undefined };
       }),
     }));
   };
-  const setShotGroupDispositionForToday = (groupId: string, disposition: "pickup" | "return" | "skip") => {
-    const dayId = currentDay?.id;
-    if (!dayId) return;
-    onChange((current) => ({
-      ...current,
-      entries: current.entries.map((entry) => {
-        if (entry.type !== "shot" || entry.shotGroupId !== groupId) return entry;
-        const status = entry.captureStatus ?? (entry.captured ? "captured" : "to-capture");
-        if (status === "captured" || status === "not-required") return entry;
-        const skippedShootDayIds = disposition === "return"
-          ? (entry.skippedShootDayIds ?? []).filter((id) => id !== dayId)
-          : [...new Set([...(entry.skippedShootDayIds ?? []), dayId])];
-        return {
-          ...entry,
-          captured: false,
-          captureStatus: disposition === "pickup" ? "pickup-needed" : status === "pickup-needed" ? "to-capture" : status,
-          skippedShootDayIds: skippedShootDayIds.length ? skippedShootDayIds : undefined,
-        };
-      }),
-    }));
-  };
-  const addShot = (groupId?: string) => {
+  const addShot = (groupId?: string, view?: "day-add") => {
     const group = groupId ? groupById.get(groupId) : undefined;
-    onEditShotDetails({
+    onEditShotDetails?.({
       dayId: currentDay?.id ?? "",
       startTime: "",
       timeMode: "unscheduled",
@@ -5208,43 +5314,69 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
       priority: "Medium",
       captureStatus: "to-capture",
       shotGroupId: groupId ?? null,
-    });
+    }, view);
   };
   const toggleExpanded = (id: string) => setExpandedEntryIds((current) => current.includes(id)
     ? current.filter((entryId) => entryId !== id)
     : [...current, id]);
-  const renderShotTable = (groupShots: ProductionEntry[], label: string) => {
-    return <div className="shoot-on-set-shot-list">
-    {groupShots.length ? <div className="shoot-on-set-table shoot-on-set-compact-table" role="table" aria-label={label}>
-    {groupShots.map((shot) => {
+  const renderShotRow = (shot: ProductionEntry, peers: string[], nested = false) => {
+      const topLevel = !nested;
       const status = shot.captureStatus ?? (shot.captured ? "captured" : "to-capture");
       const isSkipped = isShotSkippedForDay(shot, currentDay?.id);
       const isPickup = status === "pickup-needed";
       const shotNumber = displayShotNumberById.get(shot.id) ?? String(shots.indexOf(shot) + 1);
-      const shotDetails = [shot.shotSize, shot.cameraMovement].filter(Boolean).join(" · ");
+      const removed = currentDay && shot.removedAssignmentsByDay?.[currentDay.id];
+      const locationId = shot.locationId === removed?.locationId ? undefined : shot.locationId;
+      const personIds = shot.personIds.filter((id) => !removed?.personIds?.includes(id));
+      const shotDetails = [
+        shot.startTime && shot.durationMinutes ? `${shot.durationMinutes} min` : null,
+        callSheet.locations.find((location) => location.id === locationId)?.name,
+        ...personIds.map((id) => callSheet.people.find((person) => person.id === id)?.name),
+        shot.shotSize, shot.cameraMovement,
+      ].filter(Boolean).join(" · ");
       const disposition = isPickup ? "Pickup" : isSkipped ? "Skipped" : status === "not-required" ? "Not required" : null;
       const visiblePriority = shot.priority === "Critical" || shot.priority === "Bonus" ? shot.priority : null;
-      return <div className={`shoot-on-set-row is-${isPickup ? "pickup-needed" : isSkipped ? "skipped" : status}`} data-on-set-shot-id={shot.id} role="row" key={shot.id}>
-        <OnSetCaptureControl canEdit={canEdit} shotNumber={shotNumber} status={status} onChange={(value) => updateShot(shot.id, { captureStatus: value, captured: value === "captured", skippedShootDayIds: value === "captured" ? shot.skippedShootDayIds?.filter((id) => id !== currentDay?.id) : shot.skippedShootDayIds })} />
-        <span className="label-xs-semibold">{shotNumber}</span>
-        {canEdit ? <button className="shoot-on-set-shot-copy" type="button" aria-label={`Edit shot ${shotNumber}: ${shot.description}`} onClick={() => onEditShotDetails({ ...shot, timeMode: "unscheduled" })}><strong>{shot.description}</strong>{shotDetails || disposition ? <small className={`label-xs ${disposition ? "shoot-on-set-disposition-label" : ""}`}>{[shotDetails, disposition].filter(Boolean).join(" · ")}</small> : null}</button> : <span className="shoot-on-set-shot-copy"><strong>{shot.description}</strong>{shotDetails || disposition ? <small className={`label-xs ${disposition ? "shoot-on-set-disposition-label" : ""}`}>{[shotDetails, disposition].filter(Boolean).join(" · ")}</small> : null}</span>}
-        <span className="shoot-on-set-priority label-xs">{visiblePriority === "Critical" ? <DsIcon name="fire-simple" size={14} /> : null}{visiblePriority}</span>
-        <span className="shoot-on-set-reference-cell">{shot.imageReferenceUrl ? <img className="shoot-on-set-reference" src={shot.imageReferenceUrl} alt={`Reference for ${shot.description}`} /> : null}</span>
-        <input className="label-xs" disabled={!canEdit} aria-label={`Quick note for shot ${shotNumber}`} placeholder={status === "captured" ? "" : "Add note"} value={shot.notes ?? ""} onChange={(event) => updateShot(shot.id, { notes: event.target.value })} />
-        {canEdit && status !== "captured" ? <ShootCommandMenu label={`More actions for shot ${shotNumber}`} actions={isSkipped ? [
-          {label: "Return to today", onSelect: () => setShotSkippedForToday(shot, false)},
-        ] : [
-          {label: "Skip", onSelect: () => setShotSkippedForToday(shot, true)},
-          {label: status === "not-required" ? "Mark as required" : "Mark as not required", onSelect: () => updateShot(shot.id, {captureStatus: status === "not-required" ? "to-capture" : "not-required", captured: false})},
-          {label: isPickup ? "Clear pickup" : "Pickup later", onSelect: () => { if (isPickup) updateShot(shot.id, {captureStatus: "to-capture"}); else setShotForPickup(shot); }},
-        ]} /> : <span aria-hidden="true" />}
+      const shotDescription = <>
+        <strong>{shot.description}</strong>
+        {shotDetails || disposition ? <small className={`label-xs ${disposition ? "shoot-on-set-disposition-label" : ""}`}>{[shotDetails, disposition].filter(Boolean).join(" · ")}</small> : null}
+      </>;
+      const shotTitle = canEdit
+        ? <button className="shoot-on-set-shot-copy" type="button" aria-label={`Edit shot ${shotNumber}: ${shot.description}`} onClick={() => onEditShotDetails?.({ ...shot, locationId, personIds, assignmentDayId: currentDay?.id, dayId: removed ? shot.dayId : shot.dayId || currentDay?.id || "", timeMode: shot.startTime ? "set" : "unscheduled" })}>{shotDescription}</button>
+        : <span className="shoot-on-set-shot-copy">{shotDescription}</span>;
+      const reference = shot.imageReferenceUrl ? <ShotReferencePreview src={shot.imageReferenceUrl} description={shot.description} shotNumber={shotNumber} /> : null;
+      const position = topLevel && shot.startTime && (shot.id === currentEntry?.id ? "Now" : shot.id === nextEntry?.id ? "Next" : null);
+      return <div className={`shoot-on-set-row ${topLevel ? "shoot-on-set-run-summary" : "shoot-day-child"} is-${isPickup ? "pickup-needed" : isSkipped ? "skipped" : status}`} data-on-set-shot-id={shot.id} role={nested ? "row" : undefined} key={shot.id} {...rowDropProps(shot.id)}>
+        {moveHandle(shot.id, shot.description, peers)}
+        {dropHint(shot.id)}
+        <OnSetCaptureControl shotNumber={shotNumber} status={status} onChange={(value) => onTrackShot(shot.id, { captured: value === "captured" })}>
+          {canEdit ? <ShootCommandMenu align="start" label={`Capture options for shot ${shotNumber}`} actions={isSkipped ? [
+            {label: "Return to today", onSelect: () => setShotSkippedForToday(shot, false)},
+          ] : [
+            {label: isPickup ? "Clear pickup" : "Pick up later", onSelect: () => { if (isPickup) updateShot(shot.id, {captureStatus: "to-capture"}); else setShotForPickup(shot); }},
+            {label: "Skip today", onSelect: () => setShotSkippedForToday(shot, true)},
+            {label: status === "not-required" ? "Mark as required" : "Not required", onSelect: () => updateShot(shot.id, {captureStatus: status === "not-required" ? "to-capture" : "not-required", captured: false})},
+          ]} /> : null}
+        </OnSetCaptureControl>
+        {topLevel && shot.startTime && <time className="label-s-semibold" dateTime={shot.startTime}>{formatTime(shot.startTime)}</time>}
+        {nested ? <span className="shoot-day-child-number label-xs-semibold">{shotNumber}</span> : <ShootDayType type="shot" label={`Shot ${shotNumber}`} />}
+        <div className="shoot-simple-shot-title">{shotTitle}{reference}</div>
+        <div className="shoot-on-set-run-actions shoot-day-shot-actions">
+          {visiblePriority && <span className="shoot-on-set-priority label-xs">{visiblePriority === "Critical" && <DsIcon name="fire-simple" size={14} />}{visiblePriority}</span>}
+          <ShotNoteField shot={shot} shotNumber={shotNumber} onTrackShot={onTrackShot} />
+          {position && <span className={`shoot-on-set-run-status is-${position.toLowerCase()} label-xs-semibold`}>{position}</span>}
+        </div>
       </div>;
-    })}
+  };
+  const renderShotTable = (groupShots: ProductionEntry[], label: string) => {
+    const peers = groupShots.map((item) => item.id);
+    return <div className="shoot-on-set-shot-list">
+    {groupShots.length ? <div className="shoot-on-set-table shoot-on-set-compact-table" data-capture-options={canEdit || undefined} role="table" aria-label={label}>
+      {groupShots.map((shot) => renderShotRow(shot, peers, true))}
     </div> : <p className="shoot-preproduction-empty-copy">No shots have been added to this coverage yet.</p>}
   </div>;
   };
   const renderCoverageDetails = (group: ShotGroup) => {
-    const groupShots = shots.filter((shot) => shot.shotGroupId === group.id);
+    const groupShots = dayShots.filter((shot) => shot.shotGroupId === group.id);
     return <div className="shoot-on-set-run-details shoot-on-set-coverage-details">
       {renderShotTable(groupShots, `${group.name} shots`)}
     </div>;
@@ -5263,6 +5395,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
   return <section className={`shoot-preproduction-section shoot-on-set-run-of-day shoot-call-sheet-focus-section ${isFocused ? "is-focused" : ""}`} role={isFocused ? "dialog" : undefined} aria-modal={isFocused ? "true" : undefined} aria-label={isFocused ? `Focused ${sectionTitle}` : undefined}>
     <PreProductionSectionHeading
       title={sectionTitle}
+      heading={<CallSheetSectionTitle title={sectionTitle} expanded={isExpanded} onToggle={isFocused ? undefined : onToggleCollapse} />}
       count={<div className="shoot-progress-popover-anchor">
           <button
             className="shoot-call-sheet-section-count label-xs-semibold"
@@ -5277,11 +5410,11 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
               setIsProgressPopoverOpen((current) => !current);
             }}
           >
-            {capturedCount} of {requiredShots.length}
+            {capturedCount} of {requiredShots.length}{simpleMode ? " captured" : ""}
           </button>
           {isProgressPopoverOpen && typeof document !== "undefined" ? createPortal(<section className="shoot-progress-popover" ref={progressPopoverPanelRef} style={progressPopoverStyle} role="dialog" aria-label={`${currentDay?.label ?? "Shoot day"} progress`}>
             <header>
-              <div><strong className="heading-s">Shoot day progress</strong><small className="label-xs">Select shots to manage or open one for detail.</small></div>
+              <div><strong className="heading-s">Shoot day progress</strong><small className="label-xs">{canEdit ? "Select shots to manage or open one for detail." : "Select a shot to find it in the schedule."}</small></div>
               <button className="shoot-icon-button" type="button" aria-label="Close shoot day progress" onClick={() => { setIsProgressPopoverOpen(false); setSelectedProgressShotIds([]); }}><DsIcon name="x-close-cross" size={16} /></button>
             </header>
             <div className="shoot-progress-sections">
@@ -5326,31 +5459,29 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
           </section>, document.body) : null}
       </div>}
       action={<div className="shoot-preproduction-heading-inline-actions">
-        {simpleMode && canEdit && isExpanded ? <ShootCommandMenu label="Add to Shoot day" variant="primary" trigger={<><DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} /></>} actions={[
-          {label: "Shot", onSelect: () => addShot()},
-          ...(onAddShotGroup ? [{label: "Shot group", onSelect: onAddShotGroup}] : []),
-          ...(onAddScheduleItem ? [{label: "Schedule item", onSelect: onAddScheduleItem}] : []),
-        ]} /> : null}
+        {simpleMode && canEdit && isExpanded ? <Button size="S" variant="primary" aria-label="Add to Shoot day" onClick={() => addShot(undefined, "day-add")}><DsIcon name="plus" size={16} />Add</Button> : null}
         {isFocused
           ? onFocusChange ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</Button> : null
           : <>
-            {onToggleCollapse ? <button className="shoot-icon-button shoot-call-sheet-collapse-button" type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} title={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} onClick={onToggleCollapse}><DsIcon name="caret-down" size={16} /></button> : null}
             {onFocusChange ? <button className="shoot-icon-button shoot-call-sheet-focus-button" type="button" aria-label={`Focus on ${sectionTitle}`} title={`Focus on ${sectionTitle}`} onClick={onFocusChange}><DsIcon name="frame-corners" size={18} /></button> : null}
           </>}
       </div>}
     />
     {isExpanded ? <>{visibleEntries.length ? <ol className="shoot-on-set-run-list">
       {visibleEntries.map((entry) => {
+        if (entry.type === "shot") return <li key={entry.id} data-on-set-entry-id={entry.id}>{renderShotRow(entry, scheduleIds)}</li>;
         const isComplete = isOnSetEntryComplete(entry);
         const isMarkedComplete = isEntryComplete(entry);
-        const scheduleType = scheduleTypeOptions.find((option) => option.value === entry.type);
         const linkedGroup = groupById.get(entry.linkedShotGroupId ?? "");
         const location = callSheet.locations.find((candidate) => candidate.id === entry.locationId);
-        const isExpandable = Boolean(linkedGroup || entry.personIds.length || entry.notes);
+        const isExpandable = Boolean(linkedGroup || (!publicSheet && (entry.personIds.length || entry.notes)));
         const isExpanded = expandedEntryIds.includes(entry.id);
         const groupShots = linkedGroup ? shots.filter((shot) => shot.shotGroupId === linkedGroup.id) : [];
         const requiredGroupShots = groupShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) !== "not-required" && !isShotSkippedForDay(shot, currentDay?.id));
         const capturedShots = requiredGroupShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) === "captured").length;
+        const groupProgress = simpleMode && isExpanded
+          ? null
+          : `${capturedShots} of ${requiredGroupShots.length} captured`;
         const deferredGroupShots = groupShots.filter((shot) => {
           const shotStatus = shot.captureStatus ?? (shot.captured ? "captured" : "to-capture");
           return shotStatus !== "captured" && shotStatus !== "not-required" && isShotSkippedForDay(shot, currentDay?.id);
@@ -5359,29 +5490,23 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
         const groupHasSkipped = deferredGroupShots.some((shot) => shot.captureStatus !== "pickup-needed");
         const entryIsSkipped = !linkedGroup && isShotSkippedForDay(entry, currentDay?.id);
         const disposition = groupHasPickup ? "Pickup" : groupHasSkipped || entryIsSkipped ? "Skipped" : null;
-        const status = disposition ?? (isComplete ? "Done" : entry.id === currentEntry?.id ? "Now" : entry.id === nextEntry?.id ? "Next" : "Upcoming");
-        const hasGroupActions = Boolean(linkedGroup && groupShots.some((shot) => {
-          const shotStatus = shot.captureStatus ?? (shot.captured ? "captured" : "to-capture");
-          return shotStatus !== "captured" && shotStatus !== "not-required";
-        }));
-        const hasRowActions = canEdit && (hasGroupActions || entryIsSkipped || (!linkedGroup && !isMarkedComplete));
+        const status = disposition ?? (entry.id === currentEntry?.id ? "Now" : entry.id === nextEntry?.id ? "Next" : null);
         return <li className={`${isComplete ? "is-complete " : ""}${status === "Now" ? "is-current" : ""}`} data-on-set-entry-id={entry.id} key={entry.id}>
-          <div className={`shoot-on-set-run-summary ${linkedGroup ? "is-coverage" : ""}`}>
+          <div className={`shoot-on-set-run-summary ${linkedGroup ? "is-coverage" : ""}`} {...rowDropProps(entry.id)}>
+            {moveHandle(entry.id, linkedGroup?.name ?? entry.description, scheduleIds)}
+            {dropHint(entry.id)}
             {linkedGroup ? <span className="shoot-on-set-run-control-placeholder" aria-hidden="true" /> : <label className="shoot-checkbox shoot-on-set-run-check">
-              <input type="checkbox" disabled={!canEdit} checked={isMarkedComplete} aria-label={`Mark ${entry.description} as ${isMarkedComplete ? "not complete" : "complete"}`} onChange={() => onToggleCompletion(entry.id)} />
+              <input type="checkbox" disabled={!canEdit} checked={isMarkedComplete} aria-label={`Mark ${entry.description} as ${isMarkedComplete ? "not complete" : "complete"}`} onChange={() => onToggleCompletion?.(entry.id)} />
               <span aria-hidden="true"><DsIcon name="check" size={14} /></span>
             </label>}
             <time className="label-s-semibold">{formatTime(entry.startTime)}</time>
-            <span className={`shoot-schedule-type is-${entry.type} label-xs-semibold`}>{scheduleType ? <DsIcon name={scheduleType.icon} size={14} /> : null}{linkedGroup ? "Shot group" : scheduleType?.label ?? "Schedule"}</span>
-            {isExpandable ? <button className="shoot-on-set-run-expand" type="button" aria-expanded={isExpanded} onClick={() => toggleExpanded(entry.id)}><DsIcon name="caret-right" size={15} /><span className="shoot-on-set-run-copy"><strong>{linkedGroup?.name ?? entry.description}</strong><small className="label-xs">{[linkedGroup ? `${capturedShots} of ${requiredGroupShots.length} captured` : null, entry.durationMinutes ? `${entry.durationMinutes} min` : null, location?.name].filter(Boolean).join(" · ")}</small></span></button> : <span className="shoot-on-set-run-copy"><strong>{entry.description}</strong><small className="label-xs">{[entry.durationMinutes ? `${entry.durationMinutes} min` : null, location?.name].filter(Boolean).join(" · ")}</small></span>}
+            <ShootDayType type={entry.type} label={linkedGroup ? "Shot group" : undefined} />
+            {isExpandable ? <ShootDayRowToggle title={linkedGroup?.name ?? entry.description} expanded={isExpanded} onToggle={() => toggleExpanded(entry.id)}
+              detail={[linkedGroup ? groupProgress : null, entry.durationMinutes ? `${entry.durationMinutes} min` : null, location?.name].filter(Boolean).join(" · ")} /> : <span className="shoot-on-set-run-copy"><strong>{entry.description}</strong><small className="label-xs">{[entry.durationMinutes ? `${entry.durationMinutes} min` : null, location?.name].filter(Boolean).join(" · ")}</small></span>}
             <div className="shoot-on-set-run-actions">
-              {linkedGroup && isExpanded && canEdit ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => addShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</Button> : null}
-              {!isComplete || disposition ? <span className={`shoot-on-set-run-status is-${status.toLowerCase()} label-xs-semibold`}>{status}</span> : null}
-              {hasRowActions ? <ShootCommandMenu label={`More actions for ${linkedGroup?.name ?? entry.description}`} actions={linkedGroup ? [
-                ...(deferredGroupShots.length ? [{label: "Return to today", onSelect: () => setShotGroupDispositionForToday(linkedGroup.id, "return")}] : []),
-                {label: "Skip", onSelect: () => setShotGroupDispositionForToday(linkedGroup.id, "skip")},
-                {label: "Pickup later", onSelect: () => setShotGroupDispositionForToday(linkedGroup.id, "pickup")},
-              ] : [{label: entryIsSkipped ? "Return to today" : "Skip", onSelect: () => setScheduleEntrySkippedForToday(entry.id, !entryIsSkipped)}]} /> : null}
+              {linkedGroup && isExpanded && canEdit ? <GroupAddShotButton group={linkedGroup} onAdd={addShot} /> : null}
+              {status ? <span className={`shoot-on-set-run-status is-${status.toLowerCase()} label-xs-semibold`}>{status}</span> : null}
+              {canEdit && entryIsSkipped ? <Button size="S" variant="ghost" onClick={() => returnScheduleEntryToToday(entry.id)}>Return to today</Button> : null}
             </div>
           </div>
           {isExpanded ? linkedGroup ? renderCoverageDetails(linkedGroup) : renderOperationalDetails(entry) : null}
@@ -5389,11 +5514,14 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
       })}
     </ol> : standaloneShots.length || unscheduledShotGroups.length ? null : <div className="shoot-on-set-empty">
       <strong>{simpleMode ? "Add your first shot" : "Nothing scheduled yet"}</strong>
-      <p className="paragraph-s">{simpleMode ? "Build the list as you work, then tick off each shot when it is captured." : "Switch to Planning to build the run of day."}</p>
+      <p className="paragraph-s">{simpleMode ? "Build the list as you work, then tick off each shot when it is captured." : (publicSheet ? "The schedule will appear here." : "Switch to Planning to build the run of day.")}</p>
       {simpleMode && canEdit ? <Button size="S" variant="primary" onClick={() => addShot()}>Add shot</Button> : null}
     </div>}
-    {unscheduledShotGroups.length || standaloneShots.length ? <section className={`shoot-on-set-unplanned${simpleMode ? " is-simple" : ""}`}>
-      {!simpleMode ? <header><div><h3>Unscheduled coverage</h3><p className="label-xs">Shots and groups without a time remain available on the shoot day.</p></div></header> : null}
+    {movingId && currentDay && !visibleEntries.length && !shots.find((shot) => shot.id === movingId)?.shotGroupId ? <div className="shoot-on-set-group-heading shoot-day-first-drop" {...rowDropProps(currentDay.id)}>
+      <span className="label-s">Schedule at {formatTime(currentDay.generalCallTime || "08:00")}</span>{dropHint(currentDay.id)}
+    </div> : null}
+    {unscheduledShotGroups.length || standaloneShots.length ? <section className={`shoot-on-set-unplanned${simpleMode ? " is-simple" : ""}${visibleEntries.length ? " follows-schedule" : ""}`}>
+      {visibleEntries.length > 0 ? <header><h3 className="label-s-semibold">Shots without a time</h3></header> : null}
       {unscheduledShotGroups.map((group) => {
         const groupKey = `unscheduled-${group.id}`;
         const groupIsExpanded = expandedEntryIds.includes(groupKey);
@@ -5401,14 +5529,70 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
         const requiredGroupShots = groupShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) !== "not-required");
         const capturedGroupShots = requiredGroupShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) === "captured").length;
         return <article className="shoot-on-set-unplanned-group" key={group.id}>
-          <button type="button" aria-expanded={groupIsExpanded} onClick={() => toggleExpanded(groupKey)}><DsIcon name="caret-right" size={15} /><span><strong>{group.name}</strong><small className="label-xs">{capturedGroupShots} of {requiredGroupShots.length} captured</small></span></button>
-          {groupIsExpanded ? <>{renderCoverageDetails(group)}{simpleMode && canEdit ? <div className="shoot-simple-group-actions"><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => addShot(group.id)}><DsIcon name="plus" size={14} />Add shot</Button></div> : null}</> : null}
+          <div className={visibleEntries.length ? "shoot-on-set-run-summary is-coverage untimed-group-heading" : "shoot-on-set-group-heading"}>
+            {moveHandle(group.id, group.name, scheduleIds)}
+            <ShootDayType type="coverage" label="Shot group" />
+            <ShootDayRowToggle title={group.name} expanded={groupIsExpanded} onToggle={() => toggleExpanded(groupKey)}
+              compact={!visibleEntries.length}
+              detail={visibleEntries.length || !simpleMode || !groupIsExpanded ? `${capturedGroupShots} of ${requiredGroupShots.length} captured` : undefined} />
+            {simpleMode && groupIsExpanded && canEdit ? <GroupAddShotButton group={group} onAdd={addShot} /> : null}
+          </div>
+          {groupIsExpanded ? renderCoverageDetails(group) : null}
         </article>;
       })}
-      {standaloneShots.length ? renderShotTable(standaloneShots, "Unscheduled standalone shots") : null}
+      {standaloneShots.map((shot) => renderShotRow(shot, scheduleIds))}
     </section> : null}</> : null}
     {isExpanded && onOpenPlanning ? <footer className="shoot-on-set-section-planning-link"><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onOpenPlanning}><DsIcon name="pencil-simple-ds" size={16} />Edit schedule in Planning</Button></footer> : null}
   </section>;
+}
+
+const editableDayFields = ["date", "generalCallTime", "expectedWrapTime", "primaryLocationId"] as const;
+type DayDetailsChanges = Record<string, Partial<Pick<ShootDay, typeof editableDayFields[number] | "safetyEmergency">>>;
+
+function ShootDayDetailsDialog({ days, initialDayId, locations, canReviewEmergency, onSave, onClose }: {
+  canReviewEmergency: boolean;
+  days: ShootDay[];
+  initialDayId: string;
+  locations: ShootLocation[];
+  onSave: (changes: DayDetailsChanges) => void;
+  onClose: () => void;
+}) {
+  const [activeId, setActiveId] = useState(initialDayId);
+  const [changes, setChanges] = useState<DayDetailsChanges>({});
+  const drafts = days.map((day) => ({ ...day, ...changes[day.id] }));
+  const active = drafts.find((day) => day.id === activeId) ?? drafts[0];
+  const invalid = drafts.find((day) => changes[day.id] && day.expectedWrapTime && day.generalCallTime && day.expectedWrapTime <= day.generalCallTime);
+  const updateDraft = (draft: ShootDay) => {
+    const original = days.find((day) => day.id === draft.id);
+    if (!original) return;
+    const patch: DayDetailsChanges[string] = {};
+    for (const field of editableDayFields) {
+      if (draft[field] !== original[field]) patch[field] = draft[field];
+    }
+    if (draft.safetyEmergency !== original.safetyEmergency) patch.safetyEmergency = draft.safetyEmergency;
+    setChanges((current) => {
+      const next = { ...current };
+      if (Object.keys(patch).length) next[draft.id] = patch;
+      else delete next[draft.id];
+      return next;
+    });
+  };
+  return <EditingDialog title="Edit day details" size="wide" onCancel={onClose} actions={<>
+    <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+    <Button size="S" variant="primary" disabled={!Object.keys(changes).length || Boolean(invalid)} onClick={() => onSave(changes)}>Save</Button>
+  </>}>
+    <div className="shoot-day-details-editor">
+      <ShootDaySwitcher days={drafts} activeDayId={active.id} onSelectDay={setActiveId} />
+      <ShootDayEditorFields key={active.id} draft={active} locations={locations} onChange={updateDraft} className="shoot-day-dialog-fields" />
+      {canReviewEmergency && active.primaryLocationId && <SafetyEmergencySection
+        key={active.id + active.primaryLocationId}
+        info={active.safetyEmergency}
+        primaryLocation={locations.find((location) => location.id === active.primaryLocationId)}
+        onChange={(safetyEmergency) => updateDraft({ ...active, safetyEmergency })}
+      />}
+      {invalid && <p className="label-s" role="status">{invalid.label} needs an expected wrap after general call.</p>}
+    </div>
+  </EditingDialog>;
 }
 
 function ShootDayEditorFields({ draft, locations, onChange, className }: {
@@ -5436,11 +5620,12 @@ function ShootDayEditorFields({ draft, locations, onChange, className }: {
       <span>Expected wrap</span>
       <BriskTimePicker ariaLabel={`Expected wrap for ${draft.label}`} value={draft.expectedWrapTime} onChange={(expectedWrapTime) => onChange({ ...draft, expectedWrapTime })} />
     </div>
-    <label className="shoot-preproduction-field" data-shoot-guide-target="location"><span>Primary location</span><BriskSelect ariaLabel={`Primary location for ${draft.label}`} value={draft.primaryLocationId ?? ""} options={locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed" onChange={(primaryLocationId) => onChange({ ...draft, primaryLocationId })} /></label>
+    <label className="shoot-preproduction-field" data-shoot-guide-target="location"><span>Primary location</span><BriskSelect ariaLabel={`Primary location for ${draft.label}`} value={draft.primaryLocationId ?? ""} options={locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed" onChange={(primaryLocationId) => onChange({ ...draft, primaryLocationId, safetyEmergency: primaryLocationId === draft.primaryLocationId ? draft.safetyEmergency : markEmergencyDetailsForReview(draft.safetyEmergency) })} /></label>
   </div>;
 }
 
-function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, mode, selectedDayId, simpleMode = false, onChange, onDeleteDay, onEditEntry, onEditShotDetails, onNewEntry, onSelectDay, onStartGuidedCompletion, onUnscheduleEntry }: {
+function PreProductionSchedule({ onTrackShot, aiScheduleOpenRequest = 0, callSheet, canEdit, mode, selectedDayId, simpleMode = false, onChange, onDeleteDay, onEditEntry, onEditShotDetails, onNewEntry, onSelectDay, onStartGuidedCompletion, onUnscheduleEntry }: {
+  onTrackShot: TrackShot;
   aiScheduleOpenRequest?: number;
   callSheet: CallSheet;
   canEdit: boolean;
@@ -5450,7 +5635,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
   onChange: (updater: (current: CallSheet) => CallSheet) => void;
   onDeleteDay: (dayId: string) => void;
   onEditEntry: (entry: ProductionEntry) => void;
-  onEditShotDetails: (draft: EntryDraft) => void;
+  onEditShotDetails: (draft: EntryDraft, view?: "day-add") => void;
   onNewEntry: (dayId: string, startTime?: string) => void;
   onSelectDay: (dayId: string) => void;
   onStartGuidedCompletion?: (steps: AiScheduleGuideStep[]) => void;
@@ -5458,11 +5643,8 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
 }) {
   const [isMobileBacklogOpen, setIsMobileBacklogOpen] = useState(false);
   const [aiScheduleStep, setAiScheduleStep] = useState<AiScheduleStep | null>(null);
-  const [isScheduleAddMenuOpen, setIsScheduleAddMenuOpen] = useState(false);
-  const [isDayActionsOpen, setIsDayActionsOpen] = useState(false);
   const [dayEditDraft, setDayEditDraft] = useState<ShootDay | null>(null);
   const [manualScheduleDayIds, setManualScheduleDayIds] = useState<string[]>([]);
-  const [newShotGroupName, setNewShotGroupName] = useState<string | null>(null);
   const [selectedUnscheduledShotIds, setSelectedUnscheduledShotIds] = useState<string[]>([]);
   const [recentlyGroupedShotGroupId, setRecentlyGroupedShotGroupId] = useState<string | null>(null);
   const daySettingsRef = useRef<HTMLFormElement>(null);
@@ -5500,7 +5682,6 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
   useEffect(() => {
     setSelectedUnscheduledShotIds([]);
     setRecentlyGroupedShotGroupId(null);
-    setIsDayActionsOpen(false);
     setDayEditDraft(null);
   }, [currentDay?.id]);
 
@@ -5536,7 +5717,6 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
   const openDayEditor = () => {
     if (!currentDay) return;
     setDayEditDraft({ ...currentDay });
-    setIsDayActionsOpen(false);
   };
 
   const closeDayEditor = () => setDayEditDraft(null);
@@ -5584,27 +5764,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
       priority: "Medium",
       captureStatus: "to-capture",
       shotGroupId: null,
-    });
-  };
-
-  const createShotGroup = () => {
-    const name = newShotGroupName?.trim();
-    if (!name) return;
-    const id = `shot-group-${Date.now()}`;
-    applyChange((current) => {
-      const currentTopLevelOrder = getShotListTopLevelOrder(current);
-      const nextCallSheet: CallSheet = {
-        ...current,
-        shotGroups: [...(current.shotGroups ?? []), {
-          id,
-          name,
-          description: "",
-          order: current.shotGroups?.length ?? 0,
-        }],
-      };
-      return applyShotListTopLevelOrder(nextCallSheet, [...currentTopLevelOrder, id]);
-    });
-    setNewShotGroupName(null);
+    }, "day-add");
   };
 
   const assignShotsToGroup = (shotIds: string[], groupId: string) => {
@@ -5655,21 +5815,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
       const group = (current.shotGroups ?? []).find((candidate) => candidate.id === entryId);
       const existingCoverage = group ? current.entries.find((entry) => entry.type === "coverage" && entry.linkedShotGroupId === group.id) : undefined;
       if (group && !existingCoverage) {
-        const groupShots = current.entries.filter((entry) => entry.type === "shot" && entry.shotGroupId === group.id);
-        return {
-          ...current,
-          entries: [...current.entries, {
-            id: `coverage-${group.id}-${Date.now()}`,
-            dayId: currentDay.id,
-            startTime,
-            durationMinutes: 60,
-            description: group.name,
-            type: "coverage",
-            locationId: group.locationId ?? currentDay.primaryLocationId,
-            personIds: [...new Set(groupShots.flatMap((shot) => shot.personIds))],
-            linkedShotGroupId: group.id,
-          }],
-        };
+        return { ...current, entries: [...current.entries, groupScheduleEntry(current, group, currentDay, startTime)] };
       }
       return {
         ...current,
@@ -5726,15 +5872,6 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
     setAiScheduleStep(null);
   };
 
-  const shotGroupModal = newShotGroupName !== null ? <ModalShell
-    compact
-    title="Add shot group"
-    onClose={() => setNewShotGroupName(null)}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setNewShotGroupName(null)}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!newShotGroupName.trim()} onClick={createShotGroup}>Add group</Button></div>}
-  >
-    <Field label="Group name"><input autoFocus placeholder="e.g. Founder interview" value={newShotGroupName} onChange={(event) => setNewShotGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && newShotGroupName.trim()) createShotGroup(); }} /></Field>
-  </ModalShell> : null;
-
   const dayEditorFields = dayEditDraft ? <ShootDayEditorFields draft={dayEditDraft} locations={callSheet.locations} onChange={setDayEditDraft} className="shoot-schedule-day-editor-fields" /> : null;
   const dayEditorActions = dayEditDraft ? <><Button size="S" variant="secondary" onClick={closeDayEditor}>Cancel</Button><Button size="S" variant="primary" type="submit" disabled={Boolean(dayEditDraft.generalCallTime && dayEditDraft.expectedWrapTime && dayEditDraft.expectedWrapTime <= dayEditDraft.generalCallTime) || JSON.stringify(dayEditDraft) === JSON.stringify(currentDay)}>Save</Button></> : null;
   const dayEditor = dayEditDraft ? <form className="shoot-schedule-day-editor" ref={daySettingsRef} aria-label={`Edit ${dayEditDraft.label}`} onSubmit={(event) => { event.preventDefault(); saveDayEditor(); }}>
@@ -5744,58 +5881,44 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
 
   if (mode === "on-set") {
     return <><OnSetRunOfDay
+      onTrackShot={onTrackShot}
       callSheet={callSheet}
       canEdit={canEdit}
       currentDay={currentDay}
       entries={scheduled}
       simpleMode={simpleMode}
-      onAddScheduleItem={simpleMode && currentDay ? () => onNewEntry(currentDay.id) : undefined}
-      onAddShotGroup={simpleMode ? () => setNewShotGroupName("") : undefined}
       onChange={applyChange}
       onEditShotDetails={onEditShotDetails}
       onToggleCompletion={toggleCompletion}
-    />{shotGroupModal}</>;
+    /></>;
   }
 
   return <section className="shoot-preproduction-section">
     <PreProductionSectionHeading title="Schedule" />
     <div className="shoot-preproduction-schedule">
-      <div className="shoot-schedule-day-tabs" role="tablist" aria-label="Shoot days">{callSheet.days.map((day) => {
-        const isActive = day.id === currentDay?.id;
-        const locationName = callSheet.locations.find((location) => location.id === day.primaryLocationId)?.name ?? "Location not confirmed";
-        const timeRange = day.generalCallTime && day.expectedWrapTime
-          ? `${formatTime(day.generalCallTime)} - ${formatTime(day.expectedWrapTime)}`
-          : "Time not confirmed";
-        return <div className={`shoot-schedule-day-card ${isActive ? "is-active" : ""}`} key={day.id}>
-          <button className="shoot-schedule-day-card-select" type="button" role="tab" aria-selected={isActive} onClick={() => { if (!isActive) onSelectDay(day.id); }}>
-            <strong className={isActive ? "heading-3xs" : "label-s-semibold"}>{day.label}</strong>
-            <small className="label-xs">{day.date ? formatEditorDate(day.date) : "Date not confirmed"}</small>
-            {isActive ? <>
-              <span className="shoot-schedule-day-card-time label-xs-semibold">{timeRange}</span>
-              <span className="shoot-schedule-day-card-location label-xs" title={locationName}>{locationName}</span>
-            </> : null}
-          </button>
-          {isActive && canEdit ? <div className="shoot-schedule-day-actions shoot-shot-list-add-anchor">
-            <ShootCommandMenu label={`Edit or delete ${day.label}`} open={isDayActionsOpen} onOpenChange={setIsDayActionsOpen} actions={[
-              {label: "Edit day", onSelect: openDayEditor},
-              ...(callSheet.days.length > 1 ? [{label: "Delete day", tone: "danger" as const, dividerAbove: true, onSelect: () => { setDayEditDraft(null); onDeleteDay(day.id); }}] : []),
-            ]} />
-          </div> : null}
-        </div>;
-      })}{canEdit ? <button className="shoot-schedule-add-day-card" type="button" aria-label="Add shoot day" title="Add shoot day" onClick={addDay}><DsIcon name="plus" size={16} /></button> : null}</div>
+      {currentDay ? <ShootDayControls days={callSheet.days} day={currentDay} onSelectDay={onSelectDay}>
+        {canEdit && <ShootCommandMenu label={`Actions for ${currentDay.label}`} actions={[
+          { label: `Edit ${currentDay.label} details`, onSelect: openDayEditor },
+          { label: "Add shoot day", onSelect: addDay },
+          ...(callSheet.days.length > 1 ? [{
+            label: `Delete ${currentDay.label}`,
+            tone: "danger" as const,
+            dividerAbove: true,
+            onSelect: () => { closeDayEditor(); onDeleteDay(currentDay.id); },
+          }] : []),
+        ]} />}
+      </ShootDayControls> : canEdit && <Button variant="secondary" size="S" onClick={addDay}>Add shoot day</Button>}
       {currentDay ? <>
         {dayEditor}
         <div className={`shoot-preproduction-schedule-layout ${isBacklogCollapsed ? "is-backlog-collapsed" : ""}`}>
           <section className="shoot-run-of-day" data-shoot-guide-fallback>
             <header>
-              <h3>Run of day</h3>
+              <div><h3>Run of day</h3><span className="label-xs">{[
+                [currentDay.generalCallTime, currentDay.expectedWrapTime].filter(Boolean).map(formatTime).join(" - "),
+                callSheet.locations.find((location) => location.id === currentDay.primaryLocationId)?.name,
+              ].filter(Boolean).join(" · ")}</span></div>
               {canEdit ? <div className="shoot-shot-list-add-anchor">
-                <ShootCommandMenu label="Add to Schedule" open={isScheduleAddMenuOpen} onOpenChange={setIsScheduleAddMenuOpen} variant="primary" trigger={<><DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} /></>} actions={[
-                  {label: "Shot", onSelect: addStandaloneShot},
-                  {label: "Shot group", onSelect: () => setNewShotGroupName("")},
-                  {label: "Schedule item", onSelect: () => onNewEntry(currentDay.id)},
-                  {label: "Shoot day", onSelect: addDay},
-                ]} />
+                <Button size="S" variant="primary" aria-label="Add to Schedule" onClick={addStandaloneShot}><DsIcon name="plus" size={16} />Add</Button>
               </div> : null}
             </header>
             {backlogCount ? <button className="shoot-button secondary shoot-mobile-backlog-trigger label-s-semibold" type="button" onClick={() => setIsMobileBacklogOpen(true)}>Unscheduled<span>{backlogCount}<DsIcon name="caret-down" size={14} /></span></button> : null}
@@ -5803,11 +5926,12 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
               canEdit={canEdit}
               day={currentDay}
               entries={scheduled}
+              allEntries={callSheet.entries}
               highlightedEntryId={null}
               locations={callSheet.locations}
               shotGroups={shotGroups}
               clashes={clashes}
-              onEdit={onEditEntry}
+              onEdit={(entry) => entry.type === "shot" ? onEditShotDetails({ ...entry, timeMode: "set" }) : onEditEntry(entry)}
               onAddAtTime={(startTime) => onNewEntry(currentDay.id, startTime)}
               onMove={moveEntry}
               onResize={resizeEntry}
@@ -5824,6 +5948,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
             canEdit={canEdit}
             collapsed={isBacklogCollapsed}
             entries={callSheet.entries}
+            dayLabel={currentDay.label}
             groupOptions={groupsToSchedule}
             recentlyGroupedShotGroupId={recentlyGroupedShotGroupId}
             selectedShotIds={selectedUnscheduledShotIds}
@@ -5846,6 +5971,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
           canEdit={canEdit}
           isMobile
           entries={callSheet.entries}
+          dayLabel={currentDay.label}
           groupOptions={groupsToSchedule}
           recentlyGroupedShotGroupId={recentlyGroupedShotGroupId}
           selectedShotIds={selectedUnscheduledShotIds}
@@ -5864,7 +5990,6 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
           onClose={() => setIsMobileBacklogOpen(false)}
         /></div> : null}
         {aiScheduleStep === "check" ? <AiScheduleCheckModal readiness={aiScheduleReadiness} onAddMissingDetails={reviewMissingScheduleDetails} onClose={() => setAiScheduleStep(null)} onGenerate={createAiSchedule} /> : null}
-        {shotGroupModal}
       </> : <p className="shoot-preproduction-empty-copy">Add a shoot day before building the Schedule.</p>}
     </div>
   </section>;
@@ -6138,7 +6263,8 @@ function getCandidateTalentMinute(callSheet: CallSheet, personIds: string[]) {
   return callTimes.length ? Math.max(...callTimes) : Number.NEGATIVE_INFINITY;
 }
 
-function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions, isMobile = false, recentlyGroupedShotGroupId, selectedShotIds, unassignedGroups, unassignedShots, unscheduledGroups, onAddSelectedToGroup, onAssignShotToGroup, onClearSelection, onClose, onCreateGroupForSelected, onToggleCollapsed, onToggleShotSelection, onUnscheduleEntry }: {
+function ScheduleShotBacklog({ dayLabel, canEdit, collapsed = false, entries, groupOptions, isMobile = false, recentlyGroupedShotGroupId, selectedShotIds, unassignedGroups, unassignedShots, unscheduledGroups, onAddSelectedToGroup, onAssignShotToGroup, onClearSelection, onClose, onCreateGroupForSelected, onToggleCollapsed, onToggleShotSelection, onUnscheduleEntry }: {
+  dayLabel: string;
   canEdit: boolean;
   collapsed?: boolean;
   entries: ProductionEntry[];
@@ -6201,8 +6327,9 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
   }, [selectedShotIds.length]);
 
 
-  const renderShotCopy = (shot: ProductionEntry) => {
-    const metadata = [shot.shotCategory || "Single shot", shot.subject].filter(Boolean).join(" · ");
+  const renderShotCopy = (shot: ProductionEntry, standalone = false) => {
+    const timing = standalone ? (shot.dayId ? `${dayLabel} · No time set` : "No shoot day") : null;
+    const metadata = [timing, shot.shotCategory || "Shot", shot.subject].filter(Boolean).join(" · ");
     return <div className="shoot-schedule-backlog-shot-copy"><strong className="shoot-schedule-backlog-card-title" title={shot.description}>{shot.description}</strong><span className="label-xs" title={metadata}>{metadata}</span></div>;
   };
 
@@ -6210,9 +6337,11 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
     const groupShots = entries
       .filter((entry) => entry.type === "shot" && entry.shotGroupId === group.id)
       .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
-    const metadata = groupShots.length
+    const shotCountLabel = groupShots.length
       ? `${groupShots.length} ${groupShots.length === 1 ? "shot" : "shots"}${group.subject ? ` · ${group.subject}` : ""}`
       : "Drop shots here";
+    const timing = unscheduledGroups.some((item) => item.id === group.id) ? `${dayLabel} · No time set` : "No shoot day";
+    const metadata = `${timing} · ${shotCountLabel}`;
     const isExpanded = expandedGroupIds.includes(group.id);
     return <div className="shoot-schedule-backlog-group" role="listitem" key={group.id}>
       <article
@@ -6272,7 +6401,7 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
       onDragStart={(event) => { event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", shot.id); }}
     >
       <span className="shoot-drag-handle" aria-hidden="true"><DsIcon name="dots-six-vertical" size={16} /></span>
-      {renderShotCopy(shot)}
+      {renderShotCopy(shot, true)}
     </article>;
   })}</div> : <p className="shoot-schedule-backlog-empty label-xs">None</p>;
 
@@ -6286,7 +6415,7 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
 
   return <aside ref={backlogRef} className={`shoot-schedule-backlog ${isMobile ? "is-mobile" : ""} ${isScheduleDropTarget ? "is-drop-target" : ""}`} aria-label="Unscheduled items" role={isMobile ? "dialog" : undefined} aria-modal={isMobile ? true : undefined} onDragOver={handleScheduledEntryDragOver} onDragLeave={handleScheduledEntryDragLeave} onDrop={handleScheduledEntryDrop}>
     <header>
-      <h3>Unscheduled</h3>
+      <h3>Unscheduled{backlogItemCount > 0 && ` (${backlogItemCount})`}</h3>
       {isMobile ? <button className="shoot-icon-button" type="button" aria-label="Close Unscheduled" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button> : <button className="shoot-icon-button" type="button" aria-label="Collapse Unscheduled" aria-expanded="true" onClick={onToggleCollapsed}><DsIcon name="caret-right" size={16} /></button>}
     </header>
     <section>
@@ -6330,51 +6459,40 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
   </aside>;
 }
 
-function PlanningSectionChangesNotice({ label, wasSent }: { label: string; wasSent: boolean }) {
+function ScheduleChangesNotice({ onSendUpdated }: { onSendUpdated?: () => void }) {
   return <aside className="shoot-schedule-changes-notice" role="status">
     <span aria-hidden="true"><DsIcon name="alert-triangle" size={18} /></span>
-    <div>
-      <strong>Updates to confirm</strong>
-      <small className="label-xs">{wasSent ? "Confirm the updates, then send the revised schedule." : `${label} changed after it was marked ready.`}</small>
-    </div>
+    <strong>Schedule changed since it was sent</strong>
+    {onSendUpdated ? <Button size="S" variant="secondary" type="button" onClick={onSendUpdated}><DsIcon name="paper-plane-tilt" size={16} />Send updated schedule</Button> : null}
   </aside>;
 }
 
-function PlanningReadinessFooter({ decisions, canEdit, config, hasChanges, isReady, needsSending, nextAction, wasConfirmed, onMarkUnready, onReviewReadiness, onSendUpdated }: {
-  decisions: ReactNode;
-  canEdit: boolean;
-  config: (typeof planningReadinessConfig)[ReadyShootSection];
-  hasChanges: boolean;
-  isReady: boolean;
-  needsSending: boolean;
-  nextAction?: { icon: DsIconName; label: string; onSelect: () => void };
-  wasConfirmed: boolean;
-  onMarkUnready: () => void;
-  onReviewReadiness: () => void;
-  onSendUpdated: () => void;
-}) {
-  return <footer className="shoot-stage-share-footer is-schedule-footer" aria-label={`${config.label} readiness and actions`}>
-    {wasConfirmed && !isReady ? <ShootCommandMenu label={`More ${config.label} readiness actions`} actions={[{label: "Mark as not ready", disabled: !canEdit, onSelect: onMarkUnready}]} /> : null}
-    <div className="shoot-schedule-footer-actions">
-      {wasConfirmed && nextAction ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={nextAction.onSelect}><DsIcon name={nextAction.icon} size={16} />{nextAction.label}</Button> : null}
-      {needsSending && canEdit ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onSendUpdated}><DsIcon name="paper-plane-tilt" size={16} />Send updated schedule</Button> : null}
-      {!wasConfirmed && canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onReviewReadiness}>{config.markLabel}</Button> : null}
-      {hasChanges && canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onReviewReadiness}>Confirm updates</Button> : null}
-      {isReady ? <BriskSelect className="shoot-command-menu" mode="action" value="" clearable={false} ariaLabel={`${config.readyLabel}. Open readiness actions`} placeholder={config.readyLabel}
-        actionFallbackFocus={(trigger) => trigger?.closest('main')?.querySelector<HTMLButtonElement>('[role="tab"][aria-selected="true"]') ?? null}
-        options={[{value: "unready", label: "Mark as not ready", disabled: !canEdit}]}
-        onChange={(value) => { if (value === "unready") onMarkUnready(); }}
-        actionTrigger={(props) => <button {...props} type="button" className="shoot-schedule-ready-button label-s-semibold"><DsIcon name={config.icon} size={16} />{config.readyLabel}<DsIcon name="caret-down" size={14} /></button>}
-      /> : null}
-      {decisions}
-    </div>
-  </footer>;
+function withShootDocuments(sheet: CallSheet, documents: ShootDocument[]): CallSheet {
+  const visible = sheet.visibleOptionalSections;
+  return {
+    ...sheet,
+    documents,
+    visibleOptionalSections: documents.length
+      ? visible.includes("documents") ? visible : [...visible, "documents"]
+      : visible.filter((section) => section !== "documents"),
+  };
+}
+
+function documentRemovalPrompt(document: ShootDocument) {
+  return { title: `Remove ${document.name} from the shoot?`, tone: "danger" as const, confirmLabel: "Remove document", cancelLabel: "Keep document" };
 }
 
 function PreProductionDocuments({ callSheet, canEdit, onChange, onOpenDocuments }: { callSheet: CallSheet; canEdit: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments: () => void }) {
+  const { confirm, confirmationDialog } = useConfirmation();
+  async function removeDocument(document: ShootDocument) {
+    if (await confirm(documentRemovalPrompt(document))) {
+      onChange((current) => withShootDocuments(current, current.documents.filter((item) => item.id !== document.id)));
+    }
+  }
   return <section className="shoot-preproduction-section">
-    <PreProductionSectionHeading icon="folder" title="Supporting shoot documents" description="Attach reference files without changing the coverage or status of the native production plan." action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onOpenDocuments}><DsIcon name="plus" size={16} />Add supporting document</Button> : null} />
-    {callSheet.documents.length ? <div className="shoot-supporting-document-list">{callSheet.documents.map((document) => <article key={document.id}><span><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={20} /></span><div><strong>{document.name}</strong><small className="label-xs">{document.type ?? "Supporting document"} · {formatDayAssignment(document.shootDayIds, callSheet.days)}</small></div><a className="shoot-button secondary label-xs-semibold" href={document.url} target="_blank" rel="noreferrer">Open</a>{document.kind !== "link" ? <a className="shoot-icon-button" aria-label={`Download ${document.name}`} href={document.url} download><DsIcon name="download-simple" size={16} /></a> : null}{canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${document.name}`} onClick={() => onChange((current) => ({ ...current, documents: current.documents.filter((item) => item.id !== document.id) }))}><DsIcon name="trash-simple" size={16} /></button> : null}</article>)}</div> : <p className="shoot-preproduction-empty-copy">No supporting shoot documents have been added.</p>}
+    <PreProductionSectionHeading icon="folder" title="Documents" action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onOpenDocuments}><DsIcon name="plus" size={16} />Add supporting document</Button> : null} />
+    {callSheet.documents.length ? <div className="shoot-supporting-document-list">{callSheet.documents.map((document) => <article key={document.id}><span><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={20} /></span><div><strong>{document.name}</strong><small className="label-xs">{document.type ?? "Supporting document"} · {formatDayAssignment(document.shootDayIds, callSheet.days)}</small></div><a className="shoot-button secondary label-xs-semibold" href={document.url} target="_blank" rel="noreferrer">Open</a>{document.kind !== "link" ? <a className="shoot-icon-button" aria-label={`Download ${document.name}`} {...shootDownloadProps(document.url, document.name)}><DsIcon name="download-simple" size={16} /></a> : null}{canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${document.name}`} onClick={() => removeDocument(document)}><DsIcon name="trash-simple" size={16} /></button> : null}</article>)}</div> : <p className="shoot-preproduction-empty-copy">No supporting shoot documents have been added.</p>}
+    {confirmationDialog}
   </section>;
 }
 
@@ -6384,56 +6502,20 @@ function ExistingPlanCallSheetAttachment({ plan, onReplace }: { plan: ExistingSh
   return <aside className="shoot-existing-call-sheet-attachment"><span><DsIcon name="paperclip" size={18} /></span><div><strong>Attached Call Sheet</strong><small className="label-xs">{callSheetName} · Added by {plan.addedBy} on {plan.addedAt}</small></div>{plan.secondaryUrl || plan.url ? <a className="shoot-button secondary label-xs-semibold" href={plan.secondaryUrl ?? plan.url} target="_blank" rel="noreferrer">Open</a> : null}<Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onReplace}>Replace</Button></aside>;
 }
 
-function ScheduleReadinessModal({ isUpdate, readiness, onCancel, onConfirm }: {
-  isUpdate: boolean;
-  readiness: ScheduleReadinessSummary;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  const hasIssues = readiness.issues.length > 0;
-  const confirmLabel = isUpdate
-    ? hasIssues ? "Confirm updates anyway" : "Confirm updates"
-    : hasIssues ? "Mark ready anyway" : "Mark schedule ready";
-  const coverageSummary = [
-    `${readiness.shotGroupCount} shot ${readiness.shotGroupCount === 1 ? "group" : "groups"}`,
-    `${readiness.shotCount} ${readiness.shotCount === 1 ? "shot" : "shots"}`,
-    `${readiness.unscheduledShotCount} unscheduled`,
-  ].join(" · ");
-
-  return <ConfirmationDialog title={isUpdate ? "Confirm schedule updates" : "Schedule ready to use"} description={isUpdate ? "Review the current Schedule before confirming the updates." : "Review the current Schedule before marking it ready."} onCancel={onCancel} expanded actions={<><Button size="S" variant="secondary" onClick={onCancel}>Continue editing</Button><Button size="S" variant="primary" onClick={onConfirm}>{confirmLabel}</Button></>}> <div className="shoot-schedule-ready-summary">
-      <strong>{readiness.dateSummary}</strong>
-      <span className="label-s">{coverageSummary}</span>
-    </div>  {hasIssues ? <section className="shoot-schedule-review-issues" aria-labelledby="shoot-schedule-review-heading">
-      <strong id="shoot-schedule-review-heading">Review before confirming</strong>
-      <div>{readiness.issues.map((issue) => <span className="label-s" key={issue}><DsIcon name="info" size={15} />{issue}</span>)}</div>
-    </section> : <p className="shoot-schedule-review-passed label-s"><DsIcon name="check" size={16} />All Schedule checks passed.</p>} </ConfirmationDialog>;
-}
-
-function PlanningReadinessModal({ config, isUpdate, readiness, onCancel, onConfirm }: {
-  config: (typeof planningReadinessConfig)[StoredReadyShootSection];
-  isUpdate: boolean;
-  readiness: PlanningReadinessSummary;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  const hasIssues = readiness.issues.length > 0;
-  const isEmptyReferenceReview = config.label === "Visual References" && readiness.summary.startsWith("No visual references");
-  const confirmLabel = isUpdate
-    ? hasIssues ? "Confirm updates anyway" : "Confirm updates"
-    : isEmptyReferenceReview ? "No references needed"
-      : hasIssues ? `${config.markLabel} anyway` : config.markLabel;
-
-  return <ConfirmationDialog title={isUpdate ? `Confirm ${config.label.toLowerCase()} updates` : `${config.label} ready to use`} description={config.label === "Shot List" ? isUpdate ? "This will accept the remaining Brisk suggestions and confirm the shot list updates." : "This will accept the remaining Brisk suggestions and mark the shot list ready." : isUpdate ? `Review the current ${config.label} before confirming the updates.` : `Review the current ${config.label} before marking it ready.`} onCancel={onCancel} expanded actions={<><Button size="S" variant="secondary" onClick={onCancel}>Continue editing</Button><Button size="S" variant="primary" onClick={onConfirm}>{confirmLabel}</Button></>}> <div className="shoot-schedule-ready-summary">
-      <strong>{readiness.summary}</strong>
-    </div>  {hasIssues ? <section className="shoot-schedule-review-issues" aria-labelledby="shoot-planning-readiness-review-heading">
-      <strong id="shoot-planning-readiness-review-heading">Review before confirming</strong>
-      <div>{readiness.issues.map((issue) => <span className="label-s" key={issue}><DsIcon name="info" size={15} />{issue}</span>)}</div>
-    </section> : <p className="shoot-schedule-review-passed label-s"><DsIcon name="check" size={16} />{readiness.passedMessage}</p>} </ConfirmationDialog>;
-}
-
-function ShootReadinessModal({ action, missing, onAddDetails, onCancel, onContinue }: { action: ShootReadinessAction; missing: string[]; onAddDetails: () => void; onCancel: () => void; onContinue: () => void }) {
+function ShootReadinessModal({ action, missing, onAddDetails, onCancel, onContinue }: { action: ShootReadinessAction; missing: string[]; onAddDetails?: () => void; onCancel: () => void; onContinue: () => void }) {
   const labels: Record<ShootReadinessAction, string> = { share: "share the Call Sheet", send: "submit the Shoot", approve: "approve the Shoot", start: "start the shoot" };
-  return <ConfirmationDialog title="Some Call Sheet details are not confirmed" description={`You can still ${labels[action]}.`} expanded onCancel={onCancel} actions={<><Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button><Button size="S" variant="secondary" onClick={onContinue}>Continue anyway</Button><Button size="S" onClick={onAddDetails}>Add details</Button></>}>
+  const isApproval = action === "approve";
+  return <ConfirmationDialog
+    title={isApproval ? "Review before approving Shoot" : "Some Call Sheet details are not confirmed"}
+    description={`You can still ${labels[action]}.`}
+    expanded
+    onCancel={onCancel}
+    actions={<>
+      <Button size="S" variant="secondary" onClick={onCancel}>{isApproval ? "Back to plan" : "Cancel"}</Button>
+      <Button size="S" variant={isApproval ? "primary" : "secondary"} onClick={onContinue}>{isApproval ? "Approve anyway" : "Continue anyway"}</Button>
+      {onAddDetails && <Button size="S" onClick={onAddDetails}>Add details</Button>}
+    </>}
+  >
     <div className="shoot-readiness-list">{missing.map((item) => <span className="label-s" key={item}>{item}</span>)}</div>
   </ConfirmationDialog>;
 }
@@ -6735,18 +6817,41 @@ function ExistingShootPlanModal({ existingPlan, onClose, onSave }: { existingPla
   const [url, setUrl] = useState(existingPlan?.url ?? "");
   const [secondaryFileName, setSecondaryFileName] = useState(existingPlan?.secondaryName ?? "");
   const [secondaryFileUrl, setSecondaryFileUrl] = useState(existingPlan?.secondaryUrl ?? "");
-  const canSave = Boolean(name.trim() && (source === "file" || url.trim()));
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const canSave = Boolean(!uploading && name.trim() && url.trim());
+  const attach = async (file: File | undefined, secondary: boolean) => {
+    if (!file) return;
+    setUploading(true);
+    setUploadError("");
+    try {
+      const href = await storeShootFile(file);
+      if (secondary) { setSecondaryFileName(file.name); setSecondaryFileUrl(href); }
+      else { setName(file.name); setUrl(href); }
+    } catch {
+      setUploadError(`Could not save ${file.name}. Try again or paste a share link.`);
+    } finally { setUploading(false); }
+  };
+  const changeSource = (next: ExistingShootPlan["source"]) => {
+    setSource(next);
+    setName("");
+    setUrl("");
+    setSecondaryFileName("");
+    setSecondaryFileUrl("");
+    setUploadError("");
+  };
 
   return <ModalShell
     wide
     title={existingPlan ? "Replace the existing shoot plan" : "Use an existing shoot plan"}
-    description="Attach a PDF, spreadsheet or shared plan. For V1, Brisk displays and shares the original file without importing its contents."
+    description="Attach a PDF or spreadsheet to open in this browser. Use a share link for a plan hosted elsewhere."
     onClose={onClose}
     footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" disabled={!canSave} onClick={() => onSave({ name: name.trim(), source, url: url.trim() || undefined, coverage, addedBy: "Tom", addedAt: "7 September", secondaryName: secondaryFileName || undefined, secondaryUrl: secondaryFileUrl || undefined })}>{existingPlan ? "Replace plan" : "Attach plan"}</Button></div>}
   >
     <div className="shoot-existing-plan-form">
-      <fieldset className="shoot-setup-checkboxes"><legend className="label-xs-semibold">Add the plan as</legend><label className="label-s"><input type="radio" name="plan-source" checked={source === "file"} onChange={() => setSource("file")} />Upload file</label><label className="label-s"><input type="radio" name="plan-source" checked={source === "link"} onChange={() => setSource("link")} />Paste share link</label></fieldset>
-      {source === "file" ? <div className="shoot-setup-grid two-column"><label className="shoot-setup-field"><span className="label-xs-semibold">Shot List or Call Sheet</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setName(file.name); setUrl(URL.createObjectURL(file)); }} /></label><label className="shoot-setup-field"><span className="label-xs-semibold">Optional second file</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => { const file = event.target.files?.[0]; setSecondaryFileName(file?.name ?? ""); setSecondaryFileUrl(file ? URL.createObjectURL(file) : ""); }} /></label></div> : <label className="shoot-setup-field"><span className="label-xs-semibold">Share link</span><input type="url" placeholder="https://" value={url} onChange={(event) => { setUrl(event.target.value); if (!name) setName("Shared shoot plan"); }} /></label>}
+      <fieldset disabled={uploading} className="shoot-setup-checkboxes"><legend className="label-xs-semibold">Add the plan as</legend><label className="label-s"><input type="radio" name="plan-source" checked={source === "file"} onChange={() => changeSource("file")} />Upload file</label><label className="label-s"><input type="radio" name="plan-source" checked={source === "link"} onChange={() => changeSource("link")} />Paste share link</label></fieldset>
+      {source === "file" ? <div className="shoot-setup-grid two-column"><label className="shoot-setup-field"><span className="label-xs-semibold">Shot List or Call Sheet</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" disabled={uploading} onChange={(event) => void attach(event.target.files?.[0], false)} /></label><label className="shoot-setup-field"><span className="label-xs-semibold">Optional second file</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" disabled={uploading} onChange={(event) => void attach(event.target.files?.[0], true)} /></label></div> : <label className="shoot-setup-field"><span className="label-xs-semibold">Share link</span><input type="url" placeholder="https://" value={url} onChange={(event) => { setUrl(event.target.value); if (!name) setName("Shared shoot plan"); }} /></label>}
+      {uploadError && <p role="alert" className="label-s">{uploadError}</p>}
       <fieldset className="shoot-setup-checkboxes"><legend className="label-xs-semibold">What does this plan cover?</legend>{(["creative", "day", "both"] as const).map((value) => <label className="label-s" key={value}><input type="radio" name="plan-coverage" checked={coverage === value} onChange={() => setCoverage(value)} />{formatExistingPlanCoverage(value)}</label>)}</fieldset>
     </div>
   </ModalShell>;
@@ -7073,10 +7178,11 @@ type TimelineStyle = CSSProperties & {
 
 const scheduledEntryDragType = "application/x-brisk-schedule-entry";
 
-function ScheduleTimeline({ canEdit, day, entries, emptyContent, highlightedEntryId, locations, shotGroups, clashes, onEdit, onAddAtTime, onMove, onResize }: {
+function ScheduleTimeline({ canEdit, day, entries, allEntries, emptyContent, highlightedEntryId, locations, shotGroups, clashes, onEdit, onAddAtTime, onMove, onResize }: {
   canEdit: boolean;
   day: ShootDay;
   entries: ProductionEntry[];
+  allEntries: ProductionEntry[];
   emptyContent?: ReactNode;
   highlightedEntryId: string | null;
   locations: ShootLocation[];
@@ -7220,10 +7326,10 @@ function ScheduleTimeline({ canEdit, day, entries, emptyContent, highlightedEntr
         ) : null}
         {dropPreviewTime ? <div className="shoot-timeline-drop-indicator" style={{ "--timeline-slot-offset": (timeToMinutes(dropPreviewTime) - startMinute) / 15 } as TimelineStyle} aria-hidden="true"><span className="label-xs-semibold">{formatTime(dropPreviewTime)}</span></div> : null}
         {placements.map(({ entry, column, columnCount }) => {
-          const type = scheduleTypeOptions.find((option) => option.value === entry.type) ?? scheduleTypeOptions[0];
+          const type = scheduleTypeMeta[entry.type];
           const location = locations.find((item) => item.id === entry.locationId);
           const linkedGroup = shotGroups.find((group) => group.id === entry.linkedShotGroupId);
-          const linkedGroupShotCount = linkedGroup ? entries.filter((shot) => shot.type === "shot" && shot.shotGroupId === linkedGroup.id).length : 0;
+          const linkedGroupShotCount = linkedGroup ? allEntries.filter((shot) => shot.type === "shot" && shot.shotGroupId === linkedGroup.id).length : 0;
           const clash = clashes.get(entry.id);
           const entryTitle = linkedGroup?.name ?? entry.description;
           const entryMetadata = [linkedGroup ? `${linkedGroupShotCount} ${linkedGroupShotCount === 1 ? "shot" : "shots"}` : null, `${entry.durationMinutes} min`, location?.name].filter(Boolean).join(" · ");
@@ -7241,13 +7347,13 @@ function ScheduleTimeline({ canEdit, day, entries, emptyContent, highlightedEntr
             className={`shoot-timeline-block is-${entry.type} ${entry.durationMinutes <= 45 ? "is-short" : ""} ${dragPreview?.entryId === entry.id ? "is-dragging" : ""} ${highlightedEntryId === entry.id ? "is-highlighted" : ""}`}
             data-shoot-entry-id={entry.id}
             draggable={canUnschedule}
-            role="button"
-            tabIndex={0}
+            role={canEdit ? "button" : undefined}
+            tabIndex={canEdit ? 0 : undefined}
             style={blockStyle}
-            aria-label={`Edit ${entryTitle}, ${formatTime(entry.startTime)}, ${entry.durationMinutes} minutes`}
+            aria-label={`${canEdit ? "Edit " : ""}${entryTitle}, ${formatTime(entry.startTime)}, ${entry.durationMinutes} minutes`}
             title={`${entryTitle} - ${entryMetadata}`}
             key={entry.id}
-            onClick={() => { if (!suppressClickRef.current) onEdit(entry); }}
+            onClick={() => { if (canEdit && !suppressClickRef.current) onEdit(entry); }}
             onDragStart={(event) => {
               if (!canUnschedule) return;
               suppressClickRef.current = true;
@@ -7258,7 +7364,7 @@ function ScheduleTimeline({ canEdit, day, entries, emptyContent, highlightedEntr
             onDragEnd={() => window.setTimeout(() => { suppressClickRef.current = false; }, 0)}
             onPointerDown={(event) => { if (canEdit) beginMove(event, entry); }}
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onEdit(entry); }
+              if (canEdit && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onEdit(entry); }
               if (canEdit && event.altKey && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
                 event.preventDefault();
                 onMove(entry.id, minutesToTime(timeToMinutes(entry.startTime) + (event.key === "ArrowUp" ? -15 : 15)));
@@ -8169,26 +8275,19 @@ function PracticalField({ label, value, onChange }: { label: string; value: stri
   return <label className="shoot-practical-field"><span className="label-s-semibold">{label}</span><textarea rows={3} placeholder={`Add ${label.toLowerCase()} details`} value={value} onChange={(event) => onChange(event.target.value)} /></label>;
 }
 
-function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, onChange }: {
+function SafetyEmergencySection({ info, primaryLocation, onChange }: {
   info?: SafetyEmergencyInfo;
   primaryLocation?: ShootLocation;
-  onAddPrimaryLocation: () => void;
   onChange: (info?: SafetyEmergencyInfo) => void;
 }) {
   const [isReviewing, setIsReviewing] = useState(Boolean(info && !info.confirmed && !info.needsReview));
-  const [reviewSnapshot, setReviewSnapshot] = useState<SafetyEmergencyInfo | undefined>();
+  const [reviewSnapshot, setReviewSnapshot] = useState<SafetyEmergencyInfo | undefined>(info);
   const value: SafetyEmergencyInfo = info ?? emptyEmergencyInfo();
   const canConfirm = Boolean(value.hospitalName.trim() && value.hospitalAddress.trim());
 
   const beginReview = (nextInfo: SafetyEmergencyInfo) => {
     setReviewSnapshot(info);
     onChange(nextInfo);
-    setIsReviewing(true);
-  };
-  const suggest = () => {
-    if (!primaryLocation) return;
-    if (!isReviewing) setReviewSnapshot(info);
-    onChange(suggestEmergencyInfo(primaryLocation));
     setIsReviewing(true);
   };
   const update = (patch: Partial<SafetyEmergencyInfo>) => onChange({ ...value, ...patch, confirmed: false });
@@ -8203,26 +8302,15 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
     setIsReviewing(false);
   };
 
-  if (!primaryLocation) return <div className="shoot-safety-state is-location-required">
-    <div className="shoot-safety-state-copy">
-      <strong>Add a primary location to suggest the nearest emergency department.</strong>
-      <span className="shoot-status-label label-xs-semibold">Needs location</span>
-      <p className="label-xs">Emergency number: 000</p>
-    </div>
-    <div className="shoot-safety-state-actions">
-      <Button size="S" variant="secondary" className="shoot-button secondary" type="button" disabled>Suggest nearest hospital</Button>
-      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onAddPrimaryLocation}>Add primary location</Button>
-    </div>
-  </div>;
+  if (!primaryLocation) return null;
 
-  if (value.confirmed && !isReviewing) return <div className="shoot-safety-summary">
+  if (value.confirmed && !value.needsReview && !isReviewing) return <div className="shoot-safety-summary">
     <div className="shoot-safety-summary-copy">
       <strong>{value.hospitalName}</strong>
       <span className="label-xs">{value.hospitalAddress}</span>
     </div>
     <div className="shoot-safety-summary-actions">
       <Button size="S" variant="ghost" className="shoot-text-action shoot-safety-edit-action" type="button" onClick={() => beginReview({ ...value, confirmed: false })}><DsIcon name="pencil-simple-ds" size={14} />Edit</Button>
-      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={suggest}>Suggest again</Button>
     </div>
   </div>;
 
@@ -8234,18 +8322,16 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
     </div>
     <div className="shoot-safety-state-actions">
       <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={() => beginReview(value)}>Review details</Button>
-      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={suggest}>Suggest again</Button>
     </div>
   </div>;
 
   if (!info && !isReviewing) return <div className="shoot-safety-state">
     <div className="shoot-safety-state-copy">
-      <strong>Primary location: {primaryLocation.name}</strong>
+      <strong>Nearest emergency hospital</strong>
       <p className="label-xs">Emergency number: 000</p>
     </div>
     <div className="shoot-safety-state-actions">
-      <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={suggest}>Suggest nearest hospital</Button>
-      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => beginReview(emptyEmergencyInfo())}>Enter manually</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => beginReview(emptyEmergencyInfo())}>Add hospital details</Button>
     </div>
   </div>;
 
@@ -8270,6 +8356,19 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
       <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={cancelReview}>Cancel</Button>
     </div>
   </div>;
+}
+
+function ShotReferencePreview({ src, description, shotNumber }: { src: string; description: string; shotNumber: string | number }) {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+  return <>
+    <button className="shoot-shot-reference-thumbnail" type="button" aria-label={`Preview reference for shot ${shotNumber}`} aria-haspopup="dialog" onClick={() => setOpen(true)}>
+      <img src={src} alt="" />
+    </button>
+    {open && <ModalShell wide title={`Image for shot ${shotNumber}`} onClose={close} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="primary" onClick={close}>Done</Button></div>}>
+      <div className="shoot-shot-image-preview is-full-reference"><img src={src} alt={`Reference for ${description}`} /></div>
+    </ModalShell>}
+  </>;
 }
 
 function ModalShell({ title, description, compact = false, wide = false, onClose, children, footer }: { title: string; description?: string; compact?: boolean; wide?: boolean; onClose: () => void; children: ReactNode; footer: ReactNode }) {
@@ -8318,14 +8417,10 @@ function DeleteShootDayModal({ day, entries, onCancel, onConfirm }: { day?: Shoo
   return <DeleteShootItemModal title={`Delete ${day.label}?`} message={impactMessage} confirmLabel="Delete day" onCancel={onCancel} onConfirm={onConfirm} />;
 }
 
-function DeleteShootShotModal({ entryId, entries, onCancel, onConfirm }: { entryId: string; entries: ProductionEntry[]; onCancel: () => void; onConfirm: () => void }) {
-  const shots = entries
-    .filter((entry) => entry.type === "shot")
-    .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
-  const shotIndex = shots.findIndex((shot) => shot.id === entryId);
-  const shot = shots[shotIndex];
+function DeleteShootShotModal({ entryId, callSheet, onCancel, onConfirm }: { entryId: string; callSheet: CallSheet; onCancel: () => void; onConfirm: () => void }) {
+  const shot = callSheet.entries.find((entry) => entry.type === "shot" && entry.id === entryId);
   if (!shot) return null;
-  const shotLabel = shotIndex + 1;
+  const shotLabel = getShootShotNumbers(callSheet).get(entryId);
   const message = shot.description
     ? `“${shot.description}” will be permanently removed from the Shot List.`
     : "This shot will be permanently removed from the Shot List.";
@@ -8333,15 +8428,21 @@ function DeleteShootShotModal({ entryId, entries, onCancel, onConfirm }: { entry
   return <DeleteShootItemModal title={`Delete shot ${shotLabel}?`} message={message} confirmLabel="Delete shot" onCancel={onCancel} onConfirm={onConfirm} />;
 }
 
-function EntryModal({ draft, hideScheduling, compactShotDetails = false, days, entries, locations, projectId, shotGroups, confirmDelete, onCancelDelete, onChange, onClose, onDelete, onUnschedule, onCreateLocation, onAddGroupShot, onEditLinkedShot, onSave }: {
+function EntryModal({ draft, addKind, onAddKindChange, people, onCreatePerson, hideScheduling, compactShotDetails = false, detailedPlan, days, entries, locations, projectId, shotGroups, shotNumbers, confirmDelete, onCancelDelete, onChange, onClose, onDelete, onUnschedule, onCreateLocation, onAddGroupShot, onEditLinkedShot, onSave }: {
+  addKind?: DayAddKind;
+  onAddKindChange?: (kind: DayAddKind) => void;
   draft: EntryDraft;
+  people: ShootPerson[];
+  onCreatePerson?: (name: string) => void;
   hideScheduling: boolean;
   compactShotDetails?: boolean;
+  detailedPlan: boolean;
   days: ShootDay[];
   entries: ProductionEntry[];
   locations: ShootLocation[];
   projectId: string;
   shotGroups: ShotGroup[];
+  shotNumbers: Map<string, string>;
   confirmDelete: boolean;
   onCancelDelete: () => void;
   onChange: (draft: EntryDraft) => void;
@@ -8356,38 +8457,88 @@ function EntryModal({ draft, hideScheduling, compactShotDetails = false, days, e
   const canBeUntimed = draft.type === "shot" || draft.type === "coverage";
   const timeMode: EntryTimeMode = canBeUntimed ? draft.timeMode ?? (draft.startTime ? "set" : "unscheduled") : "set";
   const isUnscheduled = canBeUntimed && timeMode === "unscheduled";
-  const requiresStartTime = !hideScheduling && !isUnscheduled && !draft.startTime;
+  const canScheduleShot = compactShotDetails && !draft.shotGroupId;
+  const requiresStartTime = (!hideScheduling || canScheduleShot) && !isUnscheduled && !draft.startTime;
   const isLinkedCoverage = draft.type === "coverage" && Boolean(draft.linkedShotGroupId);
   const isShot = draft.type === "shot";
   const isCreativeEntry = isShot || isLinkedCoverage;
   const linkedGroup = draft.linkedShotGroupId ? shotGroups.find((group) => group.id === draft.linkedShotGroupId) : undefined;
   const linkedGroupShots = linkedGroup ? entries.filter((entry) => entry.type === "shot" && entry.shotGroupId === linkedGroup.id) : [];
-  const title = draft.id ? hideScheduling ? "Edit shot" : "Edit schedule item" : isUnscheduled ? "Add shot" : "Add to schedule";
+  const title = compactShotDetails ? (draft.id ? "Edit shot" : "Add shot") : draft.id ? hideScheduling ? "Edit shot" : "Edit schedule item" : isUnscheduled ? "Add shot" : "Add to schedule";
   const dayOptions = days.map((day) => ({ value: day.id, label: `${day.label} - ${formatEditorDate(day.date)}` }));
   const operationalTypeOptions = scheduleTypeOptions.filter((option) => option.value !== "shot" && option.value !== "coverage");
-  return (
-    <ModalShell title={title} onClose={onClose} footer={
-      <>
-        {draft.id ? <div className="shoot-entry-footer-actions">{confirmDelete ? <ConfirmationDialog title="Delete permanently?" tone="danger" cancelLabel="Keep it" confirmLabel="Yes, delete" onCancel={onCancelDelete} onConfirm={onDelete} /> : <>{!hideScheduling && canBeUntimed && !isUnscheduled ? <Button size="S" variant="secondary"  type="button" onClick={onUnschedule}>Unschedule item</Button> : null}<Button size="S" variant="danger"  type="button" onClick={onDelete}><DsIcon name="trash-simple" size={16} />Delete</Button></>}</div> : <span />}
-        <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={requiresStartTime || !draft.description.trim()} onClick={() => onSave(draft)}>{draft.id ? "Save changes" : isUnscheduled ? "Add shot" : "Add to schedule"}</Button></div>
-      </>
-    }>
-      <div className="shoot-entry-modal-form" onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !requiresStartTime && draft.description.trim()) { event.preventDefault(); onSave(draft); } }}>
-      {hideScheduling ? <ShotDetailsForm compact={compactShotDetails} draft={draft} locations={locations} projectId={projectId} onChange={onChange} onCreateLocation={onCreateLocation} /> : <>
+  const dayField = <Field label="Shoot day"><BriskSelect<string>
+          ariaLabel="Shoot day"
+          clearable={false}
+          options={dayOptions}
+          placeholder="Choose shoot day"
+          value={draft.dayId ?? days[0]?.id ?? ""}
+          onChange={(value) => { if (value) onChange({ ...draft, dayId: value }); }}
+        /></Field>;
+  const startTimeInput = <BriskTimePicker ariaLabel="Start time" showClockButton={false} value={draft.startTime} onChange={(startTime) => onChange({ ...draft, startTime, timeMode: "set" })} />;
+  const durationOptions = draft.durationMinutes && !durationMinutesOptions.includes(draft.durationMinutes)
+    ? [...durationMinutesOptions, draft.durationMinutes].sort((left, right) => left - right)
+    : durationMinutesOptions;
+  const durationField = <Field label="Duration">
+    {detailedPlan && !compactShotDetails ? <DurationInput value={draft.durationMinutes} onChange={(durationMinutes) => onChange({ ...draft, durationMinutes })} /> : <BriskSelect
+                  ariaLabel="Duration"
+                  placeholder="Optional"
+                  clearLabel="Clear duration"
+                  options={durationOptions.map((minutes) => ({ value: String(minutes), label: `${minutes} min` }))}
+                  value={draft.durationMinutes ? String(draft.durationMinutes) : ""}
+                  triggerContent={draft.durationMinutes ? `${draft.durationMinutes} min` : undefined}
+                  onChange={(value) => onChange({ ...draft, durationMinutes: Number(value) })}
+    />}
+  </Field>;
+  const isLocationOverride = isCreativeEntry && !compactShotDetails;
+  const locationField = <Field label={isLocationOverride ? "Location override" : "Location"}><BriskSelect<string>
+        ariaLabel={isLocationOverride ? "Location override" : "Location"}
+        clearLabel={isLocationOverride ? "Use Shot List location" : "No location"}
+        footerAction={{ label: "Create new location", icon: "plus", onSelect: onCreateLocation }}
+        options={locations.map((location) => ({ value: location.id, label: location.name }))}
+        placeholder={isLocationOverride ? "Use Shot List location" : "No location"}
+        value={draft.locationId ?? ""}
+        onChange={(value) => onChange({ ...draft, locationId: value || undefined })}
+      /></Field>;
+  const canSave = Boolean(draft.description.trim()) && (addKind === "group" || !requiresStartTime);
+  const fields = addKind === "group"
+    ? <ShotGroupNameField value={draft.description} onChange={(description) => onChange({ ...draft, description })} onSubmit={() => onSave(draft)} />
+    : (<div className="shoot-entry-modal-form" onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && canSave) { event.preventDefault(); onSave(draft); } }}>
+      {hideScheduling ? <><ShotDetailsForm detailedPlan={detailedPlan} autoFocus={!addKind} compact={compactShotDetails} draft={draft} locations={locations} projectId={projectId} onChange={onChange} onCreateLocation={onCreateLocation} />
+        {compactShotDetails ? <>
+          <div className="shoot-form-grid two-column">
+            {locationField}
+            <PeoplePicker label="People" people={people} selectedIds={draft.personIds} onChange={(personIds) => onChange({ ...draft, personIds })} onCreatePerson={onCreatePerson} />
+          </div>
+          {canScheduleShot && days.length > 0 ? <>
+            <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={!isUnscheduled} onClick={() => onChange({
+              ...draft, dayId: draft.dayId || days[0].id, startTime: "", timeMode: isUnscheduled ? "set" : "unscheduled",
+            })}>{isUnscheduled ? "Schedule shot" : "Remove time"}</Button>
+            {!isUnscheduled ? <div className="shoot-shot-details-compact-grid">
+              {dayField}
+              <div className="shoot-preproduction-field">
+                <span>Start time</span>
+                {startTimeInput}
+              </div>
+              {durationField}
+            </div> : null}
+          </> : null}
+        </> : null}
+      </> : <>
       {isLinkedCoverage ? <div className="shoot-schedule-entry-source">
         <div>
           <span className="label-xs-semibold">Shot group</span>
           <strong className="heading-s">{linkedGroup?.name ?? draft.description}</strong>
         </div>
-      </div> : !isShot ? <Field label="Title"><input autoFocus placeholder="e.g. Crew call and gear unload" value={draft.description} onChange={(event) => onChange({ ...draft, description: event.target.value })} /></Field> : null}
+      </div> : !isShot ? <Field label="Title"><input autoFocus={!addKind} placeholder="e.g. Crew call and gear unload" value={draft.description} onChange={(event) => onChange({ ...draft, description: event.target.value })} /></Field> : null}
 
       {isLinkedCoverage && linkedGroup ? <section className="shoot-schedule-group-shots">
         <header><div><strong>Shots</strong><span className="label-xs">{linkedGroupShots.length} {linkedGroupShots.length === 1 ? "shot" : "shots"}</span></div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => onAddGroupShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</Button></header>
-        {linkedGroupShots.length ? <div>{linkedGroupShots.map((shot) => <button className="label-s" type="button" key={shot.id} onClick={() => onEditLinkedShot(shot)}><span>{shot.shotNumber ?? ""}</span><strong>{shot.description}</strong><DsIcon name="caret-right" size={14} /></button>)}</div> : <p className="label-s">No shots in this group yet.</p>}
+        {linkedGroupShots.length ? <div>{linkedGroupShots.map((shot) => <button className="label-s" type="button" key={shot.id} onClick={() => onEditLinkedShot(shot)}><span>{shotNumbers.get(shot.id) ?? shot.shotNumber ?? ""}</span><strong>{shot.description}</strong><DsIcon name="caret-right" size={14} /></button>)}</div> : <p className="label-s">No shots in this group yet.</p>}
       </section> : null}
 
       <div className="shoot-form-grid two-column">
-        {!isCreativeEntry ? <Field label="Type"><BriskSelect<ScheduleType>
+        {!isCreativeEntry && !addKind ? <Field label="Type"><BriskSelect<ScheduleType>
           ariaLabel="Schedule item type"
           clearable={false}
           options={operationalTypeOptions.map((option) => ({ value: option.value, label: option.label, icon: option.icon }))}
@@ -8396,56 +8547,73 @@ function EntryModal({ draft, hideScheduling, compactShotDetails = false, days, e
           value={draft.type}
           onChange={(value) => { if (value) onChange({ ...draft, type: value, timeMode: "set" }); }}
         /></Field> : null}
-        <Field label="Shoot day"><BriskSelect<string>
-          ariaLabel="Shoot day"
-          clearable={false}
-          options={dayOptions}
-          placeholder="Choose shoot day"
-          value={draft.dayId ?? days[0]?.id ?? ""}
-          onChange={(value) => { if (value) onChange({ ...draft, dayId: value }); }}
-        /></Field>
+        {dayField}
+        {addKind ? locationField : null}
       </div>
 
       <div className="shoot-form-grid two-column shoot-entry-timing-grid">
         <div className="shoot-field">
-          {!isUnscheduled ? <><span className="label-xs-semibold">Start time</span><TimeSelect required value={draft.startTime} onChange={(value) => onChange({ ...draft, startTime: value, timeMode: "set" })} /></> : null}
+          {!isUnscheduled ? <><span className="label-xs-semibold">Start time</span>{startTimeInput}</> : null}
           {canBeUntimed && !draft.id ? <label className="shoot-unscheduled-checkbox label-s">
             <input type="checkbox" checked={isUnscheduled} onChange={(event) => onChange({ ...draft, startTime: event.target.checked ? "" : draft.startTime, timeMode: event.target.checked ? "unscheduled" : "set" })} />
             Add without a time
           </label> : null}
         </div>
-        <Field label="Duration"><DurationInput value={draft.durationMinutes} onChange={(durationMinutes) => onChange({ ...draft, durationMinutes })} /></Field>
+        {durationField}
       </div>
-      <Field label={isCreativeEntry ? "Location override" : "Location"}><BriskSelect<string>
-        ariaLabel={isCreativeEntry ? "Location override" : "Location"}
-        clearLabel={isCreativeEntry ? "Use Shot List location" : "No location"}
-        footerAction={{ label: "Create new location", icon: "plus", onSelect: onCreateLocation }}
-        options={locations.map((location) => ({ value: location.id, label: location.name }))}
-        placeholder={isCreativeEntry ? "Use Shot List location" : "No location"}
-        value={draft.locationId ?? ""}
-        onChange={(value) => onChange({ ...draft, locationId: value || undefined })}
-      /></Field>
+      {!addKind ? locationField : null}
       {isShot ? <section className="shoot-schedule-shot-details">
         <h3 className="headings-2xs-bold">Shot details</h3>
         <ShotDetailsForm compact draft={draft} locations={locations} projectId={projectId} onChange={onChange} onCreateLocation={onCreateLocation} />
       </section> : null}
       </>}
-      </div>
+      </div>);
+  return (
+    <ModalShell title={addKind ? "Add to shoot day" : title} onClose={onClose} footer={
+      <>
+        {draft.id ? <div className="shoot-entry-footer-actions">{confirmDelete ? <ConfirmationDialog title="Delete permanently?" tone="danger" cancelLabel="Keep it" confirmLabel="Yes, delete" onCancel={onCancelDelete} onConfirm={onDelete} /> : <>{!hideScheduling && canBeUntimed && !isUnscheduled ? <Button size="S" variant="secondary"  type="button" onClick={onUnschedule}>Unschedule item</Button> : null}<Button size="S" variant="danger"  type="button" onClick={onDelete}><DsIcon name="trash-simple" size={16} />Delete</Button></>}</div> : <span />}
+        <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!canSave} onClick={() => onSave(draft)}>{addKind === "group" ? "Add group" : addKind === "shot" ? "Add shot" : draft.id ? "Save changes" : isUnscheduled ? "Add shot" : "Add to schedule"}</Button></div>
+      </>
+    }>
+      {addKind && onAddKindChange ? <div className="shoot-entry-modal-form">
+        <Field label="Item type"><BriskSelect<DayAddKind>
+          ariaLabel="Item type" placeholder="Choose item type" clearable={false}
+          value={addKind} options={dayAddOptions} showSelectedIcon
+          onChange={(kind) => { if (kind) onAddKindChange(kind); }}
+        /></Field>
+        {fields}
+      </div> : fields}
     </ModalShell>
   );
 }
 
-function ShotDetailsForm({ compact = false, draft, locations, projectId, onChange, onCreateLocation }: { compact?: boolean; draft: EntryDraft; locations: ShootLocation[]; projectId: string; onChange: (draft: EntryDraft) => void; onCreateLocation: () => void }) {
-  const [showMoreOptions, setShowMoreOptions] = useState(Boolean(draft.cameraMovement || draft.cameraAngle || draft.lens || draft.camera || draft.interiorExterior || draft.gear?.length || draft.notes));
+function ShotDetailsForm({ detailedPlan = false, compact = false, autoFocus = true, draft, locations, projectId, onChange, onCreateLocation }: { detailedPlan?: boolean; compact?: boolean; autoFocus?: boolean; draft: EntryDraft; locations: ShootLocation[]; projectId: string; onChange: (draft: EntryDraft) => void; onCreateLocation: () => void }) {
+  const [showMoreOptions, setShowMoreOptions] = useState(Boolean((!compact && draft.cameraMovement) || (compact && draft.subject) || draft.cameraAngle || draft.lens || draft.camera || draft.interiorExterior || draft.gear?.length || (!compact && draft.notes)));
+  const technicalDetails = <>
+    <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={showMoreOptions} onClick={() => setShowMoreOptions((current) => !current)}>{showMoreOptions ? "Fewer details" : "More details"}<DsIcon name="caret-down" size={14} /></Button>
+    {showMoreOptions ? <>
+    <div className="shoot-shot-details-secondary">
+      {compact ? <Field label="Subject"><input placeholder="Person, product, place or activity" value={draft.subject ?? ""} onChange={(event) => onChange({ ...draft, subject: event.target.value })} /></Field> : <Field label="Camera approach"><ShotTaxonomySelect ariaLabel="Camera approach" customPlaceholder="Add a custom camera approach" options={cameraMovementOptions} placeholder="Camera approach" value={draft.cameraMovement} onChange={(value) => onChange({ ...draft, cameraMovement: value })} /></Field>}
+      <Field label="Camera angle"><BriskSelect ariaLabel="Camera angle" options={cameraAngleOptions.map((option) => ({ value: option, label: option }))} placeholder="Camera angle" value={draft.cameraAngle ?? ""} onChange={(value) => onChange({ ...draft, cameraAngle: value || undefined })} /></Field>
+      <Field label="Lens"><input list="shoot-shot-detail-lenses" placeholder="Lens or focal length" value={draft.lens ?? ""} onChange={(event) => onChange({ ...draft, lens: event.target.value })} /></Field>
+      <Field label="Camera"><input placeholder="Camera" value={draft.camera ?? ""} onChange={(event) => onChange({ ...draft, camera: event.target.value })} /></Field>
+      <Field label="Interior / Exterior"><BriskSelect ariaLabel="Interior or exterior" options={interiorExteriorOptions.map((option) => ({ value: option, label: option }))} placeholder="Interior / Exterior" value={draft.interiorExterior ?? ""} onChange={(value) => onChange({ ...draft, interiorExterior: value || undefined })} /></Field>
+    </div>
+    <fieldset className="shoot-shot-gear-options"><legend className="label-xs-semibold">Gear</legend><div>{gearOptions.map((option) => <label className="label-xs" key={option}><input type="checkbox" checked={draft.gear?.includes(option) ?? false} onChange={(event) => onChange({ ...draft, gear: event.target.checked ? [...(draft.gear ?? []), option] : (draft.gear ?? []).filter((item) => item !== option) })} />{option}</label>)}</div></fieldset>
+    {!compact ? <Field label="Notes"><textarea rows={3} placeholder="Creative direction, framing, props or practical instructions" value={draft.notes ?? ""} onChange={(event) => onChange({ ...draft, notes: event.target.value })} /></Field> : null}
+    </> : null}
+    <datalist id="shoot-shot-detail-lenses">{lensOptions.map((option) => <option value={option} key={option} />)}</datalist>
+  </>;
   if (compact) return <div className="shoot-shot-details-form is-compact">
-    <Field label="Shot"><input autoFocus required placeholder="Describe what needs to be captured…" value={draft.description} onChange={(event) => onChange({ ...draft, description: event.target.value })} /></Field>
+    <Field label="Shot"><input autoFocus={autoFocus} required placeholder="Describe what needs to be captured…" value={draft.description} onChange={(event) => onChange({ ...draft, description: event.target.value })} /></Field>
     <div className="shoot-shot-details-compact-grid">
       <Field label="Shot type"><ShotTaxonomySelect ariaLabel="Shot type" customPlaceholder="Add a custom shot type" options={shotCategoryOptions} placeholder="Shot type" value={draft.shotCategory} onChange={(value) => onChange({ ...draft, shotCategory: value })} /></Field>
       <Field label="Shot size"><BriskSelect ariaLabel="Shot size" options={shotSizeOptions.map((option) => ({ value: option, label: option }))} placeholder="Shot size" value={draft.shotSize ?? ""} onChange={(value) => onChange({ ...draft, shotSize: value || undefined })} /></Field>
-      <Field label="Camera"><ShotTaxonomySelect ariaLabel="Camera" customPlaceholder="Add a custom camera approach" options={cameraMovementOptions} placeholder="Camera" value={draft.cameraMovement} onChange={(value) => onChange({ ...draft, cameraMovement: value })} /></Field>
+      <Field label="Camera approach"><ShotTaxonomySelect ariaLabel="Camera approach" customPlaceholder="Add a custom camera approach" options={cameraMovementOptions} placeholder="Camera approach" value={draft.cameraMovement} onChange={(value) => onChange({ ...draft, cameraMovement: value })} /></Field>
       <Field label="Priority"><BriskSelect<ShotPriority> ariaLabel="Priority" clearable={false} searchable={false} options={shotPriorityOptions.map(({ value, label }) => ({ value, label }))} placeholder="Choose priority" value={normaliseShotPriority(draft.priority) ?? "Medium"} onChange={(value) => { if (value) onChange({ ...draft, priority: value }); }} /></Field>
       <div className="shoot-field"><span className="label-xs-semibold">Reference</span><ShotReferenceImagePicker compact entry={draft} projectId={projectId} onChange={(patch) => onChange({ ...draft, ...patch })} /></div>
     </div>
+    {detailedPlan ? technicalDetails : null}
     <Field label="Notes"><textarea rows={2} placeholder="Creative or practical notes" value={draft.notes ?? ""} onChange={(event) => onChange({ ...draft, notes: event.target.value })} /></Field>
   </div>;
   return <div className="shoot-shot-details-form">
@@ -8459,19 +8627,7 @@ function ShotDetailsForm({ compact = false, draft, locations, projectId, onChang
       <Field label="Shot size"><BriskSelect ariaLabel="Shot size" options={shotSizeOptions.map((option) => ({ value: option, label: option }))} placeholder="Shot size" value={draft.shotSize ?? ""} onChange={(value) => onChange({ ...draft, shotSize: value || undefined })} /></Field>
       <Field label="Est. filming time"><FilmingTimeInput value={draft.durationMinutes} onChange={(durationMinutes) => onChange({ ...draft, durationMinutes })} /></Field>
     </div>
-    <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={showMoreOptions} onClick={() => setShowMoreOptions((current) => !current)}>{showMoreOptions ? "Fewer details" : "More details"}<DsIcon name="caret-down" size={14} /></Button>
-    {showMoreOptions ? <>
-    <div className="shoot-shot-details-secondary">
-      <Field label="Camera approach"><ShotTaxonomySelect ariaLabel="Camera approach" customPlaceholder="Add a custom camera approach" options={cameraMovementOptions} placeholder="Camera approach" value={draft.cameraMovement} onChange={(value) => onChange({ ...draft, cameraMovement: value })} /></Field>
-      <Field label="Camera angle"><BriskSelect ariaLabel="Camera angle" options={cameraAngleOptions.map((option) => ({ value: option, label: option }))} placeholder="Camera angle" value={draft.cameraAngle ?? ""} onChange={(value) => onChange({ ...draft, cameraAngle: value || undefined })} /></Field>
-      <Field label="Lens"><input list="shoot-shot-detail-lenses" placeholder="Lens or focal length" value={draft.lens ?? ""} onChange={(event) => onChange({ ...draft, lens: event.target.value })} /></Field>
-      <Field label="Camera"><input placeholder="Camera" value={draft.camera ?? ""} onChange={(event) => onChange({ ...draft, camera: event.target.value })} /></Field>
-      <Field label="Interior / Exterior"><BriskSelect ariaLabel="Interior or exterior" options={interiorExteriorOptions.map((option) => ({ value: option, label: option }))} placeholder="Interior / Exterior" value={draft.interiorExterior ?? ""} onChange={(value) => onChange({ ...draft, interiorExterior: value || undefined })} /></Field>
-    </div>
-    <fieldset className="shoot-shot-gear-options"><legend className="label-xs-semibold">Gear</legend><div>{gearOptions.map((option) => <label className="label-xs" key={option}><input type="checkbox" checked={draft.gear?.includes(option) ?? false} onChange={(event) => onChange({ ...draft, gear: event.target.checked ? [...(draft.gear ?? []), option] : (draft.gear ?? []).filter((item) => item !== option) })} />{option}</label>)}</div></fieldset>
-    <Field label="Notes"><textarea rows={3} placeholder="Creative direction, framing, props or practical instructions" value={draft.notes ?? ""} onChange={(event) => onChange({ ...draft, notes: event.target.value })} /></Field>
-    </> : null}
-    <datalist id="shoot-shot-detail-lenses">{lensOptions.map((option) => <option value={option} key={option} />)}</datalist>
+    {technicalDetails}
   </div>;
 }
 
@@ -8493,7 +8649,15 @@ function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSa
   const isCustomCrewRole = isAddingCrewRole || (draft.type === "crew" && Boolean(draft.role) && !crewRoleOptions.some((role) => role === draft.role));
   return (
     <ModalShell title={isExistingContact ? "Confirm person details" : draft.id ? "Edit person" : "Create new contact"} description={isExistingContact ? "Contact details are reused. Confirm their role, call time and shoot days for this production." : "Keep only the details needed on the day."} onClose={onClose} footer={<>
-      {canDelete ? <div className="shoot-delete-confirm">{confirmDelete ? <ConfirmationDialog title={`Remove ${draft.name}?`} tone="danger" cancelLabel="Keep person" confirmLabel="Yes, remove" onCancel={() => setConfirmDelete(false)} onConfirm={onDelete} /> : <Button size="S" variant="danger"  type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</Button>}</div> : <span />}
+      {canDelete && <div className="shoot-remove-action">
+        <Button size="S" variant="ghost" type="button" onClick={() => setConfirmDelete(true)}>Remove from entire shoot</Button>
+        {confirmDelete && <ConfirmationDialog
+          title={`Remove ${draft.name} from the entire shoot?`}
+          description="This removes their shot and interview assignments across all shoot days. Their contact stays in People."
+          tone="danger" cancelLabel="Keep person" confirmLabel="Remove from shoot"
+          onCancel={() => setConfirmDelete(false)} onConfirm={onDelete}
+        />}
+      </div>}
       <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" onClick={() => onSave(draft)}>{isExistingContact ? "Add person" : isCreating ? "Create and add" : "Save person"}</Button></div>
     </>}>
       {isCreating ? <span className="shoot-contact-source-badge is-new label-xs-semibold">New person</span> : null}
@@ -8526,7 +8690,7 @@ function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSa
   );
 }
 
-function ExistingPersonPopover({ anchor, existing, addedPersonIds, onAdd, onClose, onCreate }: { anchor: HTMLButtonElement | null; existing: ShootPerson[]; addedPersonIds: string[]; onAdd: (person: ShootPerson) => void; onClose: () => void; onCreate: () => void }) {
+function ExistingPersonPopover({ title, anchor, existing, addedPersonIds, onAdd, onClose, onCreate }: { title: string; anchor: HTMLButtonElement | null; existing: ShootPerson[]; addedPersonIds: string[]; onAdd: (person: ShootPerson) => void; onClose: () => void; onCreate: () => void }) {
   const [query, setQuery] = useState("");
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({});
   const popoverRef = useRef<HTMLElement>(null);
@@ -8570,8 +8734,8 @@ function ExistingPersonPopover({ anchor, existing, addedPersonIds, onAdd, onClos
   }, [anchor, onClose]);
 
   if (typeof document === "undefined") return null;
-  return createPortal(<section className="shoot-person-search-popover" ref={popoverRef} style={popoverStyle} role="dialog" aria-label="Add new contact" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); onClose(); } }}>
-    <header><h2 className="headings-xs-bold">Add new contact</h2><button className="team-modal-close" type="button" aria-label="Close contact picker" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header>
+  return createPortal(<section className="shoot-person-search-popover" ref={popoverRef} style={popoverStyle} role="dialog" aria-label={title} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); onClose(); } }}>
+    <header><h2 className="headings-xs-bold">{title}</h2><button className="team-modal-close" type="button" aria-label="Close contact picker" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header>
     <label className="shoot-person-search-field"><span className="sr-only">Search people</span><DsIcon name="search" size={16} /><input ref={searchRef} type="search" placeholder="Search by name, role or email…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
     <div className="shoot-person-search-results">
       <span className="shoot-person-search-label label-xs-semibold">{normalisedQuery ? "Results from Brisk" : "Add from Brisk"}</span>
@@ -8587,7 +8751,7 @@ function ExistingPersonPopover({ anchor, existing, addedPersonIds, onAdd, onClos
   </section>, anchor?.closest("dialog") ?? document.body);
 }
 
-function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { activeDayId: string; days: ShootDay[]; documents: ShootDocument[]; onChange: (documents: ShootDocument[]) => void; onClose: () => void }) {
+function DocumentsModal({ activeDayId, days, documents, isStudioInternal, onChange, onClose }: { isStudioInternal: boolean; activeDayId: string; days: ShootDay[]; documents: ShootDocument[]; onChange: (update: (current: ShootDocument[]) => ShootDocument[]) => void; onClose: () => void }) {
   const { confirm, confirmationDialog } = useConfirmation();
   const [isAddingLink, setIsAddingLink] = useState(false);
   const [linkDraft, setLinkDraft] = useState("");
@@ -8614,25 +8778,27 @@ function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { a
       url: linkDraft.trim(),
       shootDayIds: activeDayId ? [activeDayId] : [],
     };
-    onChange([...documents, document]);
+    onChange((current) => [...current, document]);
     resetLinkDraft();
   };
   const renameDocument = (documentId: string) => {
     const name = renameDraft.trim();
-    if (name) onChange(documents.map((document) => document.id === documentId ? { ...document, name } : document));
+    if (name) onChange((current) => current.map((document) => document.id === documentId ? { ...document, name } : document));
     setRenamingDocumentId(null);
     setRenameDraft("");
   };
   const shareDocument = (document: ShootDocument) => {
-    void navigator.clipboard.writeText(document.url).then(
-      () => setActionMessage(`Share link copied for ${document.name}.`),
+    void navigator.clipboard.writeText(new URL(document.url, window.location.origin).href).then(
+      () => setActionMessage(document.url.startsWith("/shoot-file?")
+        ? "Link copied. Uploaded files open in this browser. Use an external file link to share across devices."
+        : `Share link copied for ${document.name}.`),
       () => setActionMessage("Could not copy the share link."),
     );
   };
   const addComment = (documentId: string) => {
     const comment = commentDraft.trim();
     if (!comment) return;
-    onChange(documents.map((document) => document.id === documentId ? { ...document, comments: [...(document.comments ?? []), comment] } : document));
+    onChange((current) => current.map((document) => document.id === documentId ? { ...document, comments: [...(document.comments ?? []), comment] } : document));
     setCommentDraft("");
     setCommentDocumentId(null);
     setActionMessage("Comment added.");
@@ -8647,28 +8813,36 @@ function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { a
           <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => setIsAddingLink(true)}><DsIcon name="link" size={16} />Add link</Button>
         </div> : null}
       </div>
-      <input ref={uploadInputRef} className="sr-only" type="file" multiple accept=".pdf,.doc,.docx,.rtf,.txt,.xls,.xlsx,.ppt,.pptx,application/pdf" onChange={(event) => {
+      <input ref={uploadInputRef} className="sr-only" type="file" multiple accept=".pdf,.doc,.docx,.rtf,.txt,.xls,.xlsx,.ppt,.pptx,application/pdf" onChange={async (event) => {
         const files = Array.from(event.target.files ?? []);
-        if (files.length) onChange([...documents, ...files.map((file, index): ShootDocument => ({ id: `document-${Date.now()}-${index}`, name: file.name, kind: "pdf", type: "General", url: URL.createObjectURL(file), shootDayIds: activeDayId ? [activeDayId] : [] }))]);
         event.currentTarget.value = "";
+        if (!files.length) return;
+        const results = await Promise.allSettled(files.map(async (file): Promise<ShootDocument> => ({
+          id: crypto.randomUUID(), name: file.name, kind: "pdf", type: "General",
+          url: await storeShootFile(file), shootDayIds: activeDayId ? [activeDayId] : [],
+        })));
+        const uploaded = results.flatMap((result) => result.status === "fulfilled" ? [result.value] : []);
+        if (uploaded.length) onChange((current) => [...current, ...uploaded]);
+        const failed = files.filter((_, index) => results[index].status === "rejected");
+        setActionMessage(failed.length ? `Could not save ${failed.map((file) => file.name).join(", ")}. Try again or add a link.` : "");
       }} />
       {documents.length ? <div className="shoot-documents-window-list">{documents.map((document) => <div className="shoot-document-list-item" key={document.id}>
         <article>
           <span className="shoot-document-file-icon"><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={18} /></span>
           <div className="shoot-document-copy">
             {renamingDocumentId === document.id ? <input className="shoot-document-rename-input label-s-semibold" autoFocus aria-label={`Rename ${document.name}`} value={renameDraft} onChange={(event) => setRenameDraft(event.target.value)} onBlur={() => renameDocument(document.id)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); if (event.key === "Escape") { setRenamingDocumentId(null); setRenameDraft(""); } }} /> : <strong className="label-s-semibold">{document.name}</strong>}
-            <span className="label-xs">{document.kind === "link" ? "Link" : document.type ?? "Document"}{formatDocumentDays(document.shootDayIds, days) ? ` · ${formatDocumentDays(document.shootDayIds, days)}` : ""}{document.comments?.length ? ` · ${document.comments.length} ${document.comments.length === 1 ? "comment" : "comments"}` : ""}</span>
+            <span className="label-xs">{document.kind === "link" ? "Link" : document.type ?? "Document"}{formatDocumentDays(document.shootDayIds, days) ? ` · ${formatDocumentDays(document.shootDayIds, days)}` : ""}{isStudioInternal && document.comments?.length ? ` · ${document.comments.length} ${document.comments.length === 1 ? "comment" : "comments"}` : ""}</span>
           </div>
           <div className="media-asset-actions is-compact shoot-document-actions" aria-label={`Actions for ${document.name}`}>
             <a className="media-icon-button" href={document.url} target="_blank" rel="noreferrer" aria-label={`Open ${document.name}`} data-tooltip="Open" title="Open"><DsIcon name="eye" size={16} /></a>
-            <a className="media-icon-button" href={document.url} download={document.name} aria-label={`Download ${document.name}`} data-tooltip="Download" title="Download"><DsIcon name="download" size={16} /></a>
+            <a className="media-icon-button" {...shootDownloadProps(document.url, document.name)} aria-label={`Download ${document.name}`} data-tooltip="Download" title="Download"><DsIcon name="download" size={16} /></a>
             <button className="media-icon-button" type="button" aria-label={`Share ${document.name}`} data-tooltip="Share" title="Share" onClick={() => shareDocument(document)}><DsIcon name="link" size={16} /></button>
-            <button className="media-icon-button" type="button" aria-label={`Comment on ${document.name}`} data-tooltip="Comment" title="Comment" onClick={() => { setCommentDocumentId((current) => current === document.id ? null : document.id); setCommentDraft(""); }}><DsIcon name="chat-circle" size={16} />{document.comments?.length ? <span className="media-comment-count label-xs-semibold">{document.comments.length}</span> : null}</button>
+            {isStudioInternal && <button className="media-icon-button" type="button" aria-label={`Comment on ${document.name}`} data-tooltip="Comment" title="Comment" onClick={() => { setCommentDocumentId((current) => current === document.id ? null : document.id); setCommentDraft(""); }}><DsIcon name="chat-circle" size={16} />{document.comments?.length ? <span className="media-comment-count label-xs-semibold">{document.comments.length}</span> : null}</button>}
             <button className="media-icon-button" type="button" aria-label={`Rename ${document.name}`} data-tooltip="Rename" title="Rename" onClick={() => { setRenamingDocumentId(document.id); setRenameDraft(document.name); }}><DsIcon name="pencil-simple" size={16} /></button>
-            <button className="media-icon-button" type="button" aria-label={`Delete ${document.name}`} data-tooltip="Delete" title="Delete" onClick={async () => { if (await confirm({ title: `Delete ${document.name}?`, tone: "danger", confirmLabel: "Delete document" })) onChange(documents.filter((item) => item.id !== document.id)); }}><DsIcon name="trash" size={16} /></button>
+            <button className="media-icon-button" type="button" aria-label={`Delete ${document.name}`} data-tooltip="Delete" title="Delete" onClick={async () => { if (await confirm(documentRemovalPrompt(document))) onChange((current) => current.filter((item) => item.id !== document.id)); }}><DsIcon name="trash" size={16} /></button>
           </div>
         </article>
-        {commentDocumentId === document.id ? <div className="shoot-document-comment-form">
+        {isStudioInternal && commentDocumentId === document.id ? <div className="shoot-document-comment-form">
           <label className="shoot-field"><span className="label-xs-semibold">Comment</span><textarea autoFocus rows={2} placeholder="Add a comment…" value={commentDraft} onChange={(event) => setCommentDraft(event.target.value)} /></label>
           <div className="shoot-document-add-actions"><Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => { setCommentDocumentId(null); setCommentDraft(""); }}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="button" disabled={!commentDraft.trim()} onClick={() => addComment(document.id)}>Add comment</Button></div>
         </div> : null}
@@ -8677,7 +8851,7 @@ function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { a
         <Field label="Link"><input autoFocus type="url" placeholder="https://" value={linkDraft} onChange={(event) => setLinkDraft(event.target.value)} /></Field>
         <div className="shoot-document-add-actions"><Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={resetLinkDraft}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="button" disabled={!linkDraft.trim()} onClick={addLink}>Add link</Button></div>
       </div> : null}
-      <span className="sr-only" role="status" aria-live="polite">{actionMessage}</span>
+      <span className={actionMessage ? "label-s" : "sr-only"} role="status">{actionMessage}</span>
     </div>
   {confirmationDialog}</ModalShell>;
 }
@@ -8701,23 +8875,27 @@ function formatDocumentDays(shootDayIds: ShootDayAssignment, days: ShootDay[]) {
 function LocationModal({ draft, days, onChange, onClose, onDelete, onSave }: { draft: LocationDraft; days: ShootDay[]; onChange: (draft: LocationDraft) => void; onClose: () => void; onDelete: () => void; onSave: (draft: LocationDraft) => void }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const locationValue = draft.address || draft.mapLink || "";
-  const selectedLocationName = draft.name.trim() || (/^https?:\/\//iu.test(locationValue.trim()) ? "Google Maps location" : "");
+
   return (
     <ModalShell compact title={draft.id ? "Edit location" : "Add location"} onClose={onClose} footer={<>
-      {draft.id ? <div className="shoot-delete-confirm">{confirmDelete ? <ConfirmationDialog title={`Remove ${draft.name}?`} tone="danger" cancelLabel="Keep location" confirmLabel="Yes, remove" onCancel={() => setConfirmDelete(false)} onConfirm={onDelete} /> : <Button size="S" variant="danger"  type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</Button>}</div> : <span />}
+      {draft.id && <div className="shoot-remove-action">
+        <Button size="S" variant="ghost" onClick={() => setConfirmDelete(true)}>Remove from entire shoot</Button>
+        {confirmDelete && <ConfirmationDialog title={`Remove ${draft.name} from the entire shoot?`} description="This clears this location from all shoot days and schedule items that use it." tone="danger" cancelLabel="Keep location" confirmLabel="Remove location" onCancel={() => setConfirmDelete(false)} onConfirm={onDelete} />}
+      </div>}
       <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" disabled={!locationValue.trim()} onClick={() => onSave(draft)}>Save location</Button></div>
     </>}>
-      <div className="shoot-preproduction-field">
-        <AddressAutocomplete ariaLabel="Search Google Maps or paste a link" draft={draft} onChange={onChange} placeholder="Search Google Maps or paste a link" />
-      </div>
-      {selectedLocationName ? <ul className="shoot-quick-start-location-list" aria-label="Selected location"><li><span className="shoot-quick-start-location-icon" aria-hidden="true"><DsIcon name="push-pin-simple" size={16} /></span><span><strong>{selectedLocationName}</strong><a className="shoot-location-link label-xs" href={getMapsUrl(locationValue)} target="_blank" rel="noreferrer">{getMapsLinkLabel(draft.address || locationValue)}</a></span></li></ul> : null}
+      <Input label="Location name" value={draft.name} onChange={(event) => onChange({ ...draft, name: event.target.value })} />
+      <Field label="Address or map link">
+        <AddressAutocomplete autoFocus={false} preserveName ariaLabel="Address or map link" draft={draft} onChange={onChange} placeholder="Search Google Maps or paste a link" />
+      </Field>
       <Field label="Shoot days"><ShootDayMultiSelect days={days} value={draft.shootDayIds} onChange={(shootDayIds) => onChange({ ...draft, shootDayIds })} /></Field>
     </ModalShell>
   );
 }
 
-function AddressAutocomplete({ ariaLabel = "Location address or Google Maps link", autoFocus = true, disabled = false, draft, onChange, onSubmit, placeholder = "Start typing an address" }: {
+function AddressAutocomplete({ ariaLabel = "Location address or Google Maps link", autoFocus = true, disabled = false, preserveName = false, draft, onChange, onSubmit, placeholder = "Start typing an address" }: {
   ariaLabel?: string;
+  preserveName?: boolean;
   autoFocus?: boolean;
   disabled?: boolean;
   draft: LocationDraft;
@@ -8766,7 +8944,7 @@ function AddressAutocomplete({ ariaLabel = "Location address or Google Maps link
       onChange={(event) => {
         const value = event.target.value;
         const nextIsMapLink = /^https?:\/\//iu.test(value.trim());
-        onChange({ ...draft, name: "", address: nextIsMapLink ? "" : value, mapLink: nextIsMapLink ? value : undefined });
+        onChange({ ...draft, name: preserveName ? draft.name : "", address: nextIsMapLink ? "" : value, mapLink: nextIsMapLink ? value : undefined });
         setIsOpen(!nextIsMapLink);
         setActiveIndex(0);
       }}
@@ -8921,7 +9099,7 @@ function TimeSelect({ value, onChange, onBlur, onFocus, onKeyDown, disabled, ...
 }
 
 function DurationInput({ value, onChange }: { value: number; onChange: (value: number) => void }) {
-  const options = Array.from({ length: 48 }, (_, index) => (index + 1) * 5);
+  const options = durationMinutesOptions;
   const [inputValue, setInputValue] = useState(value ? String(value) : "");
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -9138,7 +9316,8 @@ function locationToDraft(location: ShootLocation): LocationDraft {
   return { ...location };
 }
 
-function normaliseSimpleShootCallSheet(callSheet: CallSheet): CallSheet {
+function normaliseSimpleShootCallSheet(stored: CallSheet): CallSheet {
+  const callSheet = normaliseDefaultShotGroups(stored);
   const legacyPracticalInfo = callSheet.practicalInfo;
   const notes = [callSheet.notes.trim(), legacyPracticalInfo.access.trim()].filter(Boolean).join("\n\n");
   const normalisedShotEntries = callSheet.entries
@@ -9173,11 +9352,12 @@ function normaliseSimpleShootCallSheet(callSheet: CallSheet): CallSheet {
   return {
     ...callSheet,
     notes,
+    documents: normaliseShootDocuments(callSheet.documents),
     shotGroups,
     days: callSheet.days.map((day) => ({ ...day, notes: { ...emptyShootDayNotes(), ...day.notes } })),
     entries: [
       ...existingScheduleEntries,
-      ...shots.map((shot) => ({ ...shot, dayId: "", startTime: "", durationMinutes: 0 })),
+      ...shots.map((shot) => shot.shotGroupId === null ? shot : { ...shot, dayId: "", startTime: "", durationMinutes: 0 }),
       ...migratedCoverageEntries,
     ],
     people: callSheet.people.map((person) => ({ ...person, showContactDetails: person.showContactDetails === true, assignments: getShootAssignments(person) })),
@@ -9210,7 +9390,7 @@ function ensureShotGroups(shots: ProductionEntry[], storedGroups: ShotGroup[]) {
     let group = groupByName.get(normaliseIdentity(groupName));
     if (!group) {
       group = {
-        id: `shot-group-${normaliseIdentity(groupName).replaceAll(" ", "-") || groups.length + 1}`,
+        id: defaultShotGroupId(groupName, groups.length + 1),
         name: groupName,
         description: inferShotGroupDescription(groupName),
         subject: shot.subject,
@@ -9226,24 +9406,6 @@ function ensureShotGroups(shots: ProductionEntry[], storedGroups: ShotGroup[]) {
     return { ...shot, shotGroupId: group.id };
   });
   return { groups, shots: nextShots };
-}
-
-function inferShotGroupName(shot: ProductionEntry) {
-  if (shot.scriptSection?.trim()) return shot.scriptSection.trim();
-  const value = `${shot.description} ${shot.shotCategory ?? ""}`.toLocaleLowerCase("en-AU");
-  if (/interview|founder|piece to camera|portrait|talking head/u.test(value)) return "Founder interview";
-  if (/product|demonstration|workflow|screen|detail/u.test(value)) return "Product demonstration";
-  if (/establish|exterior|location|signage|atmosphere/u.test(value)) return "Establishing coverage";
-  if (/team|collaboration|workplace|office|b-roll|cutaway|hands/u.test(value)) return "Team and workplace B-roll";
-  return "Additional coverage";
-}
-
-function inferShotGroupDescription(groupName: string) {
-  if (groupName === "Founder interview") return "Primary frame, alternate angle, reactions and cutaways.";
-  if (groupName === "Product demonstration") return "Product workflow, screen detail and supporting inserts.";
-  if (groupName === "Establishing coverage") return "Location, signage and atmosphere that set the scene.";
-  if (groupName === "Team and workplace B-roll") return "Natural team activity and workplace coverage.";
-  return "Extra shots to capture if the day allows.";
 }
 
 function normaliseShotPriority(value: unknown): ShotPriority | undefined {
@@ -9355,15 +9517,6 @@ function getDisplayedWeather(weather: string, hasShootDetails: boolean) {
   return weather.startsWith("Weather will appear") ? "22°C · Partly cloudy · 10% rain" : weather;
 }
 
-function suggestEmergencyInfo(location?: ShootLocation): SafetyEmergencyInfo {
-  const address = location?.address.toLowerCase() ?? "";
-  if (address.includes("vic")) return { hospitalName: "The Royal Melbourne Hospital Emergency Department", hospitalAddress: "300 Grattan Street, Parkville VIC 3050", hospitalPhone: "03 9342 7000", travelTime: "Approximately 14 minutes away", emergencyNumber: "000", confirmed: false, needsReview: false };
-  if (address.includes("qld")) return { hospitalName: "Royal Brisbane and Women's Hospital Emergency Department", hospitalAddress: "Butterfield Street, Herston QLD 4029", hospitalPhone: "07 3646 8111", travelTime: "Approximately 16 minutes away", emergencyNumber: "000", confirmed: false, needsReview: false };
-  if (address.includes("sa ")) return { hospitalName: "Royal Adelaide Hospital Emergency Department", hospitalAddress: "Port Road, Adelaide SA 5000", hospitalPhone: "08 7074 0000", travelTime: "Approximately 12 minutes away", emergencyNumber: "000", confirmed: false, needsReview: false };
-  if (address.includes("thirroul") || address.includes("wollongong")) return { hospitalName: "Wollongong Hospital Emergency Department", hospitalAddress: "348-352 Crown Street, Wollongong NSW 2500", hospitalPhone: "02 4222 5000", travelTime: "Approximately 18 minutes away", emergencyNumber: "000", confirmed: false, needsReview: false };
-  return { hospitalName: "Sydney Hospital Emergency Department", hospitalAddress: "8 Macquarie Street, Sydney NSW 2000", hospitalPhone: "02 9382 7111", travelTime: "Approximately 12 minutes away", emergencyNumber: "000", confirmed: false, needsReview: false };
-}
-
 function emptyEmergencyInfo(): SafetyEmergencyInfo {
   return {
     hospitalName: "",
@@ -9381,10 +9534,10 @@ function markEmergencyDetailsForReview(info?: SafetyEmergencyInfo): SafetyEmerge
   return { ...info, confirmed: false, needsReview: true };
 }
 
-function createBriskShootPlan(current: CallSheet, project: Project, answers: QuickStartAnswers, interviewLed: boolean) {
+function createShootPlanFromAnswers(current: CallSheet, project: Project, answers: QuickStartAnswers, interviewLed: boolean, source: "manual" | "ai") {
   const confirmedCaptures = answers.captures.filter((capture): capture is ConfirmedQuickStartCapture => capture !== "not-confirmed");
   const captures: ConfirmedQuickStartCapture[] = confirmedCaptures.length ? confirmedCaptures : [interviewLed ? "interviews" : "scripted"];
-  const shouldAddQuestions = captures.includes("interviews");
+  const shouldAddQuestions = source === "ai" && captures.includes("interviews");
   const suggestionStatus = "suggested" as const;
   const now = Date.now();
   const addedPeople = parseQuickStartPeople(answers.people).map<ShootPerson>((person, index) => ({
@@ -9414,7 +9567,7 @@ function createBriskShootPlan(current: CallSheet, project: Project, answers: Qui
   } : undefined;
   const targetTalent = addedPeople[0] ?? existingTalent ?? provisionalTalent;
   const subject = targetTalent?.name ?? (captures.length === 1 && captures[0] === "b-roll" ? "Product and team" : "Primary subject");
-  const shotTemplates = getBriskShotTemplates(captures, subject);
+  const shotTemplates = source === "ai" ? getBriskShotTemplates(captures, subject) : [];
   const questionTemplates = shouldAddQuestions ? [
     "What problem were you trying to solve?",
     "What changed after you started using the product?",
@@ -9443,8 +9596,8 @@ function createBriskShootPlan(current: CallSheet, project: Project, answers: Qui
     durationMinutes: 0,
     description,
     type: "shot",
-    personIds: targetTalent ? [targetTalent.id] : [],
-    subject,
+    personIds: source === "ai" && targetTalent ? [targetTalent.id] : [],
+    subject: source === "ai" ? subject : undefined,
     captured: false,
     priority: "Critical",
   }));
@@ -9466,7 +9619,7 @@ function createBriskShootPlan(current: CallSheet, project: Project, answers: Qui
     suggestionStatus,
   }));
   const generatedQuestions: InterviewQuestion[] = nextQuestions.map((question, index) => ({ id: `question-brisk-${now}-${index}`, question, personId: targetTalent?.id, shootDayIds: "all", createdBy: "brisk-ai", suggestionStatus }));
-  const groupedPlan = ensureShotGroups([...existingShots, ...mustHaveShots, ...generatedShots], current.shotGroups ?? []);
+  const groupedPlan = source === "ai" ? ensureShotGroups([...existingShots, ...mustHaveShots, ...generatedShots], current.shotGroups ?? []) : null;
   const locationInput = answers.locationAddress.trim();
   const locationInputIsLink = /^https?:\/\//iu.test(locationInput);
   const locationName = answers.locationName.trim() || deriveLocationName(locationInput);
@@ -9493,7 +9646,7 @@ function createBriskShootPlan(current: CallSheet, project: Project, answers: Qui
       ? current.days.map((day, index) => index === blankDayIndex ? { ...day, date: answers.shootDate } : day)
       : [...current.days, { ...createEmptyShootDay(`day-quick-start-${now}`), label: `Day ${current.days.length + 1}`, date: answers.shootDate }];
   }
-  nextDays = suggestPrimaryLocations(nextDays, nextLocations);
+  if (source === "ai") nextDays = suggestPrimaryLocations(nextDays, nextLocations);
   const nextPeople = [...current.people, ...addedPeople, ...(provisionalTalent ? [provisionalTalent] : [])];
   return {
     callSheet: {
@@ -9501,11 +9654,11 @@ function createBriskShootPlan(current: CallSheet, project: Project, answers: Qui
       days: nextDays,
       locations: nextLocations,
       people: nextPeople,
-      shotGroups: groupedPlan.groups,
-      entries: ensureShotNumbers({
+      shotGroups: groupedPlan?.groups ?? current.shotGroups,
+      entries: groupedPlan ? ensureShotNumbers({
         ...current,
         entries: [...current.entries.filter((entry) => entry.type !== "shot"), ...groupedPlan.shots],
-      }).entries,
+      }).entries : [...current.entries, ...mustHaveShots],
       questions: [...current.questions, ...generatedQuestions],
     },
     shotCount: mustHaveShots.length + generatedShots.length,
@@ -9547,7 +9700,8 @@ function parseQuickStartList(value: string) {
 
 function createInitialQuickStartAnswers(briefCaptures: ConfirmedQuickStartCapture[] | null): QuickStartAnswers {
   return {
-    captures: briefCaptures ?? ["not-confirmed"],
+    captures: briefCaptures ?? [],
+    capturesEdited: false,
     people: "",
     peopleNotConfirmed: false,
     locationName: "",
@@ -9558,10 +9712,6 @@ function createInitialQuickStartAnswers(briefCaptures: ConfirmedQuickStartCaptur
     mustHaveShots: "",
     letBriskSuggestShots: false,
   };
-}
-
-function areQuickStartCapturesEqual(left: readonly QuickStartCapture[], right: readonly QuickStartCapture[]) {
-  return left.length === right.length && left.every((capture) => right.includes(capture));
 }
 
 function quickStartAnswersStorageKey(projectId: string) {
@@ -9586,7 +9736,9 @@ function parseQuickStartAnswers(value: string | null): QuickStartAnswers | null 
       ? ["not-confirmed"]
       : [...new Set(validCaptures)];
     return {
-      captures: selectedCaptures.length ? selectedCaptures : ["not-confirmed"],
+      captures: selectedCaptures,
+      // Older drafts also used "not-confirmed" as the untouched initial value.
+      capturesEdited: answers.capturesEdited ?? selectedCaptures.some((capture) => capture !== "not-confirmed"),
       people: typeof answers.people === "string" ? answers.people : "",
       peopleNotConfirmed: answers.peopleNotConfirmed === true,
       locationName: typeof answers.locationName === "string" ? answers.locationName : "",
@@ -9667,20 +9819,66 @@ function formatShootAccessLevel(value: ShootAccessLevel) {
   return "View only";
 }
 
-function getMissingCallSheetDetails(callSheet: CallSheet) {
-  const day = callSheet.days[0];
+function getMissingDayDetails(callSheet: CallSheet, day?: ShootDay) {
   const location = callSheet.locations.find((item) => item.id === day?.primaryLocationId);
-  const contactPhone = getContactPhone(callSheet.onTheDayContact) || callSheet.people.find((person) => callSheet.onTheDayContact.startsWith(person.name))?.phone.trim();
   return [
     !day?.date ? "Shoot date" : "",
     !day?.generalCallTime ? "General call time" : "",
     !location || !(location.address.trim() || location.mapLink?.trim()) ? "Primary location" : "",
-    !callSheet.onTheDayContact.trim() || !contactPhone ? "On-the-day contact and phone number" : "",
   ].filter(Boolean);
+}
+
+function hasProductionContact(callSheet: CallSheet) {
+  const contact = callSheet.onTheDayContact.trim();
+  return Boolean(contact && (getContactPhone(contact) || callSheet.people.find((person) => contact.startsWith(person.name))?.phone.trim()));
+}
+
+function getMissingCallSheetDetails(callSheet: CallSheet, day?: ShootDay) {
+  const missing = getMissingDayDetails(callSheet, day);
+  if (!hasProductionContact(callSheet)) missing.push("On-the-day contact and phone number");
+  return missing;
 }
 
 function getShootAssignments(person: ShootPerson): ShootAssignment[] {
   return person.assignments?.length ? person.assignments : [{ id: `assignment-${person.id}`, type: person.type, role: person.role, callTime: person.callTime, shootDayIds: person.shootDayIds }];
+}
+
+function withoutShootPerson(current: CallSheet, id: string): CallSheet {
+  const removedPerson = current.people.find((person) => person.id === id);
+  if (!removedPerson) return current;
+  const emergencyContact = current.practicalInfo.emergencyContact;
+  const phoneDigits = removedPerson.phone.replace(/\D/g, "");
+  const removeEmergencyContact = emergencyContact.split(" · ")[0].trim() === removedPerson.name
+    || Boolean(phoneDigits && emergencyContact.replace(/\D/g, "").includes(phoneDigits));
+  return {
+    ...current,
+    onTheDayContact: current.onTheDayContact.split(" · ")[0] === removedPerson.name ? "" : current.onTheDayContact,
+    practicalInfo: removeEmergencyContact ? { ...current.practicalInfo, emergencyContact: "" } : current.practicalInfo,
+    people: current.people.filter((person) => person.id !== id),
+    entries: current.entries.map((entry) => ({ ...entry, personIds: entry.personIds.filter((personId) => personId !== id) })),
+    questions: current.questions.map((question) => question.personId === id
+      ? { ...question, personId: undefined, unassignedDayIds: undefined } : question),
+  };
+}
+
+function withoutShootLocation(current: CallSheet, locationId: string): CallSheet {
+  return {
+    ...current,
+    locations: current.locations.filter((location) => location.id !== locationId),
+    shotGroups: current.shotGroups?.map((group) => group.locationId === locationId ? { ...group, locationId: undefined } : group),
+    days: current.days.map((day) => day.primaryLocationId === locationId
+      ? { ...day, primaryLocationId: "", safetyEmergency: markEmergencyDetailsForReview(day.safetyEmergency) } : day),
+    entries: current.entries.map((entry) => entry.locationId === locationId ? { ...entry, locationId: undefined } : entry),
+  };
+}
+
+function rosterAssignments(person: ShootPerson, shootDayIds: ShootDayAssignment): ShootAssignment[] {
+  return getShootAssignments(person).map((assignment, index) => {
+    if (index === 0) return { ...assignment, type: person.type, role: person.role.trim(), callTime: person.callTime, shootDayIds };
+    if (shootDayIds === "all") return assignment;
+    const days = assignment.shootDayIds === "all" ? shootDayIds : assignment.shootDayIds.filter((id) => shootDayIds.includes(id));
+    return { ...assignment, shootDayIds: days };
+  });
 }
 
 function emptyShootDayNotes(): ShootDayNotes {
@@ -9762,61 +9960,8 @@ function shootSetupStorageKey(projectId: string) {
   return `brisk-shoot-guided-setup-${projectId}-v1`;
 }
 
-function shootWorkflowSetupStorageKey(projectId: string) {
+export function shootWorkflowSetupStorageKey(projectId: string) {
   return `brisk-shoot-workflow-setup-${projectId}-v1`;
-}
-
-function shootPlanningReadinessStorageKey(projectId: string) {
-  return `brisk-shoot-planning-readiness-${projectId}-v1`;
-}
-
-function createEmptyPlanningReadinessState(projectId: string): PlanningReadinessState {
-  return { version: 1, projectId, sections: {} };
-}
-
-function parsePlanningReadinessState(rawValue: string | null, projectId: string): PlanningReadinessState {
-  if (!rawValue) return createEmptyPlanningReadinessState(projectId);
-  try {
-    const value: unknown = JSON.parse(rawValue);
-    if (!value || typeof value !== "object") return createEmptyPlanningReadinessState(projectId);
-    const state = value as { version?: unknown; sections?: unknown };
-    if (state.version !== 1 || !state.sections || typeof state.sections !== "object") return createEmptyPlanningReadinessState(projectId);
-    const rawSections = state.sections as Record<string, unknown>;
-    const sections: PlanningReadinessState["sections"] = {};
-    const sectionIds: StoredReadyShootSection[] = ["shots", "questions", "references", "locations", "people"];
-    sectionIds.forEach((section) => {
-      const valueForSection = rawSections[section];
-      if (!valueForSection || typeof valueForSection !== "object") return;
-      const record = valueForSection as Partial<PlanningReadinessRecord>;
-      if (typeof record.confirmedAt !== "string" || typeof record.confirmedFingerprint !== "string") return;
-      sections[section] = { confirmedAt: record.confirmedAt, confirmedFingerprint: record.confirmedFingerprint };
-    });
-    return { version: 1, projectId, sections };
-  } catch {
-    return createEmptyPlanningReadinessState(projectId);
-  }
-}
-
-function isReadyShootSection(section: ShootWorkspaceSection): section is ReadyShootSection {
-  return section === "shots"
-    || section === "questions"
-    || section === "references"
-    || section === "schedule"
-    || section === "locations"
-    || section === "people";
-}
-
-function getNextReadinessDestination(section: ReadyShootSection, modules: ShootPlanningModule[], usesCallSheetOnSet: boolean): { icon: DsIconName; label: string; section: ShootWorkspaceSection } | null {
-  if (section === "shots") {
-    if (modules.includes("interview-questions")) return { icon: "quotes", label: "View Interview Questions", section: "questions" };
-    if (modules.includes("visual-references")) return { icon: "image-square", label: "View Visual References", section: "references" };
-    if (modules.includes("schedule")) return { icon: "clock-clockwise", label: "View Schedule", section: "schedule" };
-  }
-  if ((section === "questions" || section === "references") && modules.includes("schedule")) return { icon: "clock-clockwise", label: "View Schedule", section: "schedule" };
-  if (section === "schedule" && usesCallSheetOnSet) return { icon: "file-text", label: "View Call Sheet", section: "call-sheet" };
-  if (section === "locations") return { icon: "users-three", label: "View People", section: "people" };
-  if (section === "people" && usesCallSheetOnSet) return { icon: "file-text", label: "View Call Sheet", section: "call-sheet" };
-  return null;
 }
 
 function getDefaultShootPlanningModules(includeInterviewQuestions: boolean): ShootPlanningModule[] {
@@ -9835,7 +9980,7 @@ function createInitialShootWorkflowSetup(callSheet: CallSheet, includeInterviewQ
   };
 }
 
-function parseShootWorkflowSetup(rawValue: string | null): ShootWorkflowSetup | null {
+export function parseShootWorkflowSetup(rawValue: string | null): ShootWorkflowSetup | null {
   if (!rawValue) return null;
   try {
     const value: unknown = JSON.parse(rawValue);
@@ -9954,176 +10099,24 @@ function parseShootSetupState(rawValue: string | null): ShootSetupState | null {
   }
 }
 
-/** Readiness accepts only the current Shot List, leaving interview suggestions untouched. */
-function acceptShotListSuggestions(callSheet: CallSheet): CallSheet {
-  return {
-    ...callSheet,
-    shotGroups: (callSheet.shotGroups ?? []).map((group) => group.suggestionStatus ? { ...group, suggestionStatus: undefined } : group),
-    entries: callSheet.entries.map((entry) => entry.type === "shot" && entry.suggestionStatus ? { ...entry, suggestionStatus: undefined } : entry),
-  };
-}
-
-function getPlanningSectionFingerprint(callSheet: CallSheet, section: StoredReadyShootSection) {
-  if (section === "shots") {
-    return JSON.stringify({
-      groups: (callSheet.shotGroups ?? []).map((group) => ({
-        ...group,
-        name: normaliseApprovalText(group.name),
-        description: normaliseApprovalText(group.description ?? ""),
-        subject: normaliseApprovalText(group.subject ?? ""),
-      })),
-      shots: callSheet.entries.filter((entry) => entry.type === "shot").map((entry) => ({
-        ...entry,
-        description: normaliseApprovalText(entry.description),
-        notes: normaliseApprovalText(entry.notes ?? ""),
-      })),
-      topLevelOrder: callSheet.shotListTopLevelOrder ?? [],
-    });
+function getShootApprovalIssues(callSheet: CallSheet): string[] {
+  const scheduledEntries = callSheet.days.flatMap((day) => getVisibleOnSetDayEntries(callSheet, day.id));
+  const scheduledGroups = new Set(scheduledEntries.map((entry) => entry.linkedShotGroupId).filter(Boolean));
+  const scheduledShots = new Set(scheduledEntries.filter((entry) => entry.type === "shot").map((entry) => entry.id));
+  const unscheduled = callSheet.entries.filter((shot) =>
+    shot.type === "shot" && !isEntryComplete(shot) && shot.captureStatus !== "captured" && shot.captureStatus !== "not-required"
+    && !(shot.shotGroupId ? scheduledGroups.has(shot.shotGroupId) : scheduledShots.has(shot.id))
+  ).length;
+  const issues = unscheduled ? [`${unscheduled} unscheduled ${unscheduled === 1 ? "shot" : "shots"}`] : [];
+  if (!callSheet.days.length) issues.push("No shoot day scheduled");
+  for (const day of callSheet.days) {
+    const missing = getMissingDayDetails(callSheet, day);
+    if (missing.length) issues.push(`${day.label}: missing ${missing.join(", ").toLowerCase()}`);
   }
-  if (section === "questions") return JSON.stringify(callSheet.questions);
-  if (section === "references") return JSON.stringify(callSheet.visualReferences ?? []);
-  if (section === "locations") {
-    return JSON.stringify({
-      days: callSheet.days.map((day) => ({
-        id: day.id,
-        primaryLocationId: day.primaryLocationId,
-        safetyEmergency: day.safetyEmergency,
-      })),
-      locations: callSheet.locations,
-    });
+  if (!hasProductionContact(callSheet)) {
+    issues.push("Missing production contact or phone number");
   }
-  return JSON.stringify(callSheet.people);
-}
-
-function getPlanningSectionReadiness(callSheet: CallSheet, section: StoredReadyShootSection): PlanningReadinessSummary {
-  if (section === "shots") {
-    const shots = callSheet.entries.filter((entry) => entry.type === "shot");
-    const groups = callSheet.shotGroups ?? [];
-    const groupsById = new Map(groups.map((group) => [group.id, group]));
-    const missingDescriptions = shots.filter((shot) => !shot.description.trim()).length;
-    const missingLocations = shots.filter((shot) => !shot.locationId && !(shot.shotGroupId && groupsById.get(shot.shotGroupId)?.locationId)).length;
-    const issues = [
-      !shots.length ? "No shots have been added" : "",
-      missingDescriptions ? `${missingDescriptions} ${missingDescriptions === 1 ? "shot has" : "shots have"} no description` : "",
-      missingLocations ? `${missingLocations} ${missingLocations === 1 ? "shot has" : "shots have"} no location` : "",
-    ].filter(Boolean);
-    return {
-      issues,
-      passedMessage: "All Shot List checks passed.",
-      summary: `${shots.length} ${shots.length === 1 ? "shot" : "shots"} across ${groups.length} ${groups.length === 1 ? "group" : "groups"}`,
-    };
-  }
-
-  if (section === "questions") {
-    const questions = callSheet.questions;
-    const unresolvedSuggestions = questions.filter((question) => question.suggestionStatus).length;
-    const missingQuestions = questions.filter((question) => !question.question.trim()).length;
-    const unassignedQuestions = questions.filter((question) => !question.personId).length;
-    const assignedPeople = new Set(questions.flatMap((question) => question.personId ? [question.personId] : [])).size;
-    const issues = [
-      !questions.length ? "No interview questions have been added" : "",
-      unresolvedSuggestions ? `${unresolvedSuggestions} suggested ${unresolvedSuggestions === 1 ? "question needs" : "questions need"} review` : "",
-      missingQuestions ? `${missingQuestions} empty ${missingQuestions === 1 ? "question" : "questions"}` : "",
-      unassignedQuestions ? `${unassignedQuestions} ${unassignedQuestions === 1 ? "question is" : "questions are"} not assigned to an interviewee` : "",
-    ].filter(Boolean);
-    return {
-      issues,
-      passedMessage: "All Interview Questions checks passed.",
-      summary: `${questions.length} ${questions.length === 1 ? "question" : "questions"} for ${assignedPeople} ${assignedPeople === 1 ? "interviewee" : "interviewees"}`,
-    };
-  }
-
-  if (section === "references") {
-    const references = callSheet.visualReferences ?? [];
-    return {
-      issues: [],
-      passedMessage: references.length ? "All visual references have been reviewed." : "No visual references are needed for this shoot.",
-      summary: references.length ? `${references.length} visual ${references.length === 1 ? "reference" : "references"}` : "No visual references added",
-    };
-  }
-
-  if (section === "locations") {
-    const missingPrimaryLocations = callSheet.days.filter((day) => !day.primaryLocationId || !callSheet.locations.some((location) => location.id === day.primaryLocationId)).length;
-    const primaryLocationIds = new Set(callSheet.days.flatMap((day) => day.primaryLocationId ? [day.primaryLocationId] : []));
-    const primaryLocations = callSheet.locations.filter((location) => primaryLocationIds.has(location.id));
-    const missingAddresses = primaryLocations.filter((location) => !location.address.trim() && !location.mapLink?.trim()).length;
-    const missingAccessDetails = primaryLocations.filter((location) => !location.access.trim() && !location.parking.trim()).length;
-    const missingEmergencyHospitals = callSheet.days.filter((day) => !day.safetyEmergency?.hospitalName.trim() || day.safetyEmergency.needsReview || !day.safetyEmergency.confirmed).length;
-    const issues = [
-      !callSheet.locations.length ? "No locations have been added" : "",
-      missingPrimaryLocations ? `${missingPrimaryLocations} shoot ${missingPrimaryLocations === 1 ? "day has" : "days have"} no primary location` : "",
-      missingAddresses ? `${missingAddresses} primary ${missingAddresses === 1 ? "location has" : "locations have"} no address` : "",
-      missingAccessDetails ? `${missingAccessDetails} primary ${missingAccessDetails === 1 ? "location has" : "locations have"} no access or parking details` : "",
-      missingEmergencyHospitals ? `${missingEmergencyHospitals} shoot ${missingEmergencyHospitals === 1 ? "day needs" : "days need"} its nearest emergency hospital confirmed` : "",
-    ].filter(Boolean);
-    return {
-      issues,
-      passedMessage: "All Locations checks passed.",
-      summary: `${callSheet.locations.length} ${callSheet.locations.length === 1 ? "location" : "locations"} across ${callSheet.days.length} shoot ${callSheet.days.length === 1 ? "day" : "days"}`,
-    };
-  }
-
-  const people = callSheet.people;
-  const assignments = people.flatMap((person) => getShootAssignments(person));
-  const missingRoles = assignments.filter((assignment) => !assignment.role.trim()).length;
-  const missingTalentCallTimes = people.filter((person) => getShootAssignments(person).some((assignment) => assignment.type === "talent" && !(assignment.callTime || person.callTime))).length;
-  const missingContactDetails = people.filter((person) => !person.phone.trim() && !person.email.trim()).length;
-  const issues = [
-    !people.length ? "No people have been added" : "",
-    missingRoles ? `${missingRoles} ${missingRoles === 1 ? "assignment has" : "assignments have"} no shoot role` : "",
-    missingTalentCallTimes ? `${missingTalentCallTimes} talent ${missingTalentCallTimes === 1 ? "call time is" : "call times are"} not confirmed` : "",
-    missingContactDetails ? `${missingContactDetails} ${missingContactDetails === 1 ? "person has" : "people have"} no contact details` : "",
-  ].filter(Boolean);
-  return {
-    issues,
-    passedMessage: "All People checks passed.",
-    summary: `${people.length} ${people.length === 1 ? "person" : "people"} with ${assignments.length} shoot ${assignments.length === 1 ? "role" : "roles"}`,
-  };
-}
-
-function getScheduleReadiness(callSheet: CallSheet): ScheduleReadinessSummary {
-  const shots = callSheet.entries.filter((entry) => entry.type === "shot");
-  const scheduledGroupIds = new Set(callSheet.entries.flatMap((entry) => entry.startTime && entry.linkedShotGroupId ? [entry.linkedShotGroupId] : []));
-  const unscheduledShotCount = shots.filter((shot) => shot.shotGroupId ? !scheduledGroupIds.has(shot.shotGroupId) && !shot.startTime : !shot.startTime).length;
-  const daysMissingDateOrTimes = callSheet.days.filter((day) => !day.date || !day.generalCallTime || !day.expectedWrapTime).length;
-  const daysMissingLocations = callSheet.days.filter((day) => !day.primaryLocationId || !callSheet.locations.some((location) => location.id === day.primaryLocationId)).length;
-  const unconfirmedTalentCallTimes = callSheet.people.filter((person) => {
-    const talentAssignments = getShootAssignments(person).filter((assignment) => assignment.type === "talent");
-    return talentAssignments.length > 0 && !person.callTime && talentAssignments.every((assignment) => !assignment.callTime);
-  }).length;
-  const overlapCount = callSheet.days.reduce((count, day) => {
-    const dayEntries = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.startTime);
-    return count + Math.ceil(getScheduleClashes(dayEntries).size / 2);
-  }, 0);
-  const daysMissingBreaks = callSheet.days.filter((day) => {
-    const scheduledEntries = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.startTime);
-    return scheduledEntries.length > 0 && !scheduledEntries.some((entry) => entry.type === "break" || entry.type === "lunch");
-  }).length;
-  const issues = [
-    unscheduledShotCount ? `${unscheduledShotCount} unscheduled ${unscheduledShotCount === 1 ? "shot" : "shots"}` : "",
-    daysMissingDateOrTimes ? `${daysMissingDateOrTimes} shoot ${daysMissingDateOrTimes === 1 ? "day is" : "days are"} missing a date or time` : "",
-    daysMissingLocations ? `${daysMissingLocations} shoot ${daysMissingLocations === 1 ? "day is" : "days are"} missing a primary location` : "",
-    unconfirmedTalentCallTimes ? `${unconfirmedTalentCallTimes} ${unconfirmedTalentCallTimes === 1 ? "talent call time is" : "talent call times are"} not confirmed` : "",
-    overlapCount ? `${overlapCount} overlapping schedule ${overlapCount === 1 ? "item" : "items"}` : "",
-    daysMissingBreaks ? `${daysMissingBreaks} shoot ${daysMissingBreaks === 1 ? "day has" : "days have"} no break or lunch` : "",
-  ].filter(Boolean);
-  const datedDays = callSheet.days.filter((day) => day.date);
-  const firstDay = callSheet.days[0];
-  const dateSummary = callSheet.days.length === 1
-    ? firstDay?.date
-      ? `${formatEditorDate(firstDay.date)}, ${firstDay.generalCallTime ? formatTime(firstDay.generalCallTime) : "start time not confirmed"}-${firstDay.expectedWrapTime ? formatTime(firstDay.expectedWrapTime) : "end time not confirmed"}`
-      : "Shoot date not confirmed"
-    : datedDays.length
-      ? `${callSheet.days.length} shoot days · ${formatEditorDate(datedDays[0].date)} - ${formatEditorDate(datedDays.at(-1)?.date ?? datedDays[0].date)}`
-      : `${callSheet.days.length} shoot days`;
-
-  return {
-    dateSummary,
-    issues,
-    shotGroupCount: callSheet.shotGroups?.length ?? 0,
-    shotCount: shots.length,
-    unscheduledShotCount,
-  };
+  return issues;
 }
 
 function getScheduleFingerprint(callSheet: CallSheet) {
@@ -10141,16 +10134,17 @@ function getScheduleFingerprint(callSheet: CallSheet) {
       dayId: entry.dayId,
       startTime: entry.startTime,
       durationMinutes: entry.durationMinutes,
-      description: normaliseApprovalText(entry.description),
+      description: normaliseApprovalText(shootGroupFingerprintName(entry.linkedShotGroupId, entry.description)),
       type: entry.type,
       locationId: entry.locationId,
       personIds: entry.personIds,
+      removedAssignmentsByDay: entry.removedAssignmentsByDay,
       linkedShotGroupId: entry.linkedShotGroupId,
       shotGroupId: entry.shotGroupId,
     })),
     shotGroups: (callSheet.shotGroups ?? []).map((group) => ({
       id: group.id,
-      name: normaliseApprovalText(group.name),
+      name: normaliseApprovalText(shootGroupFingerprintName(group.id, group.name)),
       order: group.order,
       subject: normaliseApprovalText(group.subject ?? ""),
     })),
@@ -10212,10 +10206,11 @@ function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
       shotNumber: entry.shotNumber,
       startTime: entry.startTime,
       durationMinutes: entry.durationMinutes,
-      description: normaliseApprovalText(entry.description),
+      description: normaliseApprovalText(shootGroupFingerprintName(entry.linkedShotGroupId, entry.description)),
       type: entry.type,
       locationId: entry.locationId,
       personIds: entry.personIds,
+      removedAssignmentsByDay: entry.removedAssignmentsByDay,
       subject: normaliseApprovalText(entry.subject ?? ""),
       priority: entry.priority,
     })),
@@ -10266,6 +10261,7 @@ function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
     questions: callSheet.questions.map((question) => ({
       id: question.id,
       personId: question.personId,
+      unassignedDayIds: question.unassignedDayIds,
       question: normaliseApprovalText(question.question),
       shootDayIds: question.shootDayIds,
     })),
@@ -10282,7 +10278,8 @@ function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
       name: normaliseApprovalText(document.name),
       kind: document.kind,
       type: document.type,
-      url: document.url,
+      url: document.url === "/shoot-documents/talent-release.pdf" ? "#release-amelia"
+        : document.url === "/shoot-documents/studio-safety.pdf" ? "#studio-safety" : document.url,
       shootDayIds: document.shootDayIds,
     })),
     visibleOptionalSections: callSheet.visibleOptionalSections,
@@ -10316,7 +10313,7 @@ function formatExistingPlanCoverage(coverage: ExistingShootPlanCoverage) {
   return "Creative Plan and Plan the Day";
 }
 
-function getBriefShootCaptures(liveFootageValue: string, fallbackIsInterviewLed: boolean): ConfirmedQuickStartCapture[] | null {
+function getBriefShootCaptures(liveFootageValue: string): ConfirmedQuickStartCapture[] | null {
   const [footageValue = "", , filmingContentValue = ""] = liveFootageValue.split("|");
   const usesNewFootage = footageValue.split("+").some((choice) => choice === "Shoot new" || choice === "New footage");
   const filmingChoices = filmingContentValue === "Both" ? ["Interviews", "Scripted scenes"] : filmingContentValue.split("+").filter(Boolean);
@@ -10325,28 +10322,7 @@ function getBriefShootCaptures(liveFootageValue: string, fallbackIsInterviewLed:
   if (usesNewFootage && filmingChoices.includes("Interviews")) captures.push("interviews");
   if (usesNewFootage && filmingChoices.includes("Scripted scenes")) captures.push("scripted");
   if (captures.length) return captures;
-  if (!liveFootageValue.trim() && fallbackIsInterviewLed) return ["interviews"];
   return null;
-}
-
-function formatQuickStartCaptures(captures: ConfirmedQuickStartCapture[]) {
-  const labels: Record<ConfirmedQuickStartCapture, string> = {
-    interviews: "Interviews",
-    scripted: "Scripted scenes",
-    "b-roll": "B-roll or general coverage",
-  };
-  return captures.map((capture) => labels[capture]).join(" + ");
-}
-
-function briefIncludesInterviews(liveFootageValue: string) {
-  const [footageValue = "", , filmingContentValue = ""] = liveFootageValue.split("|");
-  const usesNewFootage = footageValue
-    .split("+")
-    .some((choice) => choice === "Shoot new" || choice === "New footage");
-  const filmingChoices = filmingContentValue === "Both"
-    ? ["Interviews", "Scripted scenes"]
-    : filmingContentValue.split("+");
-  return usesNewFootage && filmingChoices.includes("Interviews");
 }
 
 function hasMinimumCallSheetDetails(callSheet: CallSheet) {

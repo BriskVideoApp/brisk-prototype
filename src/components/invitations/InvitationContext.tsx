@@ -11,7 +11,7 @@ import {
 } from "react";
 import { InvitePersonModal, type InvitePersonSubmission } from "@/components/invitations/InvitePersonModal";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
-import { usePeople } from "@/components/people/PeopleDataContext";
+import { makeClientContactPerson, usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import {
@@ -22,6 +22,8 @@ import {
 } from "@/data/invitations";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canActOnProject } from "@/data/prototype-access";
+import { selectProject, selectScopedClient } from "@/data/prototype-state";
 import type { Person } from "@/data/people";
 
 export type { InvitationRole, InvitationStatus, InvitePersonPrefill } from "@/data/invitations";
@@ -58,7 +60,7 @@ const InvitationContext = createContext<InvitationContextValue | null>(null);
 export function InvitationProvider({ children }: { children: ReactNode }) {
   const { selectedAccessLevel, selectedRole, canManageStudio, canManageClientAccount } = usePrototypeRole();
   const viewer = usePrototypeViewer();
-  const { inviteClient, inviteClientTeammate } = usePrototypeState();
+  const { state, inviteClient, inviteClientTeammate } = usePrototypeState();
   const {
     createPerson,
     people,
@@ -105,7 +107,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     ]);
   }, []);
 
-  const sendInvitation = useCallback((submission: InvitePersonSubmission, onComplete?: InvitePersonCompleteHandler, sendBrief = false) => {
+  const sendInvitation = useCallback((submission: InvitePersonSubmission, { prefill, onComplete }: OpenInvitation) => {
     if (submission.role === "Studio Staff" && !canManageStudio) return;
     if (selectedRole === "Studio Staff" && !canManageStudio && !submission.projectIds.length) return;
     if (selectedRole === "Customer" && (!canManageClientAccount || submission.role !== "Customer"
@@ -120,7 +122,21 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     const jobTitle = submission.jobTitle.trim();
     let person = existingPerson;
 
-    if (person) {
+    const sendBrief = prefill.purpose === "brief-send";
+    if (sendBrief) {
+      const project = selectProject(state, prefill.projectId ?? "");
+      const client = selectScopedClient(state, state.session.activeWorkspaceId, prefill.clientId ?? "");
+      if (!project || !client || client.status === "Archived" || project.status === "Archived"
+        || project.clientId !== client.id || !canActOnProject(viewer, project, state, "send", "brief")
+        || submission.role !== "Customer" || submission.projectIds.length !== 1 || submission.projectIds[0] !== project.id
+        || submission.clientIds.length !== 1 || submission.clientIds[0] !== client.id) return;
+      if (person && (person.type !== "Client contact" || person.clientId !== client.id || person.status === "Archived"
+        || person.status === "Paused" || person.clientMembershipRole !== submission.clientMembershipRole)) return;
+      const contact = inviteClient({ clientId: client.id, projectId: project.id, name: submission.name.trim() || person?.name || name,
+        email, role: submission.clientMembershipRole, sendBrief: true });
+      if (!contact) return;
+      person = makeClientContactPerson(client, contact, false);
+    } else if (person) {
       if (submission.name.trim() || jobTitle) {
         updatePersonIdentity(person.id, {
           ...(submission.name.trim() ? { name: submission.name.trim() } : {}),
@@ -155,7 +171,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     }
 
     if (submission.role === "Studio Staff") updatePersonStudioDetails(person.id, { studioPermission: submission.studioPermission });
-    if (submission.role === "Customer") updatePersonClientMembershipRole(person.id, submission.clientMembershipRole);
+    if (!sendBrief && submission.role === "Customer") updatePersonClientMembershipRole(person.id, submission.clientMembershipRole);
 
     const status = existingPerson && getInvitationStatus(existingPerson) === "Accepted" ? "Accepted" : "Pending";
     addInvitationRecord({
@@ -167,7 +183,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
       status,
       destination: getInvitationDestination(submission.role, submission.clientIds, submission.projectIds),
     });
-    if (submission.role === "Customer" && submission.clientIds[0]) {
+    if (!sendBrief && submission.role === "Customer" && submission.clientIds[0]) {
       if (submission.projectIds[0]) {
         inviteClient({
           clientId: submission.clientIds[0],
@@ -175,7 +191,6 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
           name,
           email,
           role: submission.clientMembershipRole,
-          sendBrief,
         });
       } else {
         inviteClientTeammate({
@@ -189,7 +204,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     onComplete?.(person, submission);
     setOpenInvitation(null);
     setToast(`Invite sent to ${email}.`);
-  }, [canManageClientAccount, canManageStudio, selectedRole, viewer?.clientId, updatePersonClientMembershipRole, updatePersonStudioDetails, addInvitationRecord, createPerson, getInvitationStatus, inviteClient, inviteClientTeammate, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
+  }, [canManageClientAccount, canManageStudio, selectedRole, state, viewer, updatePersonClientMembershipRole, updatePersonStudioDetails, addInvitationRecord, createPerson, getInvitationStatus, inviteClient, inviteClientTeammate, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
 
   const resendInvitation = useCallback((person: Person) => {
     if (person.accessRole === "Studio Staff" && !canManageStudio) return;
@@ -246,7 +261,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
           key={openInvitation.id}
           prefill={openInvitation.prefill}
           onClose={() => setOpenInvitation(null)}
-          onSubmit={(submission) => sendInvitation(submission, openInvitation.onComplete, openInvitation.prefill.purpose === "brief-send")}
+          onSubmit={(submission) => sendInvitation(submission, openInvitation)}
         />
       ) : null}
       {toast ? <div className="invitation-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={16} /> {toast}</div> : null}
@@ -265,6 +280,10 @@ export function useInvitations() {
 }
 
 function normalisePrefill(prefill: InvitePersonPrefill): InvitePersonPrefill {
+  if (prefill.purpose === "brief-send") {
+    return { ...prefill, role: "Customer", clientIds: prefill.clientId ? [prefill.clientId] : [],
+      projectIds: prefill.projectId ? [prefill.projectId] : [], clientMembershipRole: "Client Member" };
+  }
   return {
     ...prefill,
     clientIds: unique([...(prefill.clientIds ?? []), ...(prefill.clientId ? [prefill.clientId] : [])]),

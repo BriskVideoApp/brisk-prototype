@@ -35,11 +35,12 @@ import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/
 import { ProjectTags } from "@/components/project/ProjectTags";
 import { getTagClass, type TagClass } from "@/data/project-tags";
 import { ProjectTitleRow } from "@/components/project/ProjectTitleRow";
-import { ClientModal } from "@/components/clients/ClientPrimitives";
+import { AddClientDialog, ClientModal, ClientPicker } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getSlotLabel, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
+import { usePeople } from "@/components/people/PeopleDataContext";
+import { formatHours, getAcceptedInvitation, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getSlotLabel, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { todayCurrentUserId } from "@/data/today/mockData";
@@ -199,6 +200,7 @@ function ActiveVideosWorkspace() {
   const { invoices, offers } = useCostsData();
   const router = useRouter();
   const [isStartVideoClientPickerOpen, setIsStartVideoClientPickerOpen] = useState(false);
+  const [newStartVideoClientName, setNewStartVideoClientName] = useState<string | null>(null);
   const [quickAssignmentProjectId, setQuickAssignmentProjectId] = useState<string | null>(null);
   const [teamAssignmentNotice, setTeamAssignmentNotice] = useState<string | null>(null);
   const [selectedStartVideoClientId, setSelectedStartVideoClientId] = useState("");
@@ -208,7 +210,7 @@ function ActiveVideosWorkspace() {
   const assignPersonIdFromParams = searchParams.get("assignPerson");
   const previewState = searchParams.get("preview");
   const availableClients = clients.filter((client) => client.status !== "Archived");
-  const startVideoClientOptions = availableClients.map((client) => ({ value: client.id, label: client.name }));
+  const selectedStartVideoClient = availableClients.find((client) => client.id === selectedStartVideoClientId);
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
   const [query, setQuery] = usePageSearch("Videos", () => searchScopeProjects.map((project) => ({
     id: `video:${project.id}`, source: "videos", kind: "Videos" as const, title: project.name,
@@ -804,23 +806,19 @@ function ActiveVideosWorkspace() {
                       ? "Videos shared by your Studio will appear in your Client dashboard."
                       : availableClients.length > 0
                         ? "Start a video for one of your Clients. They won’t be notified unless you invite them."
-                        : "Add a Client before you can start a video."}
+                        : "Choose or add a Client to start a video."}
                 </p>
                 <div className="active-videos-empty-actions">
                   {selectedRole === "Studio Freelancer" || selectedRole === "Customer" ? (
                     <Link className="active-videos-empty-primary label-s-semibold" href={selectedRole === "Studio Freelancer" ? "/chat" : "/customer-dashboard"}>
                       {selectedRole === "Studio Freelancer" ? "Open Chat" : "Back to dashboard"}
                     </Link>
-                  ) : availableClients.length === 0 ? (
-                    <Link className="active-videos-empty-primary label-s-semibold" href="/clients?dialog=add">Add Client</Link>
-                  ) : availableClients.length === 1 ? (
-                    <Link className="active-videos-empty-primary label-s-semibold" href={`/customer-dashboard/start-video?client=${encodeURIComponent(availableClients[0].id)}`}>Start a video</Link>
                   ) : (
                     <Button size="S" variant="primary"
-                      className="active-videos-empty-primary"
                       type="button"
                       onClick={() => {
-                        setSelectedStartVideoClientId("");
+                        setSelectedStartVideoClientId(availableClients.length === 1 ? availableClients[0].id : "");
+                        setNewStartVideoClientName(null);
                         setIsStartVideoClientPickerOpen(true);
                       }}
                     >
@@ -886,7 +884,7 @@ function ActiveVideosWorkspace() {
           onSaveDeadline={(deadline) => saveProjectDeadline(panelProject.id, deadline)}
         />
       ) : null}
-      {isStartVideoClientPickerOpen ? (
+      {isStartVideoClientPickerOpen && newStartVideoClientName === null ? (
         <ClientModal
           title="Choose a Client"
           description="Choose who this video is for. They won’t be notified unless you invite them."
@@ -894,19 +892,26 @@ function ActiveVideosWorkspace() {
           footer={
             <>
               <Button size="S" variant="secondary" onClick={() => setIsStartVideoClientPickerOpen(false)}>Cancel</Button>
-              <Button size="S" disabled={!selectedStartVideoClientId} onClick={() => startVideoForClient(selectedStartVideoClientId)}>Continue</Button>
+              <Button size="S" disabled={!selectedStartVideoClient} onClick={() => {
+                if (selectedStartVideoClient) startVideoForClient(selectedStartVideoClient.id);
+              }}>Continue</Button>
             </>
           }
         >
-          <BriskSelect
-            ariaLabel="Choose a Client"
-            options={startVideoClientOptions}
-            placeholder="Select a Client"
-            searchable={availableClients.length > 7}
-            value={selectedStartVideoClientId}
-            onChange={setSelectedStartVideoClientId}
+          <ClientPicker
+            label="Client"
+            value={selectedStartVideoClient?.id ?? null}
+            onAddClient={setNewStartVideoClientName}
+            onChange={(client) => setSelectedStartVideoClientId(client.id)}
           />
         </ClientModal>
+      ) : null}
+      {isStartVideoClientPickerOpen && newStartVideoClientName !== null ? (
+        <AddClientDialog
+          initialName={newStartVideoClientName}
+          onClose={() => setNewStartVideoClientName(null)}
+          onCreated={(client) => startVideoForClient(client.id)}
+        />
       ) : null}
       </div>
     </main>
@@ -2354,6 +2359,7 @@ function ProjectDataCell({
   onOpenLatestActions: () => void;
 }) {
   const studioName = useStudioCompanyName();
+  const { teamPeople } = usePeople();
   const [teamAvatarTooltip, setTeamAvatarTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
   const columnClassName = [
     `column-${columnKey}`,
@@ -2487,7 +2493,7 @@ function ProjectDataCell({
   }
 
   if (columnKey === "team") {
-    const teamMembers = getProjectTeamColumnMembers(project.team);
+    const teamMembers = getProjectTeamColumnMembers(project.team, teamPeople);
     const visibleTeamMembers = teamMembers.members.slice(0, 3);
     const extraMemberCount = teamMembers.members.length - visibleTeamMembers.length;
     const accessibleTeamSummary = teamMembers.members
@@ -2864,12 +2870,13 @@ function getPrimaryTeamPerson(team: RoleSlot[]): TeamPerson | undefined {
   return primarySlot ? getAcceptedPerson(primarySlot) : undefined;
 }
 
-function getProjectTeamColumnMembers(team: RoleSlot[]) {
+function getProjectTeamColumnMembers(team: RoleSlot[], people: ReadonlyMap<string, TeamPerson>) {
   const membersById = new Map<string, { person: TeamPerson; roles: string[]; isInvited: boolean }>();
 
   team.filter((slot) => !slot.archivedAt).forEach((slot) => {
     const roleLabel = getSlotLabel(slot);
-    const acceptedPerson = getAcceptedPerson(slot);
+    const accepted = getAcceptedInvitation(slot);
+    const acceptedPerson = accepted && people.get(accepted.personId);
     const pendingInvitations = getVisibleInvitations(slot);
 
     const addMember = (person: TeamPerson, isInvited: boolean) => {
@@ -2885,7 +2892,7 @@ function getProjectTeamColumnMembers(team: RoleSlot[]) {
 
     if (acceptedPerson) addMember(acceptedPerson, false);
     pendingInvitations.forEach((invitation) => {
-      const invitedPerson = getTeamPerson(invitation.personId);
+      const invitedPerson = people.get(invitation.personId);
       if (invitedPerson) addMember(invitedPerson, true);
     });
 

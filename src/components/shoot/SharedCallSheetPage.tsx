@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
 import Link from "next/link";
+import { createPortal } from "react-dom";
+import { FloatingCommentShell, getFloatingCommentPosition, type FloatingCommentPosition } from "@/components/script/FloatingCommentShell";
+import { scriptUsers, type ScriptComment } from "@/data/script";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { useSearchParams } from "next/navigation";
+import { ShootCommandMenu } from "./ShootCommandMenu";
+import { DayNotesEditor, DayNotesText } from "./DayNotesEditor";
+import { BriskSelect } from "@/components/form/BriskSelect";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
-import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import {
@@ -16,21 +24,24 @@ import {
   formatTime,
   getInitialCallSheet,
   getShootDayShots,
+  updateShootDayShot,
+  type TrackShot,
+  type DayNoteMark,
+  getShootShotNumbers,
   getMapsLinkLabel,
   getMapsUrl,
   isAssignedToDay,
   normaliseShootArchitecture,
-  shootAccessStorageKey,
   type CallSheet,
-  type SafetyEmergencyInfo,
   type ScheduleType,
   type ShootDay,
   type ShootLocation,
+  type ShootPerson,
 } from "@/data/shoot";
 
-const scheduleTypeMeta: Record<ScheduleType, { label: string; icon: DsIconName }> = {
+export const scheduleTypeMeta: Record<ScheduleType, { label: string; icon: DsIconName }> = {
   shot: { label: "Shot", icon: "video-camera-ds" },
-  coverage: { label: "Coverage", icon: "video-camera-ds" },
+  coverage: { label: "Coverage", icon: "folder" },
   setup: { label: "Setup", icon: "settings" },
   lunch: { label: "Lunch", icon: "fork-knife" },
   travel: { label: "Travel", icon: "car-simple" },
@@ -45,33 +56,18 @@ export type CallSheetSectionControls = {
 };
 
 type CallSheetPlanningSection = "locations" | "people" | "schedule";
-type EditableOperationalSection = "people" | "notes";
-
-type SharedShootAccessLevel = "viewOnly" | "canEdit" | "canManage";
-
-function getDefaultShootAccess(role: PrototypeRole): SharedShootAccessLevel {
-  if (role === "Studio Staff") return "canManage";
-  if (role === "Studio Freelancer") return "canEdit";
-  return "viewOnly";
-}
-
-function readShootAccess(projectId: string, role: PrototypeRole): SharedShootAccessLevel {
-  if (role === "Studio Staff") return "canManage";
-  try {
-    const rawValue = window.localStorage.getItem(shootAccessStorageKey(projectId));
-    if (!rawValue) return getDefaultShootAccess(role);
-    const parsed: unknown = JSON.parse(rawValue);
-    if (!parsed || typeof parsed !== "object") return getDefaultShootAccess(role);
-    const value = role === "Studio Freelancer"
-      ? (parsed as Record<string, unknown>).freelancer
-      : (parsed as Record<string, unknown>).client;
-    return value === "viewOnly" || value === "canEdit" || value === "canManage"
-      ? value
-      : getDefaultShootAccess(role);
-  } catch {
-    return getDefaultShootAccess(role);
-  }
-}
+type LocationActions = {
+  add: (day: ShootDay) => void;
+  addExisting: (location: ShootLocation, day: ShootDay) => void;
+  removeFromDay: (location: ShootLocation, day: ShootDay) => void;
+  edit: (location: ShootLocation) => void;
+  makePrimary: (locationId: string, dayId: string) => void;
+};
+type RosterActions = {
+  add: (dayId: string) => void;
+  edit: (person: ShootPerson) => void;
+  removeFromDay: (person: ShootPerson, day: ShootDay) => void;
+};
 
 function getWeatherIcon(weather: string): DsIconName {
   const condition = (weather.split(" · ")[1] ?? weather).toLowerCase();
@@ -81,8 +77,10 @@ function getWeatherIcon(weather: string): DsIconName {
   return "weather-cloud";
 }
 
-export function SharedCallSheetPage({ project, previewMode, printMode, viewerId, embedded = false, compact = false, onEditEssentials, embeddedCallSheet, canEdit, isStudioInternal, focusedSectionId = null, openSectionRequest, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, onEmbeddedChange, onEmbeddedSelectDay, onExitSectionFocus, onFocusSection, renderInterviewQuestions, renderRunOfDay }: {
+export function SharedCallSheetPage({ SharedSchedule, includeInterviewQuestions, project, previewMode, printMode, viewerId, embedded = false, compact = false, onEditEssentials, embeddedCallSheet, canEdit, isStudioInternal, focusedSectionId = null, openSectionRequest, onOpenDocuments, locationActions, rosterActions, onOpenPlanningSection, onOpenSchedule, onEmbeddedChange, onEmbeddedSelectDay, onExitSectionFocus, onFocusSection, renderInterviewQuestions, renderRunOfDay }: {
+  SharedSchedule?: ComponentType<{ callSheet: CallSheet; day: ShootDay; onTrackShot: TrackShot }>;
   project: Project;
+  includeInterviewQuestions?: boolean;
   previewMode: boolean;
   printMode: boolean;
   viewerId?: string;
@@ -95,6 +93,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   focusedSectionId?: string | null;
   openSectionRequest?: { sectionId: string; requestId: number } | null;
   onOpenDocuments?: () => void;
+  locationActions?: LocationActions; rosterActions?: RosterActions;
   onOpenPlanningSection?: (section: CallSheetPlanningSection) => void;
   onOpenSchedule?: () => void;
   onEmbeddedChange?: (updater: (current: CallSheet) => CallSheet) => void;
@@ -121,16 +120,10 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   const [copyStatus, setCopyStatus] = useState("Copy link");
   const [showPreviewBar, setShowPreviewBar] = useState(previewMode && !printMode);
   const [collapsedSectionIds, setCollapsedSectionIds] = useState<string[]>(compact ? ["documents", "locations", "emergency"] : ["documents"]);
-  const [standaloneAccess, setStandaloneAccess] = useState<SharedShootAccessLevel>(() => getDefaultShootAccess(selectedRole));
   const effectiveIsStudioInternal = isStudioInternal ?? selectedRole !== "Customer";
-
-  useEffect(() => {
-    if (embedded) return;
-    const loadAccess = () => setStandaloneAccess(readShootAccess(project.id, selectedRole));
-    loadAccess();
-    window.addEventListener("storage", loadAccess);
-    return () => window.removeEventListener("storage", loadAccess);
-  }, [embedded, project.id, selectedRole]);
+  const documentAccess = !embedded && !printMode && !previewMode ? searchParams.get("linkAccess") : null;
+  const editableDocument = documentAccess === "canEdit";
+  const commentableDocument = editableDocument || documentAccess === "canComment";
 
   useEffect(() => {
     if (embedded) {
@@ -144,7 +137,8 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
       setHasLoaded(true);
       return;
     }
-    const loadStoredCallSheet = () => {
+    const loadStoredCallSheet = (event?: StorageEvent) => {
+      if (event && event.key !== callSheetStorageKey(project.id)) return;
       try {
         const stored = window.localStorage.getItem(callSheetStorageKey(project.id));
         if (stored) {
@@ -154,7 +148,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
           }
           setCallSheet(next);
           setSelectedDayId((current) => {
-            if (requestedDayId && next.days.some((day) => day.id === requestedDayId)) {
+            if (!event && requestedDayId && next.days.some((day) => day.id === requestedDayId)) {
               return requestedDayId;
             }
 
@@ -174,8 +168,16 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
 
   useEffect(() => {
     if (!printMode || !hasLoaded) return;
-    const timeoutId = window.setTimeout(() => window.print(), 500);
-    return () => window.clearTimeout(timeoutId);
+    let cancelled = false;
+    const timeoutId = window.setTimeout(async () => {
+      const images = document.querySelectorAll<HTMLImageElement>(".shared-print-references img");
+      await Promise.allSettled(Array.from(images, (image) => image.decode()));
+      if (!cancelled) window.print();
+    }, 500);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
   }, [hasLoaded, printMode]);
 
   useEffect(() => {
@@ -195,7 +197,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
 
   const copyShareLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/share/call-sheet/${project.id}`);
+      await navigator.clipboard.writeText(`${window.location.origin}/share/call-sheet/${project.id}?day=${encodeURIComponent(selectedDayId)}`);
       setCopyStatus("Copied");
       window.setTimeout(() => setCopyStatus("Copy link"), 2000);
     } catch {
@@ -217,11 +219,12 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
       onEmbeddedChange(updater);
       return;
     }
-    setCallSheet((current) => {
-      const next = { ...updater(current), updatedAt: new Date().toISOString() };
-      window.localStorage.setItem(callSheetStorageKey(project.id), JSON.stringify(next));
-      return next;
-    });
+    const key = callSheetStorageKey(project.id);
+    const stored = window.localStorage.getItem(key);
+    const current = stored ? normaliseShootArchitecture(JSON.parse(stored) as CallSheet) : callSheet;
+    const next = { ...updater(current), updatedAt: new Date().toISOString() };
+    window.localStorage.setItem(key, JSON.stringify(next));
+    setCallSheet(next);
   };
 
   const selectDay = (dayId: string) => {
@@ -303,6 +306,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
         </header> : null}
         {visibleDays.map((day, index) => (
           <SharedDay
+            includeInterviewQuestions={includeInterviewQuestions ?? (!embedded && callSheet.visibleOptionalSections.includes("questions"))}
             callSheet={callSheet}
             clientName={project.clientName}
             day={day}
@@ -315,12 +319,17 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
             getSectionControls={embedded && !printMode && (compact || onFocusSection) ? getSectionControls : undefined}
             printIndex={printMode ? index : undefined}
             onSelectDay={!printMode ? selectDay : undefined}
-            onChange={embedded && canEdit && !printMode ? updateLiveCallSheet : undefined}
+            onChange={(embedded && canEdit && !printMode) || editableDocument ? updateLiveCallSheet : undefined}
+            canComment={commentableDocument || Boolean(embedded && canEdit && !printMode)}
             onOpenDocuments={embedded && !printMode ? onOpenDocuments : undefined}
+            locationActions={embedded && canEdit && effectiveIsStudioInternal && !printMode ? locationActions : undefined}
+            rosterActions={embedded && canEdit && effectiveIsStudioInternal && !printMode ? rosterActions : undefined}
             onOpenPlanningSection={embedded && effectiveIsStudioInternal && !printMode ? onOpenPlanningSection : undefined}
             onOpenSchedule={embedded && effectiveIsStudioInternal && !printMode ? onOpenSchedule : undefined}
             renderInterviewQuestions={!printMode ? renderInterviewQuestions : undefined}
-            renderRunOfDay={!printMode ? renderRunOfDay : undefined}
+            renderRunOfDay={!embedded && !printMode && !previewMode && SharedSchedule
+              ? (shootDay) => <SharedSchedule callSheet={callSheet} day={shootDay} onTrackShot={(shotId, change) => updateLiveCallSheet((sheet) => updateShootDayShot(sheet, shootDay.id, shotId, change))} />
+              : !printMode ? renderRunOfDay : undefined}
             key={day.id}
           />
         ))}
@@ -361,13 +370,16 @@ export function OnSetLiveView({ callSheet, day, isStudioInternal, project, onBac
   </div>;
 }
 
-function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEditEssentials, projectId, viewer, isStudioInternal, getSectionControls, printIndex, onSelectDay, onChange, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, renderInterviewQuestions, renderRunOfDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; embedded: boolean; compact?: boolean; onEditEssentials?: () => void; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; getSectionControls?: (sectionId: string) => CallSheetSectionControls; printIndex?: number; onSelectDay?: (dayId: string) => void; onChange?: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments?: () => void; onOpenPlanningSection?: (section: CallSheetPlanningSection) => void; onOpenSchedule?: () => void; renderInterviewQuestions?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode; renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode }) {
-  const daySwitcherRef = useRef<HTMLElement>(null);
-  const activeDayButtonRef = useRef<HTMLButtonElement>(null);
-  const [editingOperationalSection, setEditingOperationalSection] = useState<EditableOperationalSection | null>(null);
+function SharedDay({ includeInterviewQuestions, canComment, callSheet, clientName, day, embedded, compact = false, onEditEssentials, projectId, viewer, isStudioInternal, getSectionControls, printIndex, onSelectDay, onChange, onOpenDocuments, locationActions, rosterActions, onOpenPlanningSection, onOpenSchedule, renderInterviewQuestions, renderRunOfDay }: { includeInterviewQuestions: boolean; canComment: boolean; callSheet: CallSheet; clientName: string; day: ShootDay; embedded: boolean; compact?: boolean; onEditEssentials?: () => void; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; getSectionControls?: (sectionId: string) => CallSheetSectionControls; printIndex?: number; onSelectDay?: (dayId: string) => void; onChange?: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments?: () => void; locationActions?: LocationActions; rosterActions?: RosterActions; onOpenPlanningSection?: (section: CallSheetPlanningSection) => void; onOpenSchedule?: () => void; renderInterviewQuestions?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode; renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode }) {
+  const [editingPhones, setEditingPhones] = useState(false);
+  const locationSectionActionsRef = useRef<HTMLDivElement>(null);
+  const addPersonRef = useRef<HTMLButtonElement>(null);
   const location = callSheet.locations.find((item) => item.id === day.primaryLocationId);
   const timedEntries = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.startTime).sort((left, right) => left.startTime.localeCompare(right.startTime));
   const dayShots = getShootDayShots(callSheet, day.id);
+  const scheduledGroups = new Set(timedEntries.flatMap((entry) => entry.linkedShotGroupId ?? []));
+  const untimedShots = dayShots.filter((shot) => !shot.startTime && !scheduledGroups.has(shot.shotGroupId ?? ""));
+  const dayQuestions = includeInterviewQuestions ? callSheet.questions.filter((question) => isAssignedToDay(question.shootDayIds, day.id)) : [];
   const remainingShots = dayShots.filter((entry) => !entry.captured && entry.captureStatus !== "not-required" && !entry.skippedShootDayIds?.includes(day.id)).length;
   const displayedWeather = getDisplayedWeather(callSheet.weather, Boolean(day.date && location));
   const [temperature, conditions, rainChance] = displayedWeather.split(" · ");
@@ -375,16 +387,14 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
   const locations = callSheet.locations.filter((item) => isAssignedToDay(item.shootDayIds, day.id));
   const documents = callSheet.documents.filter((document) => isAssignedToDay(document.shootDayIds, day.id));
   const dayNotes = day.notes?.practicalDetails ?? getLegacyDayNotes(callSheet, day, location);
-  const nearestEmergencyHospital = compact
-    ? day.safetyEmergency?.confirmed && !day.safetyEmergency.needsReview ? day.safetyEmergency : undefined
-    : getNearestEmergencyHospital(location, day.safetyEmergency);
+  const nearestEmergencyHospital = day.safetyEmergency?.confirmed && !day.safetyEmergency.needsReview
+    && day.safetyEmergency.hospitalName.trim() && day.safetyEmergency.hospitalAddress.trim() ? day.safetyEmergency : undefined;
   const internalNotes = isStudioInternal ? day.notes?.internalNotes?.trim() ?? "" : "";
-  const selectedProductionContact = callSheet.people.find((person) => callSheet.onTheDayContact.startsWith(person.name));
-  const hideProductionContactDetails = Boolean(!isStudioInternal && selectedProductionContact && selectedProductionContact.showContactDetails !== true);
-  const visibleProductionContact = hideProductionContactDetails && selectedProductionContact
-    ? [selectedProductionContact.name, selectedProductionContact.role].filter(Boolean).join(" · ")
-    : callSheet.onTheDayContact;
-  const visibleProductionPhone = hideProductionContactDetails ? "" : getContactPhone(callSheet.onTheDayContact);
+  const visibleProductionContact = isStudioInternal ? callSheet.onTheDayContact
+    : visibleRosterContact(callSheet, callSheet.onTheDayContact);
+  const productionPhoneText = visibleProductionContact.match(/(?:\+?\d[\d\s()-]{7,}\d)/u)?.[0]?.trim() ?? "";
+  const visibleProductionPhone = normalisePhone(productionPhoneText);
+  const productionContactDetails = visibleProductionContact.replace(productionPhoneText, "").replace(/\s*·\s*$/u, "").trim();
   const sectionControls = (sectionId: string): CallSheetSectionControls => getSectionControls?.(sectionId) ?? {
     collapsed: false,
     focused: false,
@@ -395,7 +405,7 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
     ...current,
     people: current.people.map((person) => person.id === personId ? { ...person, phone } : person),
   }));
-  const updateDayNotes = (value: string) => onChange?.((current) => ({
+  const updateDayNotes = (value: string, marks: DayNoteMark[]) => onChange?.((current) => ({
     ...current,
     days: current.days.map((item) => item.id === day.id ? {
       ...item,
@@ -410,36 +420,48 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
         internalNotes: "",
         ...item.notes,
         practicalDetails: value,
+        practicalDetailsMarks: marks,
       },
     } : item),
   }));
 
-  useEffect(() => {
-    const switcher = daySwitcherRef.current;
-    const activeButton = activeDayButtonRef.current;
-    if (!switcher || !activeButton) return;
-    const centredLeft = activeButton.offsetLeft - ((switcher.clientWidth - activeButton.offsetWidth) / 2);
-    switcher.scrollTo({ left: Math.max(0, centredLeft), behavior: "smooth" });
-  }, [day.id]);
-
-  const peopleSection = (
-      <SharedSection title="People" count={people.length} controls={getSectionControls?.("people")}>
-        <OperationalSectionActions
-          editing={editingOperationalSection === "people"}
-          editLabel="Edit phone numbers"
-          planningLabel={compact ? "Add person" : people.length ? "Manage people in Planning" : "Add people in Planning"}
-          showEdit={Boolean(onChange && people.length)}
-          showPlanning={Boolean(onOpenPlanningSection)}
-          onEdit={() => setEditingOperationalSection((current) => current === "people" ? null : "people")}
-          onOpenPlanning={() => onOpenPlanningSection?.("people")}
-        />
+  const peopleControls = getSectionControls?.("people");
+  const compactEmptyPeople = compact && !people.length && !peopleControls?.focused;
+  const canEditPhones = Boolean(!rosterActions && onChange && people.some((person) => isStudioInternal || person.showContactDetails === true));
+  const peopleActions = (rosterActions || onOpenPlanningSection || canEditPhones) && <div className="shared-section-actions shared-people-actions">
+    {rosterActions ? <Button ref={addPersonRef} size="S" variant="ghost" onClick={() => rosterActions.add(day.id)}>Add person</Button> : onOpenPlanningSection && <Button size="S" variant="ghost" onClick={() => onOpenPlanningSection("people")}>{compact ? "Add person" : "Manage people in Planning"}</Button>}
+    {canEditPhones && (editingPhones
+      ? <Button size="S" variant="secondary" onClick={() => setEditingPhones(false)}>Done</Button>
+      : <BriskSelect mode="action" actionMenuSize="compact" ariaLabel="People actions" placeholder="People actions" value="" clearable={false}
+          options={[{ value: "phones", label: "Edit phone numbers" }]}
+          onChange={() => {
+            if (peopleControls?.collapsed && !peopleControls.focused) peopleControls.onToggleCollapse();
+            setEditingPhones(true);
+          }}
+          actionTrigger={(props) => <IconButton {...props} aria-label="People actions" tooltipAlign="end"><DsIcon name="dots-three" size={16} /></IconButton>}
+        />)}
+  </div>;
+  const peopleSection = compactEmptyPeople ? (
+    <SharedSection title="People" count={0} headerAction={peopleActions} />
+  ) : (
+      <SharedSection title="People" count={people.length} controls={peopleControls} headerAction={peopleActions}>
         {people.length ? <div className="shared-contact-list">{people.map((person) => (
-          <article key={person.id}>
+          <article key={person.id} className={rosterActions ? "has-roster-actions" : undefined}>
             <span className="shared-contact-avatar label-xs-semibold">{getInitials(person.name)}</span>
-            <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime || (compact ? day.generalCallTime : ""))}</span>{(isStudioInternal || person.showContactDetails === true) && person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}{editingOperationalSection === "people" ? <OperationalField label="Phone" type="tel" value={person.phone} onChange={(value) => updatePersonPhone(person.id, value)} /> : null}</div>
-            {editingOperationalSection !== "people" && (isStudioInternal || person.showContactDetails === true) && person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
+            <div><CallSheetRowName name={person.name} onEdit={rosterActions && (() => rosterActions.edit(person))} /><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime || (compact ? day.generalCallTime : ""))}</span></div>
+            {(isStudioInternal || person.showContactDetails === true) && <div className="shared-contact-details">
+              {person.email && <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a>}
+              {editingPhones ? <OperationalField label="Phone" type="tel" value={person.phone} onChange={(value) => updatePersonPhone(person.id, value)} />
+                : person.phone && <a className="shared-contact-email label-s-semibold" aria-label={`Call ${person.name}, ${person.phone}`} href={`tel:${normalisePhone(person.phone)}`}>{person.phone}</a>}
+            </div>}
+            {rosterActions && <ShootCommandMenu compact align="end" label={`Actions for ${person.name}`}
+              fallbackFocus={() => addPersonRef.current}
+              actions={[
+                { label: "Edit person", onSelect: () => rosterActions.edit(person) },
+                { label: `Remove from ${day.label}`, dividerAbove: true, onSelect: () => rosterActions.removeFromDay(person, day) },
+              ]} />}
           </article>
-        ))}</div> : <div className="shared-section-empty"><strong>No people added</strong><span className="label-xs">{compact ? "Add crew and talent for this shoot day." : "Add crew and talent in Planning before the day begins."}</span></div>}
+        ))}</div> : <div className="shared-section-empty"><strong>No people added</strong><span className="label-xs">{rosterActions ? "Add crew and talent for this day." : "Add crew and talent in Planning before the day begins."}</span></div>}
       </SharedSection>
   );
 
@@ -463,23 +485,14 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
         </header>
       ) : null}
       <section className="shared-call-hero" aria-label={`${day.label} essentials`}>
-        {onSelectDay && callSheet.days.length > 1 ? <nav className="shared-day-switcher" ref={daySwitcherRef} aria-label="Shoot days">
-          {callSheet.days.map((shootDay) => {
-            const isActive = shootDay.id === day.id;
-            return <button ref={isActive ? activeDayButtonRef : undefined} className={`label-s-semibold ${isActive ? "active" : ""}`} type="button" aria-current={isActive ? "page" : undefined} key={shootDay.id} onClick={() => onSelectDay(shootDay.id)}>
-              <span>{shootDay.label}</span>
-              <small>{shootDay.date ? formatShortDate(shootDay.date) : "Date not set"}</small>
-            </button>;
-          })}
-        </nav> : null}
+        {onSelectDay && (onEditEssentials ? <ShootDayControls days={callSheet.days} day={day} onSelectDay={onSelectDay} onEdit={onEditEssentials} /> : <ShootDaySwitcher days={callSheet.days} activeDayId={day.id} onSelectDay={onSelectDay} />)}
         {typeof printIndex === "number" ? <header className="shared-print-day-heading"><strong>{day.label} of {callSheet.days.length}</strong></header> : null}
         <div className="shared-date-block">
-          <span className="label-xs-semibold">Shoot date</span>
-          <h2>{day.date ? formatShootDate(day.date) : "Not set"}</h2>
+          <h2>{day.date ? formatShootDate(day.date) : "Shoot date not set"}</h2>
           {compact && !day.date && onEditEssentials ? <Button size="S" variant="ghost" onClick={onEditEssentials}>Add shoot date</Button> : null}
         </div>
         <div className="shared-call-time-block">
-          <span className="label-xs-semibold">General call time</span>
+          <span className="label-xs-semibold">General call</span>
           <strong>{formatTime(day.generalCallTime)}</strong>
           {day.expectedWrapTime ? <small>Expected wrap {formatTime(day.expectedWrapTime)}</small> : compact ? <small>Expected wrap: Not set</small> : null}
           {compact && (!day.generalCallTime || !day.expectedWrapTime) && onEditEssentials ? <Button size="S" variant="ghost" onClick={onEditEssentials}>Set times</Button> : null}
@@ -492,21 +505,30 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
           </div>
         ) : null}
         <div className="shared-location-block">
-          <span className="label-xs-semibold">Primary location</span>
-          <strong>{location?.name || "Location not set"}</strong>
+          {location ? <div className="shared-location-title">
+            <strong>{location.name}</strong>
+            {compact && onOpenPlanningSection && <IconButton aria-label="Edit location" onClick={() => onOpenPlanningSection("locations")}>
+              <DsIcon name="pencil-simple-ds" size={16} />
+            </IconButton>}
+          </div> : compact && onOpenPlanningSection
+            ? <Button size="S" variant="ghost" onClick={() => onOpenPlanningSection("locations")}>Add location</Button>
+            : <strong>Location not set</strong>}
           {location && (location.mapLink || location.address) ? <a className="shared-location-address label-s-semibold" href={getMapsUrl(location.mapLink || location.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || location.mapLink || "")}</a> : null}
-          {compact && onOpenPlanningSection ? <Button size="S" variant="ghost" onClick={() => onOpenPlanningSection("locations")}>{location ? "Edit location" : "Add location"}</Button> : null}
         </div>
-        {!compact ? <div className="shared-weather-block">
-          <div className="shared-weather-summary"><span className="shared-weather-icon" aria-hidden="true"><DsIcon name={getWeatherIcon(displayedWeather)} size={18} /></span><div><strong>{temperature}</strong><p>{[conditions, rainChance].filter(Boolean).join(" · ")}</p></div></div>
-          {visibleProductionContact ? <div className="shared-production-contact"><span className="label-xs-semibold">Key contacts</span><strong>{visibleProductionContact}</strong>{visibleProductionPhone ? <a className="label-s-semibold" href={`tel:${visibleProductionPhone}`}>Call production</a> : null}</div> : null}
-        </div> : null}
+        {!compact ? <>
+          <div className="shared-weather-block">
+            <div className="shared-weather-summary"><span className="shared-weather-icon" aria-hidden="true"><DsIcon name={getWeatherIcon(displayedWeather)} size={18} /></span><div><strong>{temperature}</strong><p>{[conditions, rainChance].filter(Boolean).join(" · ")}</p></div></div>
+          </div>
+          {visibleProductionContact ? <div className="shared-production-contact">
+            <span className="label-xs-semibold">Production contact</span>
+            <strong>{productionContactDetails}</strong>
+            {visibleProductionPhone ? <div className="shared-contact-details"><a className="shared-contact-email label-s-semibold" aria-label={`Call ${productionContactDetails}`} href={`tel:${visibleProductionPhone}`}>{productionPhoneText}</a></div> : null}
+          </div> : null}
+        </> : null}
       </section>
 
-      {compact ? peopleSection : null}
-
       {!embedded ? <section className="shared-day-glance is-single" aria-label="At a glance">
-        <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong><small>{renderRunOfDay ? "Track detailed coverage below" : "Track detailed coverage in Shoot day"}</small>{!renderRunOfDay && isStudioInternal && typeof printIndex !== "number" ? <Link className="shared-shot-list-link label-s-semibold" href={`/projects/${projectId}/stages/shoot?view=on-set&day=${encodeURIComponent(day.id)}&section=schedule`}>Open Shoot day<DsIcon name="arrow-right" size={14} /></Link> : null}</article>
+        <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong>{renderRunOfDay && <small>Track detailed coverage below</small>}{!renderRunOfDay && isStudioInternal && typeof printIndex !== "number" ? <Link className="shared-shot-list-link label-s-semibold" href={`/projects/${projectId}/stages/shoot?view=on-set&day=${encodeURIComponent(day.id)}&section=schedule`}>Open Shoot day<DsIcon name="arrow-right" size={14} /></Link> : null}</article>
       </section> : null}
 
       {renderRunOfDay ? renderRunOfDay(day, sectionControls("run-of-day")) : <SharedSection title="Run of day" count={timedEntries.length} controls={getSectionControls?.("run-of-day")}>
@@ -514,55 +536,82 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
           const meta = scheduleTypeMeta[entry.type];
           const rowLocation = callSheet.locations.find((item) => item.id === entry.locationId);
           const linkedGroup = entry.linkedShotGroupId ? callSheet.shotGroups?.find((group) => group.id === entry.linkedShotGroupId) : undefined;
-          const linkedShotCount = entry.linkedShotGroupId ? callSheet.entries.filter((shot) => shot.type === "shot" && shot.shotGroupId === entry.linkedShotGroupId).length : 0;
+          const linkedShots = linkedGroup ? dayShots.filter((shot) => shot.shotGroupId === linkedGroup.id) : [];
           return (
             <article className={`shared-schedule-row is-${entry.type} ${entry.captured ? "captured" : ""}`} key={entry.id}>
               <div className="shared-schedule-time"><strong>{formatTime(entry.startTime)}</strong>{entry.durationMinutes ? <span className="label-xs">to {formatTime(addMinutes(entry.startTime, entry.durationMinutes))}</span> : null}</div>
               <span className="shared-schedule-icon"><DsIcon name={entry.type === "shot" && entry.captured ? "check-circle" : meta.icon} size={18} /></span>
-              <div><strong>{linkedGroup?.name ?? entry.description}</strong><span className="label-xs">{[entry.type === "coverage" && linkedShotCount ? `${linkedShotCount} shots` : meta.label, rowLocation?.name].filter(Boolean).join(" · ")}</span></div>
+              <div><strong>{linkedGroup?.name ?? entry.description}</strong><span className="label-xs">{[entry.type === "coverage" && linkedShots.length ? `${linkedShots.length} ${linkedShots.length === 1 ? "shot" : "shots"}` : meta.label, rowLocation?.name].filter(Boolean).join(" · ")}</span>
+                {typeof printIndex === "number" && linkedShots.length > 0 && <ul>{linkedShots.map((shot) => <li className="label-s" key={shot.id}>{shot.description}</li>)}</ul>}
+              </div>
             </article>
           );
         })}</div> : <div className="shared-empty-schedule"><p className="shared-empty-copy">{onOpenSchedule ? "The schedule has not been added yet." : "Schedule not yet available."}</p>{onOpenSchedule ? <button className="shared-schedule-helper-link label-s-semibold" type="button" onClick={onOpenSchedule}>Create the run of day in Schedule<DsIcon name="arrow-right" size={14} /></button> : null}</div>}
       </SharedSection>}
 
-      {renderInterviewQuestions ? renderInterviewQuestions(day, sectionControls("interview-questions")) : null}
+      {!renderRunOfDay && untimedShots.length > 0 && <SharedSection title="Shots without a time" count={untimedShots.length}>
+        <ol>{untimedShots.map((shot) => <li key={shot.id}><strong>{shot.description}</strong></li>)}</ol>
+      </SharedSection>}
+      {compact ? peopleSection : null}
+      {!embedded && <PrintShotReferences callSheet={callSheet} shots={dayShots} />}
 
-      {!compact || locations.some((item) => item.id !== location?.id) ? <SharedSection title="Locations" count={locations.length} controls={getSectionControls?.("locations")}>
+      {renderInterviewQuestions ? renderInterviewQuestions(day, sectionControls("interview-questions"))
+        : dayQuestions.length > 0 && <SharedSection title="Interview" count={dayQuestions.length}>
+          <ol>{dayQuestions.map((question) => {
+            const talent = !question.unassignedDayIds?.includes(day.id) && people.find((person) => person.id === question.personId);
+            return <li key={question.id}><strong>{question.question}</strong>{talent && <p className="label-s">{talent.name}</p>}</li>;
+          })}</ol>
+        </SharedSection>}
+
+      {locationActions || !compact || locations.some((item) => item.id !== location?.id) ? <SharedSection title="Locations" count={locations.length} controls={getSectionControls?.("locations")}
+        headerAction={locationActions && <div ref={locationSectionActionsRef}><BriskSelect
+          mode="action" ariaLabel={`Add location to ${day.label}`} placeholder="Add location" value="" clearable={false}
+          emptyLabel="No other shoot locations"
+          options={callSheet.locations.filter((item) => !isAssignedToDay(item.shootDayIds, day.id)).map((item) => ({ value: item.id, label: item.name, description: item.address }))}
+          onChange={(id) => {
+            const item = callSheet.locations.find((candidate) => candidate.id === id);
+            if (item) locationActions.addExisting(item, day);
+          }}
+          footerAction={{ label: "Create new location", icon: "plus", onSelect: () => locationActions.add(day) }}
+          actionTrigger={(props) => <Button {...props} size="S" variant="ghost">Add location</Button>}
+        /></div>}>
         <OperationalSectionActions
           editing={false}
           planningLabel={locations.length ? "Manage locations in Planning" : "Add locations in Planning"}
           showEdit={false}
-          showPlanning={Boolean(onOpenPlanningSection && !compact)}
+          showPlanning={Boolean(!locationActions && onOpenPlanningSection && !compact)}
           onOpenPlanning={() => onOpenPlanningSection?.("locations")}
         />
         {locations.length ? <div className="shared-location-list">{locations.map((item) => (
           <article key={item.id}>
-            <div className="shared-location-heading"><strong>{item.name}</strong>{item.id === day.primaryLocationId ? <span className="label-xs-semibold">Primary</span> : null}</div>
+            <div className="shared-location-heading">
+              <CallSheetRowName name={item.name} onEdit={locationActions && (() => locationActions.edit(item))} />
+              {item.id === day.primaryLocationId && <span className="label-xs-semibold">Primary</span>}
+              {locationActions && <ShootCommandMenu compact align="end" label={`Actions for ${item.name}`}
+                fallbackFocus={() => locationSectionActionsRef.current?.querySelector("button") ?? null}
+                actions={[
+                  { label: "Edit location", onSelect: () => locationActions.edit(item) },
+                  ...(item.id === day.primaryLocationId ? [] : [{ label: `Make primary for ${day.label}`, onSelect: () => locationActions.makePrimary(item.id, day.id) }]),
+                  { label: `Remove from ${day.label}`, dividerAbove: true, onSelect: () => locationActions.removeFromDay(item, day) },
+                ]} />}
+            </div>
             {item.mapLink || item.address ? <a className="shared-location-map label-s-semibold" href={getMapsUrl(item.mapLink || item.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(item.address || item.mapLink || "")}</a> : null}
           </article>
-        ))}</div> : <div className="shared-section-empty"><strong>No locations added</strong><span className="label-xs">Add the shoot locations in Planning before the day begins.</span></div>}
+        ))}</div> : <div className="shared-section-empty"><strong>No locations added</strong>{!locationActions && <span className="label-xs">Add the shoot locations in Planning before the day begins.</span>}</div>}
       </SharedSection> : null}
 
       {!compact ? peopleSection : null}
 
       {onChange || dayNotes.trim() || internalNotes ? (
         <SharedSection title="Notes for the day" controls={getSectionControls?.("notes")}>
-          {compact && onChange ? <OperationalSectionActions editing={editingOperationalSection === "notes"} editLabel={dayNotes.trim() ? "Edit notes" : "Add notes"} showEdit onEdit={() => setEditingOperationalSection((current) => current === "notes" ? null : "notes")} /> : null}
-          {onChange && (!compact || editingOperationalSection === "notes") ? (
-            <label className="shared-notes-editor">
-              <span className="label-xs-semibold">{day.label} notes</span>
-              <textarea
-                aria-label={`${day.label} notes`}
-                placeholder={"Parking:\nAccess:\nWi-Fi:\nOther practical details:"}
-                rows={compact ? 4 : 7}
-                value={dayNotes}
-                onChange={(event) => updateDayNotes(event.target.value)}
-              />
-            </label>
-          ) : dayNotes.trim() ? <p className="shared-notes">{dayNotes}</p> : compact ? <p className="label-s">No notes added.</p> : null}
+          {onChange ? (
+            <DayNotesEditor label={`${day.label} notes`} text={dayNotes} marks={day.notes?.practicalDetailsMarks} onChange={updateDayNotes} />
+          ) : dayNotes.trim() ? <p className="shared-notes"><DayNotesText text={dayNotes} marks={day.notes?.practicalDetailsMarks} /></p> : compact ? <p className="label-s">No notes added.</p> : null}
           {internalNotes ? <div className="shared-practical-grid"><PracticalItem title="Internal Studio notes" body={internalNotes} /></div> : null}
         </SharedSection>
       ) : null}
+
+      {typeof printIndex !== "number" && <CallSheetDayComments projectId={projectId} day={day} canComment={canComment} showWhenEmpty={!embedded} />}
 
       {documents.length || (!compact && onOpenDocuments) ? (
         <SharedSection sectionId="documents" title="Documents" count={documents.length} controls={getSectionControls?.("documents")}>
@@ -579,7 +628,7 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
             <div>
               <strong>{nearestEmergencyHospital.hospitalName}</strong>
               <a className="shared-location-map label-s-semibold" href={getMapsUrl(nearestEmergencyHospital.hospitalAddress)} target="_blank" rel="noreferrer">{nearestEmergencyHospital.hospitalAddress}</a>
-              <span className="label-xs">{nearestEmergencyHospital.travelTime || `Calculated from ${location.name}`}</span>
+              {nearestEmergencyHospital.travelTime && <span className="label-xs">{nearestEmergencyHospital.travelTime}</span>}
             </div>
             <a className="shared-primary-action label-s-semibold" href={getMapsUrl(nearestEmergencyHospital.hospitalAddress)} target="_blank" rel="noreferrer"><DsIcon name="arrow-bend-up-right" size={16} />Directions</a>
             <div>
@@ -589,7 +638,10 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
             </div>
           </div>
         </SharedSection>
-      ) : null}
+      ) : embedded && isStudioInternal && location ? <SharedSection title="Nearest emergency hospital" controls={getSectionControls?.("emergency")}>
+        <p className="label-s">Needs confirmation</p>
+        {onEditEssentials && <Button size="S" variant="ghost" onClick={onEditEssentials}>Review day details</Button>}
+      </SharedSection> : null}
 
       {typeof printIndex === "number" ? (
         <footer className="shared-document-print-footer">
@@ -601,14 +653,26 @@ function SharedDay({ callSheet, clientName, day, embedded, compact = false, onEd
   );
 }
 
+function visibleRosterContact(callSheet: CallSheet, value: string) {
+  if (!value.trim()) return "";
+  const digits = normalisePhone(value);
+  const contact = callSheet.people.find((person) => {
+    const phone = normalisePhone(person.phone);
+    return value.split(" · ")[0].trim() === person.name || Boolean(phone && digits.includes(phone));
+  });
+  if (!contact) return "";
+  return [contact.name, contact.role, contact.showContactDetails ? contact.phone : ""].filter(Boolean).join(" · ");
+}
+
 function getLegacyDayNotes(callSheet: CallSheet, day: ShootDay, location: CallSheet["locations"][number] | undefined) {
   const emergency = day.safetyEmergency;
+  const sharedEmergencyContact = visibleRosterContact(callSheet, callSheet.practicalInfo.emergencyContact);
   const details: Array<[string, string]> = [
     ["Parking", location?.parking ?? ""],
     ["Access", [location?.access, day.notes?.access, callSheet.practicalInfo.access].filter(Boolean).join(" ")],
     ["Accessibility", location?.accessibility ?? callSheet.practicalInfo.accessibility],
     ["Wi-Fi", location?.wifi ?? callSheet.practicalInfo.wifi],
-    ["Emergency contact", [emergency?.emergencyNumber, callSheet.practicalInfo.emergencyContact].filter(Boolean).join(" - ")],
+    ["Emergency contact", [emergency?.emergencyNumber, sharedEmergencyContact].filter(Boolean).join(" - ")],
     ["Equipment", day.notes?.equipment ?? ""],
     ["Wardrobe", day.notes?.wardrobe ?? ""],
     ["Catering", day.notes?.catering ?? ""],
@@ -624,48 +688,131 @@ function getLegacyDayNotes(callSheet: CallSheet, day: ShootDay, location: CallSh
     .join("\n");
 }
 
-function getNearestEmergencyHospital(location: ShootLocation | undefined, existing: SafetyEmergencyInfo | undefined): SafetyEmergencyInfo | undefined {
-  if (!location) return undefined;
-  if (existing?.hospitalName.trim() && existing.hospitalAddress.trim() && !existing.needsReview) return existing;
-
-  const locationText = `${location.name} ${location.address}`.toLowerCase();
-  if (locationText.includes("carriageworks") || locationText.includes("eveleigh") || locationText.includes("camperdown") || locationText.includes("newtown")) {
-    return { hospitalName: "Royal Prince Alfred Hospital Emergency Department", hospitalAddress: "Missenden Road, Camperdown NSW 2050", hospitalPhone: "02 9515 6111", emergencyNumber: "000", confirmed: true };
-  }
-  if (locationText.includes("thirroul") || locationText.includes("wollongong")) {
-    return { hospitalName: "Wollongong Hospital Emergency Department", hospitalAddress: "348-352 Crown Street, Wollongong NSW 2500", hospitalPhone: "02 4222 5000", emergencyNumber: "000", confirmed: true };
-  }
-  if (locationText.includes("vic")) {
-    return { hospitalName: "The Royal Melbourne Hospital Emergency Department", hospitalAddress: "300 Grattan Street, Parkville VIC 3050", hospitalPhone: "03 9342 7000", emergencyNumber: "000", confirmed: true };
-  }
-  if (locationText.includes("qld")) {
-    return { hospitalName: "Royal Brisbane and Women's Hospital Emergency Department", hospitalAddress: "Butterfield Street, Herston QLD 4029", hospitalPhone: "07 3646 8111", emergencyNumber: "000", confirmed: true };
-  }
-  if (locationText.includes("sa ")) {
-    return { hospitalName: "Royal Adelaide Hospital Emergency Department", hospitalAddress: "Port Road, Adelaide SA 5000", hospitalPhone: "08 7074 0000", emergencyNumber: "000", confirmed: true };
-  }
-
-  return { hospitalName: "Sydney Hospital Emergency Department", hospitalAddress: "8 Macquarie Street, Sydney NSW 2000", hospitalPhone: "02 9382 7111", emergencyNumber: "000", confirmed: true };
+export function ShootDayControls({ days, day, onSelectDay, onEdit, children }: {
+  days: ShootDay[]; day: ShootDay; onSelectDay: (id: string) => void; onEdit?: () => void; children?: ReactNode;
+}) {
+  return <header className="shared-day-edit-row">
+    <ShootDaySwitcher days={days} activeDayId={day.id} onSelectDay={onSelectDay} />
+    {days.length === 1 && <strong className="label-s-semibold">{day.label}</strong>}
+    {onEdit && <IconButton aria-label={`Edit ${day.label} details`} tooltipPlacement="bottom" onClick={onEdit}>
+      <DsIcon name="pencil-simple-ds" size={16} />
+    </IconButton>}
+    {children}
+  </header>;
 }
 
-function SharedSection({ title, count, children, controls, sectionId }: { title: string; count?: number; children: ReactNode; controls?: CallSheetSectionControls; sectionId?: string }) {
+export function ShootDaySwitcher({ days, activeDayId, onSelectDay }: { days: ShootDay[]; activeDayId: string; onSelectDay: (id: string) => void }) {
+  const daySwitcherRef = useRef<HTMLElement>(null);
+  const activeDayButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const switcher = daySwitcherRef.current;
+    const activeButton = activeDayButtonRef.current;
+    if (!switcher || !activeButton) return;
+    const centredLeft = activeButton.offsetLeft - ((switcher.clientWidth - activeButton.offsetWidth) / 2);
+    switcher.scrollTo({ left: Math.max(0, centredLeft), behavior: "smooth" });
+  }, [activeDayId]);
+
+  if (days.length < 2) return null;
+  return <nav className="shared-day-switcher" ref={daySwitcherRef} aria-label="Shoot days">
+    {days.map((shootDay) => {
+      const isActive = shootDay.id === activeDayId;
+      return <button ref={isActive ? activeDayButtonRef : undefined} data-dialog-autofocus={isActive || undefined} className={`label-s-semibold ${isActive ? "active" : ""}`} type="button" aria-current={isActive ? "page" : undefined} key={shootDay.id} onClick={() => onSelectDay(shootDay.id)}>
+        <span>{shootDay.label}</span>
+        <small>{shootDay.date ? formatShortDate(shootDay.date) : "Date not set"}</small>
+      </button>;
+    })}
+  </nav>;
+}
+
+function CallSheetDayComments({ projectId, day, canComment, showWhenEmpty }: {
+  projectId: string; day: ShootDay; canComment: boolean; showWhenEmpty: boolean;
+}) {
+  const key = `brisk-call-sheet-comments-${projectId}-${day.id}`;
+  const viewer = usePrototypeViewer();
+  const [comments, setComments] = useState<ScriptComment[]>([]);
+  const [position, setPosition] = useState<FloatingCommentPosition | null>(null);
+  useEffect(() => {
+    const load = () => {
+      const raw = localStorage.getItem(key);
+      setComments(raw ? (JSON.parse(raw) as ScriptComment[]).filter((comment) => comment.visibility === "external") : []);
+    };
+    load();
+    window.addEventListener("storage", load);
+    return () => window.removeEventListener("storage", load);
+  }, [key]);
+  if (!comments.length && !(showWhenEmpty && canComment)) return null;
+  const authorId = viewer?.chatUserId ?? "call-sheet-guest";
+  const users = [...scriptUsers.filter((user) => user.id !== authorId), {
+    id: authorId, name: viewer?.name ?? "Guest", initials: getInitials(viewer?.name ?? "Guest"),
+    team: "customer" as const, avatarTone: "sand" as const,
+  }];
+  return <div className="shared-day-comments">
+    {canComment ? <Button size="S" variant="secondary" onClick={(event) => setPosition(getFloatingCommentPosition(event.currentTarget.getBoundingClientRect()))}>
+      Comments{comments.length ? ` (${comments.length})` : ""}
+    </Button> : <SharedSection title="Comments" count={comments.length}>{comments.map((comment) => <div key={comment.id}><p>{comment.body}</p>{comment.replies.map((reply) => <p key={reply.id}>{reply.body}</p>)}</div>)}</SharedSection>}
+    {canComment && position && createPortal(<FloatingCommentShell anchor={{kind: "overall", label: day.label}}
+      currentUserId={authorId} users={users} canPostInternal={false} comments={comments} position={position}
+      onDismiss={() => setPosition(null)} onCommentsChange={(next) => {
+        localStorage.setItem(key, JSON.stringify(next));
+        setComments(next);
+      }} />, document.body)}
+  </div>;
+}
+
+function PrintShotReferences({ callSheet, shots }: { callSheet: CallSheet; shots: CallSheet["entries"] }) {
+  const references = shots.filter((shot) => shot.imageReferenceUrl);
+  if (!references.length) return null;
+  const numbers = getShootShotNumbers(callSheet);
+  references.sort((a, b) => (numbers.get(a.id) ?? "").localeCompare(numbers.get(b.id) ?? "", "en", { numeric: true }));
+  return <section className="shared-print-references" aria-label="Shot references">
+    <h2>Shot references</h2>
+    {references.map((shot) => <figure key={shot.id}>
+      <figcaption className="label-s-semibold">Shot {numbers.get(shot.id)} · {shot.description}</figcaption>
+      <img src={shot.imageReferenceUrl} alt={`Reference for ${shot.description}`} />
+    </figure>)}
+  </section>;
+}
+
+export function CallSheetSectionTitle({ title, count, expanded = true, onToggle }: {
+  title: string;
+  count?: ReactNode;
+  expanded?: boolean;
+  onToggle?: () => void;
+}) {
+  return <h2 className="shared-section-title" aria-label={title}>
+    {onToggle ? <button type="button" aria-expanded={expanded} aria-label={`${expanded ? "Collapse" : "Expand"} ${title}`} onClick={onToggle}>
+      <DsIcon name={expanded ? "caret-down" : "caret-right"} size={14} />{title}{count}
+    </button> : <>{title}{count}</>}
+  </h2>;
+}
+
+function SharedSection({ title, count, children, controls, sectionId, headerAction }: { title: string; count?: number; children?: ReactNode; headerAction?: ReactNode; controls?: CallSheetSectionControls; sectionId?: string }) {
   const isExpanded = controls?.focused || !controls?.collapsed;
+  const countBadge = typeof count === "number" && <span className="shoot-call-sheet-section-count label-xs-semibold">{count}</span>;
   return (
     <section className={`shared-section shoot-call-sheet-focus-section ${controls?.focused ? "is-focused" : ""}`} data-call-sheet-section={sectionId} role={controls?.focused ? "dialog" : undefined} aria-modal={controls?.focused ? "true" : undefined} aria-label={controls?.focused ? `Focused ${title}` : undefined}>
       <header>
-        <div><h2>{title}</h2>{typeof count === "number" ? <span className="shoot-call-sheet-section-count label-xs-semibold">{count}</span> : null}</div>
-        {controls ? <div className="shared-section-actions">
-          {controls.focused
-            ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={controls.onToggleFocus}><DsIcon name="x-close-cross" size={16} />Exit focus</Button>
-            : <>
-              <button className="shoot-icon-button shoot-call-sheet-collapse-button" type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? "Collapse" : "Expand"} ${title}`} title={`${isExpanded ? "Collapse" : "Expand"} ${title}`} onClick={controls.onToggleCollapse}><DsIcon name="caret-down" size={16} /></button>
-              <button className="shoot-icon-button shoot-call-sheet-focus-button" type="button" aria-label={`Focus on ${title}`} title={`Focus on ${title}`} onClick={controls.onToggleFocus}><DsIcon name="frame-corners" size={17} /></button>
-            </>}
-        </div> : null}
+        <CallSheetSectionTitle
+          title={title}
+          count={countBadge}
+          expanded={isExpanded}
+          onToggle={controls && !controls.focused ? controls.onToggleCollapse : undefined}
+        />
+        {headerAction}
+        {controls && (controls.focused
+          ? <Button size="S" variant="secondary" type="button" onClick={controls.onToggleFocus}><DsIcon name="x-close-cross" size={16} />Exit focus</Button>
+          : <span className="shared-section-focus"><IconButton aria-label={`Focus on ${title}`} tooltipAlign="end" onClick={controls.onToggleFocus}><DsIcon name="frame-corners" size={16} /></IconButton></span>)}
+
       </header>
-      {isExpanded ? <div className="shared-section-body">{children}</div> : null}
+      {isExpanded && children ? <div className="shared-section-body">{children}</div> : null}
     </section>
   );
+}
+
+export function CallSheetRowName({ name, onEdit }: { name: string; onEdit?: () => void }) {
+  return onEdit
+    ? <button type="button" className="shoot-on-set-shot-copy" aria-label={`Edit ${name}`} onClick={onEdit}><strong>{name}</strong></button>
+    : <strong>{name}</strong>;
 }
 
 function OperationalSectionActions({ editing, editLabel, planningLabel, showEdit, showPlanning = false, onEdit, onOpenPlanning }: {
@@ -724,9 +871,4 @@ function getInitials(name: string) {
 
 function normalisePhone(phone: string) {
   return phone.replace(/[^+\d]/gu, "");
-}
-
-function getContactPhone(contact: string) {
-  const match = contact.match(/(?:\+?\d[\d\s()-]{7,}\d)/u);
-  return match ? normalisePhone(match[0]) : "";
 }

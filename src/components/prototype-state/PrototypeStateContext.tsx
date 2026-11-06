@@ -6,7 +6,7 @@ import { usePrototypeScenario } from "@/components/prototype-scenarios/Prototype
 import type { TagClass } from "@/data/project-tags";
 import type { BriefFields } from "@/data/brief";
 import type { RoleSlot } from "@/components/active-videos/types";
-import type { Client, NewClientInput } from "@/data/clients";
+import type { Client, ClientContact, NewClientInput } from "@/data/clients";
 import {
   cloneStudioBriefConfiguration,
   getStudioBrandColours,
@@ -60,7 +60,7 @@ type PrototypeStateContextValue = {
   createProject: (input: CreateProjectInput) => ScopedProject | null;
   createClientVideo: (input: { clientId: string; userId: string; name: string; fields?: BriefFields }) => ScopedProject | null;
   inviteClientTeammate: (input: { clientId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => void;
-  inviteClient: (input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member"; sendBrief?: boolean }) => void;
+  inviteClient: (input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member"; sendBrief?: boolean }) => ClientContact | undefined;
   setClientMemberProjects: (input: { clientId: string; memberId: string; projectIds: string[]; role?: "Client Admin" | "Client Member" }) => void;
   markClientPreviewed: () => void;
   completeOnboarding: () => void;
@@ -102,6 +102,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     stateRef.current = nextState;
     persistState(nextState);
     setState(nextState);
+    return nextState;
   }, [persistState]);
 
   useEffect(() => {
@@ -160,7 +161,10 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
   }, [persistState]);
 
   const inviteClient = useCallback((input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member"; sendBrief?: boolean }) => {
-    commitState((current) => inviteClientToProjectState(current, input));
+    const next = commitState((current) => inviteClientToProjectState(current, input));
+    const client = next.clients.find((candidate) => candidate.workspaceId === next.session.activeWorkspaceId && candidate.id === input.clientId);
+    return client?.contacts.find((contact) => contact.email.toLowerCase() === input.email.trim().toLowerCase()
+      && contact.projectIds.includes(input.projectId));
   }, [commitState]);
 
   const inviteClientTeammate = useCallback((input: { clientId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => {

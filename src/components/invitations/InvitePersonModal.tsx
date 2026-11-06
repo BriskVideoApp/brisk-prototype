@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 import { Radio } from "../../../Brisk DS/src/app/components/Radio";
@@ -26,6 +27,7 @@ export type InvitePersonSubmission = {
   email: string;
   name: string;
   jobTitle: string;
+  briefMessage?: string;
   clientIds: string[];
   projectIds: string[];
 };
@@ -59,11 +61,13 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
   const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const prefilledProjectIds = prefill.projectIds ?? [];
   const isBriefSendInvite = prefill.purpose === "brief-send";
-  const briefProjectName = workspaceProjects.find((project) => project.id === (prefill.projectId ?? prefilledProjectIds[0]))?.name ?? "this project";
+  const briefProject = workspaceProjects.find((project) => project.id === prefill.projectId && project.clientId === prefill.clientId && project.status !== "Archived");
+  const briefClient = clients.find((client) => client.id === prefill.clientId && client.status !== "Archived");
   const projectClientIds = prefilledProjectIds
     .map((projectId) => workspaceProjects.find((project) => project.id === projectId)?.clientId)
     .filter((clientId): clientId is string => Boolean(clientId));
   const initialClientIds = unique([...(prefill.clientIds ?? []), ...projectClientIds]);
+  const [briefMessage, setBriefMessage] = useState(prefill.briefMessage ?? "");
   const [step, setStep] = useState<1 | 2>(1);
   const [role, setRole] = useState<InvitationRole>(prefill.role ?? (canManageStudio ? "Studio Staff" : selectedRole === "Customer" ? "Customer" : "Studio Freelancer"));
   const [studioPermission, setStudioPermission] = useState<StudioPermission>(prefill.studioPermission ?? "Team Member");
@@ -90,7 +94,11 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
   const availableProjects = workspaceProjects.filter((project) => project.status !== "Archived" && selectedClientIds.includes(project.clientId));
   const selectedProjects = projectIds.filter((projectId) => availableProjects.some((project) => project.id === projectId));
   const hasCustomerConflict = role === "Customer" && existingPerson?.type === "Client contact" && existingPerson.clientId !== customerClientId;
+  const briefRecipientError = isBriefSendInvite && existingPerson && (
+    existingPerson.type !== "Client contact" || hasCustomerConflict || existingPerson.status === "Paused" || existingPerson.status === "Archived"
+  ) ? "Use an email for an active or invited contact at this company, or invite someone new." : null;
   const canSend = (canManageStudio || selectedRole === "Customer" || selectedProjects.length > 0)
+    && (!isBriefSendInvite || (briefProject && briefClient && !briefRecipientError))
     && emailIsValid
     && !hasCustomerConflict
     && (
@@ -159,13 +167,25 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
     setJobTitle(nextChoice);
   };
 
+  const effectiveMembership = isBriefSendInvite ? existingPerson?.clientMembershipRole ?? clientMembershipRole : clientMembershipRole;
+  const canChooseMembership = (canManageStudio || canManageClientAccount) && !(isBriefSendInvite && existingPerson);
+  function describeMembership(membership: ClientMembershipRole) {
+    if (isBriefSendInvite) {
+      return membership === "Client Admin"
+        ? `Teammate access, plus manage ${briefClient?.name}’s billing, company details and team access.`
+        : `Review and approve work on ${briefProject?.name}.`;
+    }
+    return membership === "Client Admin" ? "Company details, billing and team access, plus permitted projects." : "Review and approve permitted projects.";
+  }
+
   const send = () => {
     if (!canSend) return;
     onSubmit({
       role,
       studioPermission,
-      clientMembershipRole,
+      clientMembershipRole: effectiveMembership,
       email: normalisedEmail,
+      ...(isBriefSendInvite ? { briefMessage: briefMessage.trim() } : {}),
       name,
       jobTitle,
       clientIds: role === "Studio Staff" ? [] : selectedClientIds,
@@ -173,15 +193,67 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
     });
   };
 
+  const identityFields = (
+    <div className="invite-person-identity-fields">
+      <Input label="Email" type="email" value={email} hint="Required" error={attemptedNext && !emailIsValid} onChange={(event) => {
+        setEmail(event.target.value);
+        if (isBriefSendInvite) {
+          setClientMembershipRole("Client Member");
+          if (email === prefill.email && name === prefill.name) setName("");
+        }
+      }} />
+      <Input label="Name" value={name} hint="Optional" onChange={(event) => setName(event.target.value)} />
+    </div>
+  );
+  const membershipField = canChooseMembership ? <fieldset className={isBriefSendInvite ? "invite-role-choice invite-brief-roles" : "invite-role-choice"}>
+    <legend className="label-m-semibold">{isBriefSendInvite ? "Access level" : "Client access level"}</legend>
+    <div>
+      {(["Client Member", "Client Admin"] as const).map((membership) => (
+        <Radio
+          key={membership}
+          name="client-access-level"
+          value={membership}
+          checked={effectiveMembership === membership}
+          onChange={() => setClientMembershipRole(membership)}
+          label={<span>
+            <strong className="label-s-semibold">{clientMembershipLabels[membership]}</strong>
+            <small className="label-xs">{describeMembership(membership)}</small>
+          </span>}
+        />
+      ))}
+    </div>
+  </fieldset> : isBriefSendInvite ? (
+    <div className="invite-person-select-field">
+      <strong className="label-m-semibold">{clientMembershipLabels[effectiveMembership]}</strong>
+      <p className="label-s">{describeMembership(effectiveMembership)}</p>
+    </div>
+  ) : null;
+
+  if (isBriefSendInvite) {
+    return (
+      <ClientModal
+        title="Invite to review Brief"
+        description={briefClient && briefProject ? `${briefClient.name} / ${briefProject.name}` : "This project is unavailable."}
+        onClose={onClose}
+        footer={<>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" variant="primary" disabled={!canSend} onClick={send}>Invite and send Brief</Button>
+        </>}
+      >
+        <div className="invite-person-flow">
+          {identityFields}
+          {briefRecipientError ? <p className="invite-field-error label-xs" role="alert">{briefRecipientError}</p> : membershipField}
+          <Textarea label="Message" value={briefMessage} rows={2} maxLength={240} onChange={(event) => setBriefMessage(event.target.value)} />
+        </div>
+      </ClientModal>
+    );
+  }
+
   return (
     <ClientModal
       className="invite-person-modal"
-      title={isBriefSendInvite ? "Invite Client and send Brief" : "Invite person"}
-      description={isBriefSendInvite
-        ? step === 1
-          ? `They can't access ${briefProjectName} yet. Invite them to Brisk with access to this project.`
-          : `We'll send the Brief to ${inviteeName} for review after you send the invite.`
-        : `Step ${step} of 2 - ${step === 1 ? "Who are you inviting?" : "Add the relevant details"}`}
+      title="Invite person"
+      description={`Step ${step} of 2 - ${step === 1 ? "Who are you inviting?" : "Add the relevant details"}`}
       onClose={onClose}
       footer={step === 1 ? (
         <>
@@ -191,7 +263,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
       ) : (
         <>
           <Button size="S" variant="secondary" onClick={() => setStep(1)}>Back</Button>
-          <Button size="S" variant="primary"  type="button" disabled={!canSend} onClick={send}>{isBriefSendInvite ? "Invite and send Brief" : "Send invite"}</Button>
+          <Button size="S" variant="primary"  type="button" disabled={!canSend} onClick={send}>Send invite</Button>
         </>
       )}
     >
@@ -219,10 +291,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
                 ))}
               </div>
             </fieldset>
-            <div className="invite-person-identity-fields">
-              <Input label="Email" type="email" value={email} hint="Required" error={attemptedNext && !emailIsValid} onChange={(event) => setEmail(event.target.value)} />
-              <Input label="Name" value={name} hint="Optional" onChange={(event) => setName(event.target.value)} />
-            </div>
+            {identityFields}
             {attemptedNext && !emailIsValid ? <p className="invite-field-error label-xs" role="alert">Enter a valid email address.</p> : null}
             {existingPerson ? <ExistingPersonNotice name={existingPerson.name} /> : null}
           </>
@@ -281,12 +350,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
 
             {role === "Customer" ? (
               <>
-                {canManageStudio || canManageClientAccount ? <fieldset className="invite-role-choice">
-                  <legend className="label-m-semibold">Client access level</legend>
-                  <div>{(["Client Member", "Client Admin"] as const).map((membership) => <Radio
-                    key={membership} name="client-access-level" value={membership} checked={clientMembershipRole === membership}
-                    onChange={() => setClientMembershipRole(membership)} label={<span><strong className="label-s-semibold">{clientMembershipLabels[membership]}</strong><small className="label-xs">{membership === "Client Admin" ? "Company details, billing and team access, plus permitted projects." : "Review and approve permitted projects."}</small></span>} />)}</div>
-                </fieldset> : null}
+                {membershipField}
                 <div className="invite-person-select-field">
                   <span className="label-m-semibold">Client company</span>
                   <BriskSelect

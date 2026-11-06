@@ -20,7 +20,8 @@ import { useProjectStageStatus, type EditReadinessItem } from "@/components/proj
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
-import { canActOnProject } from "@/data/prototype-access";
+import { ProjectUnavailable } from "@/components/project/CanonicalStageProject";
+import { canActOnProject, canViewProject } from "@/data/prototype-access";
 import { ShareActionRow, StageShareControl, type ShareActionRowProps } from "@/components/share/ShareActionRow";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import { DsIcon } from "./DsIcon";
@@ -116,10 +117,11 @@ export function VideoReviewScreen({
     () => new Set(initialReviewComments.filter((comment) => comment.resolved).map((comment) => comment.id)),
   );
   const [expandedResolvedIds, setExpandedResolvedIds] = useState(new Set<string>());
-  const [selectedVersionLabel, setSelectedVersionLabel] = useState(() => {
-    const linkedVersion = searchParams.get("version");
-    return initialReviewVersions.find((version) => version.label === linkedVersion)?.label ?? initialReviewVersions[0]?.label ?? "";
-  });
+  const linkedVersion = searchParams.get("version");
+  const [selectedVersionLabel, setSelectedVersionLabel] = useState(linkedVersion ?? initialReviewVersions[0]?.label ?? "");
+  useEffect(() => {
+    if (linkedVersion) setSelectedVersionLabel(linkedVersion);
+  }, [linkedVersion]);
   const [versionStatuses, setVersionStatuses] = useState<Record<string, ReviewVersionStatus>>(() =>
     Object.fromEntries(initialReviewVersions.map((version) => [version.label, version.status])),
   );
@@ -146,7 +148,7 @@ export function VideoReviewScreen({
   const [toastMessage, setToastMessage] = useState("");
   const [isToastFading, setIsToastFading] = useState(false);
   const [videoVersions, setVideoVersions] = useState<ReviewVersion[]>(() =>
-    initialReviewVersions.map((version) => ({ ...version })),
+    initialReviewVersions.map((version) => ({ ...version, releasedToClient: true })),
   );
   const [loadedReviewKey, setLoadedReviewKey] = useState<string | null>(null);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
@@ -164,11 +166,13 @@ export function VideoReviewScreen({
   const toastFadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastRemoveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const lastStoredReview = useRef<string | null>(null);
   const usersById = useMemo(() => new Map(reviewUsers.map((user) => [user.id, user])), []);
 
   useEffect(() => {
     try {
       const currentRaw = window.localStorage.getItem(reviewStorageKey);
+      lastStoredReview.current = currentRaw;
       const currentParsed: unknown = currentRaw ? JSON.parse(currentRaw) : null;
       let restored = isStoredEditReview(currentParsed) ? currentParsed : null;
       if (isolateLegacyReview) {
@@ -190,38 +194,69 @@ export function VideoReviewScreen({
         }
       }
       if (restored) {
-        setVideoVersions(restored.versions.map((version) => version.sourceUrl?.startsWith("blob:")
-          ? { ...version, sourceUrl: undefined }
-          : version));
+        setVideoVersions(restored.versions.map((version) => ({
+          ...version,
+          sourceUrl: version.sourceUrl?.startsWith("blob:") ? undefined : version.sourceUrl,
+          // Older demo versions already had Client reviews. Other legacy uploads need an explicit release.
+          releasedToClient: version.releasedToClient ?? (!initiallyEmpty && reviewVersions.some((sample) =>
+            sample.label === version.label && sample.fileName === version.fileName && sample.uploadedAt === version.uploadedAt)),
+        })));
         setReviewComments(restored.comments);
         setResolvedIds(new Set(restored.resolvedIds));
         setVersionStatuses(restored.statuses);
-        setSelectedVersionLabel((current) => restored.versions.some((version) => version.label === current)
-          ? current
-          : restored.versions[0]?.label ?? "");
       }
     } catch {
       // Keep the fixture if a browser draft cannot be read.
     }
     setLoadedReviewKey(reviewStorageKey);
-  }, [isolateLegacyReview, legacyReviewStorageKey, reviewStorageKey]);
+
+    // Another open review can release or replace a version while this page is visible.
+    const syncReview = (event: StorageEvent) => {
+      if (event.storageArea !== window.localStorage || event.key !== reviewStorageKey) return;
+      const latest = window.localStorage.getItem(reviewStorageKey);
+      if (latest === lastStoredReview.current) return;
+      try {
+        const saved: unknown = latest ? JSON.parse(latest) : null;
+        if (!isStoredEditReview(saved)) return;
+        lastStoredReview.current = latest;
+        setVideoVersions((local) => saved.versions.map((version) => {
+          const matching = local.find((item) => item.label === version.label && item.uploadedAt === version.uploadedAt);
+          return { ...version, sourceUrl: matching?.sourceUrl ?? version.sourceUrl };
+        }));
+        setReviewComments(saved.comments);
+        setResolvedIds(new Set(saved.resolvedIds));
+        setVersionStatuses(saved.statuses);
+      } catch {
+        setToastMessage("This browser could not read the latest review changes.");
+      }
+    };
+    window.addEventListener("storage", syncReview);
+    return () => window.removeEventListener("storage", syncReview);
+  }, [initiallyEmpty, isolateLegacyReview, legacyReviewStorageKey, reviewStorageKey]);
 
   useEffect(() => {
     if (loadedReviewKey !== reviewStorageKey) return;
     try {
-      window.localStorage.setItem(reviewStorageKey, JSON.stringify({
+      // A pending storage event will apply the newer snapshot.
+      if (window.localStorage.getItem(reviewStorageKey) !== lastStoredReview.current) return;
+      const snapshot = JSON.stringify({
         versions: videoVersions.map((version) => version.sourceUrl?.startsWith("blob:")
           ? { ...version, sourceUrl: undefined }
           : version),
         comments: reviewComments,
         resolvedIds: [...resolvedIds],
         statuses: versionStatuses,
-      }));
+      });
+      window.localStorage.setItem(reviewStorageKey, snapshot);
+      lastStoredReview.current = snapshot;
     } catch {
       setToastMessage("This browser could not save review changes.");
     }
   }, [loadedReviewKey, reviewComments, reviewStorageKey, resolvedIds, versionStatuses, videoVersions]);
-  const versionComments = reviewComments.filter((comment) => comment.versionLabel === selectedVersionLabel);
+  const allReviewVersions = useMemo(() => selectedRole === "Customer"
+    ? videoVersions.filter((version) => version.releasedToClient === true) : videoVersions, [selectedRole, videoVersions]);
+  const selectedReviewVersion = allReviewVersions.find((version) => version.label === selectedVersionLabel) ?? allReviewVersions[0];
+  const versionComments = reviewComments.filter((comment) => comment.versionLabel === selectedReviewVersion?.label);
   const roleVisibleVersionComments = canChooseCommentVisibility
     ? versionComments
     : versionComments.filter((comment) => comment.visibility === "external");
@@ -248,10 +283,9 @@ export function VideoReviewScreen({
   const canSkipNext =
     comments.length > 0 && (selectedVisibleIndex === -1 || selectedVisibleIndex < comments.length - 1);
   const selectedComment = selectedCommentId
-    ? reviewComments.find((comment) => comment.id === selectedCommentId)
+    ? roleVisibleVersionComments.find((comment) => comment.id === selectedCommentId)
     : undefined;
-  const allReviewVersions = videoVersions;
-  const selectedReviewVersion = allReviewVersions.find((version) => version.label === selectedVersionLabel) ?? allReviewVersions[0];
+
   const activeComparisonVersionLabels = allReviewVersions.length === 2
     ? allReviewVersions.map((version) => version.label)
     : comparisonVersionLabels;
@@ -282,10 +316,10 @@ export function VideoReviewScreen({
   const isEditEmpty = allReviewVersions.length === 0;
 
   useEffect(() => {
-    if (loadedReviewKey === reviewStorageKey && isEditEmpty && editStageStatus.state === "done") {
+    if (loadedReviewKey === reviewStorageKey && videoVersions.length === 0 && editStageStatus.state === "done") {
       setProjectStageStatus(project.id, "edit", { state: "in_progress", daysAgo: 0 });
     }
-  }, [editStageStatus.state, isEditEmpty, loadedReviewKey, project.id, reviewStorageKey, setProjectStageStatus]);
+  }, [editStageStatus.state, videoVersions.length, loadedReviewKey, project.id, reviewStorageKey, setProjectStageStatus]);
 
   useEffect(() => {
     if (allReviewVersions.length !== 2) {
@@ -301,23 +335,6 @@ export function VideoReviewScreen({
         : availableLabels
     ));
   }, [allReviewVersions]);
-
-  useEffect(() => {
-    if (!selectedReviewVersion) return;
-
-    setVersionStatuses((current) => {
-      const currentStatus = current[selectedReviewVersion.label] ?? selectedReviewVersion.status;
-      const nextStatus = editStageStatus.state === "done"
-        ? "approved"
-        : currentStatus === "approved"
-          ? "in_review"
-          : currentStatus;
-
-      return nextStatus === currentStatus
-        ? current
-        : { ...current, [selectedReviewVersion.label]: nextStatus };
-    });
-  }, [editStageStatus.state, selectedReviewVersion]);
 
   useEffect(() => {
     if (canChooseCommentVisibility) {
@@ -699,7 +716,7 @@ export function VideoReviewScreen({
   const updateVideoDuration = (durationSeconds: number) => {
     setVideoVersions((current) =>
       current.map((version) =>
-        version.label === selectedVersionLabel
+        version.label === selectedReviewVersion?.label
           ? {
               ...version,
               durationSeconds,
@@ -728,6 +745,7 @@ export function VideoReviewScreen({
       state: "done",
       daysAgo: 0,
       approvedAt: new Date().toLocaleDateString("en-AU", { day: "numeric", month: "short", timeZone: "Australia/Sydney" }),
+      reviewVersion: selectedReviewVersion.label,
       approvedBy: viewer?.name ?? "Tom Mitchell",
     });
 
@@ -798,6 +816,7 @@ export function VideoReviewScreen({
         currentVersion.label === version.label
           ? {
               ...currentVersion,
+              releasedToClient: false,
               fileName: file.name,
               sourceUrl,
               fileSize: formatFileSize(file.size),
@@ -809,6 +828,10 @@ export function VideoReviewScreen({
       ),
     );
     setVersionStatuses((current) => ({ ...current, [version.label]: "in_review" }));
+    if (editStageStatus.reviewVersion === version.label
+      || (!editStageStatus.reviewVersion && editStageStatus.state === "done" && versionStatuses[version.label] === "approved")) {
+      setProjectStageStatus(project.id, "edit", { state: "in_progress", daysAgo: 0 });
+    }
     selectReviewVersion(version.label);
     setToastMessage(`V${version.number} file replaced`);
   };
@@ -1064,6 +1087,15 @@ export function VideoReviewScreen({
     setToastMessage("Overall comment added");
   };
 
+  if (loadedReviewKey !== reviewStorageKey) return null;
+  if (selectedRole === "Customer" && !canViewProject(viewer, project, prototypeState)) return <ProjectUnavailable />;
+  if (selectedRole === "Customer" && linkedVersion && allReviewVersions.length > 0
+    && !allReviewVersions.some((version) => version.label === linkedVersion)) {
+    return <main className="client-not-found">
+      <h1 className="headings-s-bold">Edit version unavailable</h1>
+      <Link className="client-secondary-button label-s-semibold" href={`/projects/${project.id}/stages/edit`}>View shared versions</Link>
+    </main>;
+  }
   const editShareProps = {
     context: "edit",
     stageLabelOverride: editStageLabel,
@@ -1189,7 +1221,7 @@ export function VideoReviewScreen({
           <ReviewVersionLibrary
             versions={allReviewVersions}
             statuses={versionStatuses}
-            selectedVersionLabel={selectedVersionLabel}
+            selectedVersionLabel={selectedReviewVersion.label}
             canUpload={canUploadVersions}
             uploadInputId={versionUploadInputId}
             isCompareMode={isCompareMode}
@@ -1279,10 +1311,10 @@ export function VideoReviewScreen({
               stageDecisionActions
               showCopyLink={false}
               reviewScopeKey={selectedReviewVersion?.label}
-              reviewFingerprint={selectedReviewVersion ? JSON.stringify(selectedReviewVersion) : undefined}
+              reviewFingerprint={selectedReviewVersion ? JSON.stringify([selectedReviewVersion.label, selectedReviewVersion.uploadedAt, selectedReviewVersion.fileName]) : undefined}
               allowProjectScope
               initialLinkOpens="videoOnly"
-              isWaitingOnReview={editStageStatus.state === "waiting" && editStageStatus.reviewVersion === selectedReviewVersion?.label}
+              isWaitingOnReview={Boolean(selectedReviewVersion?.releasedToClient || editStageStatus.assignedTo === studioCompanyName) && editStageStatus.state === "waiting" && editStageStatus.reviewVersion === selectedReviewVersion?.label}
               waitingOnCompany={editStageStatus.assignedTo}
               sendLabel={selectedReviewVersion ? `Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review V${selectedReviewVersion.number}` : undefined}
               approveLabel={selectedReviewVersion ? `Approve V${selectedReviewVersion.number}` : `Approve ${editShareProps.stageLabelOverride}`}
@@ -1295,6 +1327,11 @@ export function VideoReviewScreen({
               onRequestReview={(recipient, message) => {
                 if (!canActOnProject(viewer, project, prototypeState, "send", "edit") || !selectedReviewVersion) return;
 
+                if (recipient === "customer") {
+                  if (viewer?.role !== "Studio Staff") return;
+                  setVideoVersions((versions) => versions.map((version) => version.label === selectedReviewVersion.label && version.uploadedAt === selectedReviewVersion.uploadedAt
+                    ? { ...version, releasedToClient: true } : version));
+                }
                 setProjectStageStatus(project.id, "edit", {
                   state: "waiting",
                   daysAgo: 0,

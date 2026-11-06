@@ -92,6 +92,8 @@
   margin-top: var(--brisk-space-s);
 }
 
+.invite-brief-roles > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
 .invite-role-choice label,
 .invite-selection-options label {
   display: flex;

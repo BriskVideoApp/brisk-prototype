@@ -15,7 +15,8 @@ export function getAppShellPresentation(
   role?: PrototypeRole,
   studioPreview = false,
 ): AppShellPresentation {
-  const isStandaloneDocument = pathname.startsWith("/print/")
+  const isStandaloneDocument = pathname === "/shoot-file"
+    || pathname.startsWith("/print/")
     || pathname.startsWith("/share/call-sheet/");
 
   if (isStandaloneDocument) return "standalone";

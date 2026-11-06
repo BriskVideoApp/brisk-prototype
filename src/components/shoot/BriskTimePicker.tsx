@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { formatTime } from "@/data/shoot";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -8,6 +8,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 export type BriskTimePickerProps = {
   ariaLabel: string;
   placeholder?: string;
+  showClockButton?: boolean;
   value: string;
   onChange: (value: string) => void;
 };
@@ -29,7 +30,8 @@ type PopoverPosition = {
   opensUp: boolean;
 };
 
-export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value, onChange }: BriskTimePickerProps) {
+export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", showClockButton = true, value, onChange }: BriskTimePickerProps) {
+  const popoverId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [draft, setDraft] = useState(value ? formatTime(value) : "");
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -154,6 +156,10 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
       <div className="shoot-brisk-time-trigger" data-open={isOpen} ref={triggerRef}>
         <input
           aria-label={ariaLabel}
+          role="combobox"
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? popoverId : undefined}
           inputMode="text"
           placeholder={placeholder}
           value={draft}
@@ -169,8 +175,17 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
             setDraft(event.target.value);
             setIsOpen(true);
           }}
+          onClick={() => setIsOpen(true)}
           onFocus={() => setIsOpen(true)}
           onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setIsOpen(true);
+              window.requestAnimationFrame(() => {
+                const option = selectedOptionRef.current ?? popoverRef.current?.querySelector<HTMLButtonElement>('[role="option"]');
+                option?.focus();
+              });
+            }
             if (event.key === "Enter") {
               event.preventDefault();
               commitDraft();
@@ -186,7 +201,7 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
             }
           }}
         />
-        <button
+        {showClockButton && <button
           className="shoot-brisk-time-toggle"
           type="button"
           aria-label={`Open ${ariaLabel} picker`}
@@ -195,10 +210,11 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
           onClick={() => setIsOpen((current) => !current)}
         >
           <DsIcon name="clock-clockwise" size={16} />
-        </button>
+        </button>}
       </div>
       {isOpen ? (
         createPortal(<div
+          id={popoverId}
           className={`shoot-brisk-time-popover${popoverPosition?.opensUp ? " opens-up" : ""}`}
           role="dialog"
           onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); setIsOpen(false); } }}

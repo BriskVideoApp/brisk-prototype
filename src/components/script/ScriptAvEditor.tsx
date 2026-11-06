@@ -41,28 +41,26 @@ type TextRange = {
 
 function ScriptColumnHeaders({
   areVisualsVisible,
+  visualsActionLabel,
   onToggleVisuals,
 }: {
   areVisualsVisible: boolean;
+  visualsActionLabel: string;
   onToggleVisuals: () => void;
 }) {
   const showVisualsAction = (
     <div className="script-column-header-actions script-toolbar-trailing-actions">
-      <h2
-        className="script-column-title-with-tooltip script-visuals-toggle-heading"
-        data-tooltip="Describe the visuals for each line. Add media, links or references."
+      <Button
+        aria-expanded={false}
+        className="script-toolbar-visuals-toggle"
+        size="S"
+        type="button"
+        variant="ghost"
+        onClick={onToggleVisuals}
       >
-        <Button
-          className="script-visuals-header-toggle script-toolbar-visuals-toggle"
-          size="S"
-          type="button"
-          variant="ghost"
-          onClick={onToggleVisuals}
-        >
-          <span>Show Visuals</span>
-          <DsIcon name="caret-right" size={16} />
-        </Button>
-      </h2>
+        {visualsActionLabel}
+        <DsIcon name="caret-right" size={16} />
+      </Button>
     </div>
   );
 
@@ -70,6 +68,7 @@ function ScriptColumnHeaders({
     <button
       className="script-visuals-header-toggle script-toolbar-visuals-toggle is-icon-only"
       type="button"
+      aria-expanded={true}
       aria-label="Hide visuals"
       data-tooltip="Hide visuals"
       onClick={onToggleVisuals}
@@ -230,6 +229,7 @@ export function AvScriptEditor({
   confirmingDeleteRowId,
   rows,
   areVisualsVisible,
+  visualsActionLabel = "Show visuals",
   selectedRowIds,
   showChanges,
   wordInputRefs,
@@ -268,6 +268,7 @@ export function AvScriptEditor({
   confirmingDeleteRowId: string | null;
   rows: ScriptRow[];
   areVisualsVisible: boolean;
+  visualsActionLabel?: string;
   selectedRowIds: Set<string>;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
@@ -301,6 +302,7 @@ export function AvScriptEditor({
     <section className={`script-av-surface ${density} ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="AV script editor">
       <ScriptColumnHeaders
         areVisualsVisible={areVisualsVisible}
+        visualsActionLabel={visualsActionLabel}
         onToggleVisuals={onToggleVisuals}
       />
       {editorRows.map((row, index) => {
@@ -376,6 +378,7 @@ export function AvScriptEditor({
             {areVisualsVisible ? (
               <div className="script-row-visuals">
                 <textarea
+                  aria-label={`Visuals for ${getRowLabel(row.id, editorRows)}`}
                   className="script-cell-input visuals label-s"
                   placeholder=""
                   readOnly={isApproved}
@@ -544,7 +547,7 @@ function AddVisualPlaceholder({
       isOpen={isOpen}
       options={scriptMediaPickerOptions}
       triggerLabel={`Add visual to ${getRowLabel(row.id, rows)}`}
-      triggerClassName="script-visual-empty"
+      quietIconTrigger
       triggerTooltip="Add image or footage"
       onOpenChange={(nextOpen) => { if (isApproved) onGuardApproved(); else onSetMediaMenuRow(nextOpen ? row.id : null); }}
       onSelect={(type) => onAddMediaItem(row.id, type)}

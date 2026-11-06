@@ -99,7 +99,8 @@
   gap: var(--brisk-space-m);
 }
 
-.project-stage-header .share-popover {
+.project-stage-header .share-popover,
+.shoot-simple-workspace-toolbar .share-popover {
   right: var(--brisk-space-none);
   left: auto;
   transform: none;

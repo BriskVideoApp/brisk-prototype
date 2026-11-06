@@ -54,6 +54,7 @@ type BriskSelectSharedProps<T extends string> = {
   actionContext?: BriskActionContext;
   /** Opt-in width for short action labels; ordinary fields are unaffected. */
   actionMenuSize?: "default" | "compact";
+  actionMenuAlign?: "start" | "end";
   /** Capture a stable focus target before a command removes its own trigger. */
   actionFallbackFocus?: (trigger: HTMLButtonElement | null) => HTMLElement | null;
   open?: boolean;
@@ -185,7 +186,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const actionWidth = props.actionMenuSize === "compact" ? (rowHeight * 4) + triggerGap : rowHeight * 5;
     const preferredWidth = mode === "action" ? Math.max(actionWidth, rect.width) : Math.max(192, rect.width);
     const width = Math.min(preferredWidth, viewportWidth - (viewportPadding * 2));
-    const preferredLeft = mode === "action" && !context ? rect.right - width : rect.left;
+    const preferredLeft = mode === "action" && !context && props.actionMenuAlign !== "start" ? rect.right - width : rect.left;
     const left = Math.min(Math.max(viewportLeft + viewportPadding, preferredLeft), viewportLeft + viewportWidth - width - viewportPadding);
     const spaceBelow = viewportTop + viewportHeight - rect.bottom - triggerGap - viewportPadding;
     const spaceAbove = rect.top - viewportTop - triggerGap - viewportPadding;

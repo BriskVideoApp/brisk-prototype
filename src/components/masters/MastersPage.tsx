@@ -1,5 +1,7 @@
 "use client";
 
+import { captureVideoPoster } from "@/lib/video-poster";
+
 import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 
@@ -674,7 +676,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
     ));
     setSelectedVersionByDeliverable((current) => ({ ...current, [target.id]: nextVersion.id }));
     if (target.kind === "video") {
-      void captureMastersVideoPoster(file).then((posterUrl) => {
+      void captureVideoPoster(file).then((posterUrl) => {
         if (!posterUrl) return;
         setDeliverables((current) => current.map((deliverable) =>
           deliverable.id === target.id
@@ -3467,47 +3469,6 @@ function getDownloadedVersionKey(deliverableId: string, versionId: string) {
 function formatRowMetadata(deliverable: MastersDeliverable, version?: MastersVersion) {
   const duration = deliverable.duration.replace("mins", "min").replace("secs", "sec");
   return [version ? `V${version.number}` : deliverable.recutBrief ? "V0" : null, deliverable.format, duration].filter(Boolean).join(" · ");
-}
-
-function captureMastersVideoPoster(file: File): Promise<string | undefined> {
-  return new Promise((resolve) => {
-    const url = URL.createObjectURL(file);
-    const video = document.createElement("video");
-    let finished = false;
-    const finish = (posterUrl?: string) => {
-      if (finished) return;
-      finished = true;
-      window.clearTimeout(timeout);
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-      URL.revokeObjectURL(url);
-      resolve(posterUrl);
-    };
-    const capture = () => {
-      if (!video.videoWidth || !video.videoHeight) { finish(); return; }
-      try {
-        const canvas = document.createElement("canvas");
-        const scale = 160 / Math.max(video.videoWidth, video.videoHeight);
-        canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
-        canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
-        const context = canvas.getContext("2d");
-        if (!context) { finish(); return; }
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        finish(canvas.toDataURL("image/jpeg", 0.68));
-      } catch { finish(); }
-    };
-    const timeout = window.setTimeout(() => finish(), 4000);
-    video.muted = true;
-    video.preload = "auto";
-    video.onloadedmetadata = () => {
-      if (video.duration > 0.2) video.currentTime = Math.min(0.2, video.duration / 2);
-      else capture();
-    };
-    video.onseeked = capture;
-    video.onerror = () => finish();
-    video.src = url;
-  });
 }
 
 function formatShortDate(value: string) { return new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value)); }

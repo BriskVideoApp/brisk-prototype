@@ -10,6 +10,10 @@ import type {
   RecipientInboxItem,
 } from "@/data/notification-inbox";
 
+const approvalRemovalTime = new Intl.DateTimeFormat("en-AU", {
+  day: "numeric", month: "short", hour: "numeric", minute: "2-digit",
+});
+
 export function NotificationInboxItem({
   item,
   read,
@@ -27,6 +31,7 @@ export function NotificationInboxItem({
 }) {
   const [isReminderPreviewOpen, setIsReminderPreviewOpen] = useState(false);
   const emailPreview = item.emailPreview ?? item.emailReminderPreview;
+  const isBriefApprovalRemoval = item.eventKey === "stage.approval_removed" && item.stage === "brief";
   const metadata = [
     !compact && item.actorName ? item.actorName : null,
     item.projectCode,
@@ -43,13 +48,24 @@ export function NotificationInboxItem({
       <span className="notification-inbox-item-title-row">
         <span className="sr-only">{`${read ? "Read" : "Unread"}. ${getSemanticStatusLabel(item)}. `}</span>
         <strong className="label-s-semibold">{item.title}</strong>
+        {isBriefApprovalRemoval && (
+          <span className="notification-inbox-item-meta label-xs">
+            · <time dateTime={item.occurredAt} title={absoluteTime}>{approvalRemovalTime.format(new Date(item.occurredAt))}</time>
+          </span>
+        )}
         {!compact && status ? <span className={`notification-inbox-item-status is-${status.tone} label-xs-semibold`}>{status.label}</span> : null}
       </span>
-      <span className="notification-inbox-item-body label-s">{item.copy}</span>
-      <span className="notification-inbox-item-meta label-xs">
-        {metadata ? `${metadata} · ` : null}
-        <time dateTime={item.occurredAt} title={absoluteTime}>{formatNotificationRelativeTime(item.occurredAt)}</time>
-      </span>
+      {isBriefApprovalRemoval ? (
+        <span className="notification-inbox-item-meta label-xs">{item.projectName}</span>
+      ) : (
+        <>
+          <span className="notification-inbox-item-body label-s">{item.copy}</span>
+          <span className="notification-inbox-item-meta label-xs">
+            {metadata ? `${metadata} · ` : null}
+            <time dateTime={item.occurredAt} title={absoluteTime}>{formatNotificationRelativeTime(item.occurredAt)}</time>
+          </span>
+        </>
+      )}
     </>
   );
 

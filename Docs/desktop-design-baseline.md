@@ -2,6 +2,106 @@
 
 Current approval register, established on 20 October and updated with the scoped decisions recorded below through 30 October 2026. Use it for future work. It is not blanket screen sign-off, a new design proposal or confirmation that Yura's Figma source has been updated.
 
+### Shoot plan approval - 6 November 2026
+
+Tom approved removing section readiness from Shoot Planning after reviewing the Detailed sidebar. This supersedes the 5 November navigator checkbox decision. The existing section buttons show names and counts. Simple and Detailed use Approve Shoot for the whole plan. When a plan includes scheduling, flag concrete missing details at approval and allow the reviewer to go back or approve anyway. Optional sections can stay empty. Accepting AI suggestions and sending a plan to the Client are separate, explicit actions.
+
+### Shoot audit follow-up - 6 November 2026
+
+Tom approved the desktop Simple and Detailed Shoot audit fixes for Loom Launch Film. Both modes use the existing role-specific stage approval and handover actions. Reopening an approved plan respects its saved mode and modules. The Schedule title uses the Interview collapse control alongside its separate progress action. Planning and On set support arrow keys, Home and End.
+
+Client People views and automatically generated contact text respect each person's contact-sharing setting. Day notes keep their freeform text and emphasis. A producer confirms hospital details for the day's primary location before publication, and a change of venue or address requires fresh confirmation. The standalone sheet and print include the day's interview questions when that module is enabled. Print includes timed group coverage and untimed shots.
+
+Quick setup removals state the affected role or shoot-wide scope and use the same confirmation pattern as Documents. Sample document links open actual PDFs. New file uploads persist within the same browser profile. External file links remain available for cross-device sharing. Reference: Tom's approved desktop audit of the Shoot tab. Live desktop visual verification pending.
+
+### Call sheet People and Locations - 6 November 2026
+
+On editable Studio call sheets, use the name to edit and a visible Schedule-style row menu for Edit and Remove from the selected day. Secondary locations also offer Make primary for that day. Keep the Primary badge beside the row menu. The header Add actions reuse existing people or shoot locations, with creation as a separate choice. A saved contact can join the selected day directly. Confirm day removal when it clears assignments or the primary venue, identifying the affected items. Whole-shoot removal stays in the existing editors with its own confirmation. Source: Tom's approved People and Locations audit for the Loom Launch Film on-set call sheet. Desktop visual verification pending.
+
+### Detailed shoot planning - 5 November 2026
+
+Tom approved moving desktop planning readiness into the section navigator. Use a separate DS Checkbox beside each eligible section's navigation button. Unchecked opens its existing readiness confirmation, checked can mark it unready, and the mixed state opens confirmation for subsequent changes. Keep section-specific summaries, suggestion acceptance, persistence and permissions. Tom then requested removing the section icons to give these checks more space. Expanded navigation uses text and checks. The compact rail uses section icons and status indicators; expand it to access the checks. Preserve the narrow-screen readiness controls while the mobile pass is deferred. The desktop footer holds overall Shoot approval and handover. Keep sending an updated schedule available from its changes notice. Source: Tom's sidebar readiness approval and icon-removal follow-up, 5 November 2026.
+
+Tom approved two equal columns for Weather and Production contact below the location in the full call-sheet hero, reusing the date/call-time grid and its padding. After reviewing the result, Tom requested removing the Weather heading. The weather column begins with the icon and temperature. Keep the small Production contact heading. Show the contact's name and role separately from the formatted clickable phone number, using the existing contact-link composition. Respect Client contact-visibility settings. Sources: Tom's quoted layout request and subsequent Weather-heading annotation, 5 November 2026.
+
+Tom approved one overflow menu immediately after Schedule's day buttons. Reuse `ShootCommandMenu` for Edit [day] details, Add shoot day and the existing Delete [day] confirmation. Separate Delete with the DS danger-action spacing and retain the existing rule requiring another shoot day. Move the editor's duplicate Delete action into this menu. Source: Tom's quoted day-management menu request, 5 November 2026.
+
+Tom requested the on-set Interview collapse control to the left of its title, matching Locations and People. Extract the existing `SharedSection` title composition as `CallSheetSectionTitle` and reuse it in Interview. Keep its progress count beside the title, with Add question and focus actions on the right. Source: Loom Detailed call-sheet Interview heading annotation, 5 November 2026.
+
+Tom reported double dividers in the Detailed call-sheet Schedule. An expanded shot group uses its shot table's single light divider, with no additional border or padding on the group details wrapper. All run-of-day row separators use the existing secondary border colour from Simple shoot. Source: Loom Detailed On set Schedule, double-lines screenshot, 5 November 2026.
+
+Tom reported the Shoot sections collapse control failing on the wider desktop layout. Apply the existing expanded sidebar and compact icon rail styles at all desktop widths above 820px, including their labels, tooltips and expand/collapse control. Source: Loom Detailed Shot List, Collapse Shoot sections annotation, 5 November 2026.
+
+Tom reported call-sheet header buttons touching the surrounding border and inconsistent colours. Detailed and Simple use one shared call-sheet workspace with the existing document-width toolbar, spaced header actions and separate call-sheet cards. Remove Detailed's extra outer card and give the shared toolbar 8px vertical padding. Planning and On set use the same approved purple selected-tab treatment. Source: Loom Detailed On set call-sheet layout annotation, 5 November 2026.
+
+Tom requested a slightly taller Planning / On set switch. Increase its desktop buttons from 40px to 48px using the existing spacing tokens. Reference: Loom Detailed Shot List, Planning-tab annotation, 5 November 2026.
+
+Tom requested opening the Detailed Shot List editor by clicking the shot title and removing the separate edit pencil. Reuse `CallSheetRowName` and the existing shot dialog, including keyboard activation. Add shot opens that editor as a new draft and saves its group membership on confirmation. On hover-capable desktop devices, reveal an empty reference picker anywhere over its shot row, on row keyboard focus or while the picker is open. Reference thumbnails remain visible. Reuse the Script editor's attachment disclosure pattern. Sources: Loom Shot List image-picker annotation and Tom's two-pencil annotation, 5 November 2026.
+
+Tom requested removing the coloured underline beneath Planning and On set. Remove the selected tab's inset shadow from the shared Shoot mode switch. The selected tab uses its existing background tint and text colour. Reference: Loom launch film, Detailed Shot List, 5 November 2026.
+
+Tom approved working through the desktop Detailed shoot audit using Simple shoot as the reference. Loom's Detailed Shot List keeps inline writing, group membership, manual ordering, suggestions, readiness and comment threads. Use the Simple thumbnail beside the shot title, the shared note dialog, an expanded group's quiet plus, and the shot details pencil. Show day and time on scheduled standalone shots and on the parent for grouped shots. The technical disclosure distinguishes camera approach from camera equipment. Schedule counts linked shots from the full list and uses the same shot and group icons.
+
+Detailed Planning keeps its timeline, resize and drag, clashes, bulk grouping and assisted scheduling. Reuse the day switcher and pencil, type-specific Add dialog and time controls. The embedded Detailed call sheet uses Simple's PDF and Share call sheet header and day editor, alongside its additional sections. Planning roster names open the existing editors. Primary venue actions name the day they affect. Keep interview suggestion review, section readiness, Shoot approval and explicit Client handover separate.
+
+Reference: Loom launch film, Shot List, Day 1 Schedule and embedded On set call sheet. Implementation and desktop walkthrough are recorded here pending Tom's visual sign-off.
+
+### Simple shoot day list - 5 November 2026
+
+Tom approved one bordered Shoot day list with light dividers between groups and shots. Keep day progress in the heading and show “X of Y captured” on collapsed groups. Tom approved showing Now and Next for schedule order on 5 November 2026. Later items have no Upcoming badge and completed items use their checkbox or group count. Skip and pickup indicators retain their operational meaning. Show Add shot in the group heading only while that group is expanded, as Tom requested on 5 November 2026 for the on-set schedule. Give shot titles room to wrap and reveal empty note prompts on row hover or keyboard focus. Keep saved notes and priority visible. An empty People section shows its count and the permitted Add person action in one row. Reference: Fluff ball, Simple shoot, day 1, using the shared call-sheet header and On Set shot list.
+
+Tom approved placing each Simple shoot reference thumbnail directly after its shot title. Keep priorities aligned across rows and colour only the Critical flame with the Brisk red token. Reference: Fluff ball, day 1, shot 2.1 “Opening scripted scene”.
+
+Tom approved one primary Share call sheet action beside the Simple shoot Call sheet heading, using the existing stage sharing panel and day link. Keep PDF secondary. Place People immediately after the Shoot day schedule. The thumbnail beside the shot title opens the existing Shot List image dialog. The printed call sheet includes uncropped, day-specific shot references with matching shot numbers and titles. Sources: Tom's Fluff ball shot 2.1 and Loom day 1 People annotations.
+
+The Call sheet share action copies a standalone document link for the selected day. Keep both scope choices. Call Sheet only opens the standalone document. Whole project uses the existing project link and independent access settings. Both scopes offer View only, Can comment and Can edit. The standalone sheet accepts day comments for commenting and editing links, and enables its existing day notes and visible contact fields for editing links. Previously copied stage-scoped Call sheet links resolve to the same document.
+
+Tom approved selecting shoot days inside Edit day details. Reuse the Call sheet day selector, open on the current day, retain each edited day while switching, and save the changes together. Reference: Loom launch film, Simple shoot day editor.
+
+### Shoot setup opens with the workflow choice - 5 November 2026
+
+Tom approved moving the existing “How do you want to run this shoot?” cards in `ShootQuickStart` to question one. Label the options “Simple shoot” and “Detailed shoot plan”. Follow with the editable capture question, then people, location, date and must-have shots.
+
+The shared header uses the text-only “Shoot setup” heading. Use the same single 16px four-point star as Ask Brisk on the “Draft plan for me” action. The opening cards describe filming from a one-page shot list and choosing planning tools. Keep the change-later note and place the numbered footer close beneath it.
+
+Tom approved preselecting only capture types identified by the project Brief, with quiet “From the Brief” text on selected matching cards. Explicit Shoot edits take precedence on return, including an empty selection or “Not sure yet”. The opening footer pairs Continue setup with a quiet Open plan. Open plan remains available at every question and takes the current answers to the chosen manual workspace. On the final question it sits beside Draft plan for me.
+
+### Words-first Script editor - 5 November 2026
+
+Tom approved opening Script directly in the existing AV editor for both Filmmakers and Clients. Empty and words-only drafts show Words with a quiet Add visuals action at the right of the column header. Opening it reveals the existing Visuals column and focuses its first editable field. A version with saved visual directions or attached row media opens with both columns visible. The Visuals heading owns the guidance when expanded. Reference: the Fluff ball Script page, `ScriptColumnHeaders` and the existing DS ghost Button.
+
+Tom approved keeping the borderless attachment plus below each visual direction. On desktop, reveal it when the pointer is anywhere over its Script row, when the row contains focus, or while its media picker is open. Devices without hover retain a visible control. The shared AV editor uses the quiet DS IconButton with the tooltip “Add image or footage”.
+
+### Brief approval removal - 5 November 2026
+
+Tom approved a four-second “Brief approval removed” toast. Updates shows the actor’s name and removal action beside the exact date and time, with the project name underneath. Use the stored Brief audit and the viewer’s current project review access. Keep both approval and removal timestamps out of the inline area beneath the stage bar, including on return visits. The approved control shows who approved the Brief and when.
+
+### Brief approval celebration - 5 November 2026
+
+Tom requested a full-screen, 3–4 second celebration. Confetti launches from both lower corners in two volleys and drifts down across the viewport. Keep the approval card and Continue action in front. The automatic next-stage handoff follows at 3.8 seconds. Reduced motion uses the static check and short handoff.
+
+### Invite to review Brief - 5 November 2026
+
+Tom approved a project-specific version of the shared Invite person dialog. Show the Client and project below “Invite to review Brief”. When a Client needs access, Send to Client opens one dialog with the recipient, access level and editable review message. New reviewers default to Teammate. Existing contacts keep their role. “Invite and send Brief” grants access to that project and sends it for review. The general invitation flow owns company and project selection.
+
+### Brief summary review layout - 5 November 2026
+
+The Reference videos label shares a row with a small, right-aligned purple Edit action (Add reference videos when empty). Filenames appear once beneath their previews as muted, regular-weight captions. It opens the existing Similar videos editor inline for the full list. Selecting a file adds it immediately. Below the list, show the reference count and a primary Done button.
+
+Main video details uses the 20px bold heading with a 20px gap to its table. Additional versions uses the 16px bold heading with a 14px gap. The horizontal rule sits beneath the table column labels. Align the bottom review action's text with the section headings. The opening sentence uses “reel” for Short-form / Reels and shows the editable call to action on a separate secondary line.
+
+Tom revised the summary after reviewing the desktop result. Lead with the concept beneath the page title and show the reference as a visual with its filename below. Use the existing Masters frame capture for new video uploads. Older filename-only entries can load the original file for a local preview. Keep the per-deliverable date controls and main/additional version layouts. Place optional confirmation guidance and the quiet review action after Additional versions, retaining field navigation and the approval footer.
+
+### Studio Videos Client chooser - approved 5 November 2026
+
+Source: Tom annotated the Studio Videos empty-state Start a video action, asked to choose a different Client or create one, and approved reusing the existing dialog and picker. Always open Choose a Client from that action, including when only one active Client exists. Preselect the sole active Client; otherwise leave the choice empty. Studios with no Clients use the same Start a video action and can create their first Client in the picker.
+
+Reuse `ActiveVideosPage`'s existing `ClientModal` composition and `ClientPicker` from `ClientPrimitives.tsx`, already consumed by `ClientProfilePage`'s `StartProjectDialog`. Continue opens the selected Client's existing video-naming route. Creating a Client opens that route immediately. The primary opener uses the DS Button without consumer appearance overrides. Client-scoped portal actions continue directly to naming. Studio Admin/Staff use the shared Studio compatibility group for this chooser.
+
+Creation-action correction, 5 November 2026: Tom reported the disabled Add new Client action with an empty search. In this Videos flow, keep the action enabled and use `ClientPicker`'s optional `onAddClient` callback to open the existing `AddClientDialog`. Carry any typed search into Client name. Replace the chooser while the form is open; cancelling returns to the chooser with its previous selection. Creating a Client or choosing an existing duplicate continues to video naming. Other `ClientPicker` consumers retain their inline creation handling. Reuse the existing form, validation, duplicate checks and DS controls.
+
+Verification: TypeScript and diff checks passed. Source review covers zero, one and multiple active Clients, archived exclusion, creation, duplicate selection and the existing Client-scoped naming route. Live desktop verification remains outstanding because browser control is unavailable and the shell cannot reach localhost:3000. No tests or production build were run.
+
 ### Shoot compact call sheet and Planning simplification - approved 4 November 2026
 
 Source: Tom approved implementing a Simple mode call sheet with where/when/who, keeping every shot available regardless of preceding capture, then simplifying the Planning Shot List and its footer. He explicitly approved accepting the remaining suggested shots and groups when marking the list ready, and authorised completing the agreed refinements autonomously while away.
@@ -162,6 +262,8 @@ TypeScript and diff checks passed. Desktop visual and interaction verification r
 Source: Tom selected Move Fluff ball to In production in the Studio Videos table and requested this shortcut only in Client view. Remove the `StartProductionAction` consumer and callback prop from `ActiveVideosPage`'s `ProjectCell`, retaining its shared `ProjectTitleRow`, chat, files and Client portal navigation. Preserve the existing Studio status dropdown and status commands. The shared action and its `CustomerDashboard` consumer, including permitted Studio previews of the Client view, remain unchanged. This supersedes earlier approvals to show the shortcut on main Videos rows. Desktop browser verification remains outstanding.
 
 ### Deliverable dates and Client visibility - requested 4 November 2026
+
+Summary simplification, requested 5 November 2026: Tom flagged the standalone Suggested delivery line as redundant with Delivery date in sections 02 Main Video Details and 03 Additional versions. Remove that line and its unused `BriefSummaryPage` prop. Keep the date cells as the summary's timing surfaces. The initial Deliverables question retains its existing assessment hint before a deadline is established.
 
 Source: Tom clarified that cutdowns follow the main video and need independent dates, then explicitly requested removing the separate Final delivery field and allowing Studios to hide the date option from Clients. This supersedes the automatic inheritance and separate Brief final-date field in the entry below.
 
@@ -771,3 +873,54 @@ The approved app composition uses DS Popover for its anchored surface/focus/view
 30 October source-search refinement: Tom requested removal of the extra inner line. The unified source search has one enclosing edge/focus treatment; suppress the inner native input's inherited global hard focus shadow and place the existing blue focus outline on the enclosing search label. Scoped to this specialised picker; global focus and DS Input contracts are unchanged. [Verified screenshot](../audits/desktop-2026-10-20/review-rounds/28-unified-add-source/search-single-edge.png).
 
 30 October scope-control removal: Tom explicitly requested removal of the entire Ask across fieldset from Add source. Remove its options, props and unused Radio/import/layout code; do not relocate or recreate the group. Preserve source search/suggestions, upload/link actions, quiet context text, current conversation scope values and permission filtering. This supersedes the earlier same-day Ask across menu approval. [Verified screenshot](../audits/desktop-2026-10-20/review-rounds/28-unified-add-source/without-ask-across.png).
+
+### Share links and on-set shot tracking - approved 5 November 2026
+
+Tom approved one compact link panel across project, stage, version and Media sharing. Reuse ShareActionRow in its popover and dialog presentations. Show available scopes, one “Anyone with the link” permission field and “Copy link”. A single-scope panel names its subject. Call sheet and whole-project links retain independent permissions and destinations.
+
+Tom approved shot tracking for view-only recipients on the standalone call sheet and in the on-set workspace. Reuse the on-set schedule and group controls. Recipients can expand coverage, mark a shot captured or remaining, and update its quick note. On desktop, reveal the empty “Add note” prompt on row hover or keyboard focus and keep saved notes visible. Scheduling, shot definitions, shared-document comments and internal visibility retain their separate permissions. Print keeps the document layout. Reference: Loom Launch Film, Day 1, standalone call sheet and on-set schedule.
+
+Tom approved moving the on-set shot actions beside the capture checkbox on 5 November 2026. In Simple and Detailed shoot day schedules, the checkbox captures or undoes immediately. Editors use the adjacent three-dot menu for Skip today, Pickup later and Not required, with the appropriate reversal for the current status. After Tom reported that the first captured shot had no chevron, show the same editor menu on captured shots as well. Selecting Skip today, Pickup later or Not required there clears the capture tick and updates the counts. Shared view-only recipients retain capture and notes. Reference: Loom Launch Film, Day 1, on-set shot 3.1.
+
+Tom approved the Notifications popover’s quiet DS IconButton for closing the Share popover on 5 November 2026. Use the existing close cross and two-pixel purple underline on the selected link scope. The EditingDialog presentation keeps its footer Close. Reference: ShareActionRow on the Loom Launch Film call sheet.
+
+Tom approved persistent three dots beside each editor capture checkbox to distinguish shot actions from group expand/collapse chevrons. Remove the trailing action menu from operational schedule items such as crew call, travel and lunch, and from shot group headings. Editors manage skip and pickup on each shot. Previously skipped items retain a direct Return to today action. Reference: Loom Launch Film, Day 1, 5 November 2026.
+
+On 5 November 2026 Tom approved “Establishing shots” for the default group and “Shots without a time” above untimed groups and shots on mixed days only. Reuse the on-set schedule section after timed entries. Reference: Loom Launch Film, Day 1. On mixed desktop schedules, align untimed group chevrons and titles with timed groups, show capture progress underneath and use one divider above the left-aligned section heading. Entirely untimed days keep compact left-aligned groups (Tom, 5 November 2026).
+
+On 5 November 2026 Tom requested optional scheduling, people and a location in the on-set shot editor. Standalone shots can have their own day and start time. Grouped shots follow their group’s schedule. In the Simple shoot call sheet, place Edit day details beside the day selector and keep Edit setup, PDF and Share call sheet directly visible. Reference: Loom Launch Film, Simple shoot, Day 1.
+
+On 5 November 2026 Tom approved drag-to-reschedule in the desktop Shoot day list. Editors use the Planning shot grip to place a standalone shot, shot group or schedule item before or after a timed row. Preview the new start and the number of later items that must move. Shots within a group can change order while sharing its time. Reference: Loom Launch Film, Simple shoot, Day 1.
+
+Tom requested the Edit day details time picker for Start time when adding or editing an on-set shot. Reuse BriskTimePicker with quarter-hour choices and typed entry. For a shot’s Start time, the full field opens the picker directly on click or focus. Omit the separate clock button. The shared time picker uses a single outer border around its scrollable time choices and footer. Reference: Loom Launch Film, Day 1, Add shot annotation, 5 November 2026.
+
+On 5 November 2026 Tom requested the shared BriskSelect dropdown for optional Duration beside Start time in the on-set shot editor. Offer 5 to 240 minutes in five-minute increments. Reference: Loom Launch Film, Day 1, Add shot.
+
+On 5 November 2026 Tom requested that timed standalone shots show their saved start in the Shoot day time column. Use the timed schedule row in the editor and shared call sheet, with duration beneath the shot title. Reference: Loom Launch Film, Day 1, 5:00 pm standalone shot.
+
+On 5 November 2026 Tom approved a common desktop Shoot day grid for timed and untimed entries. Top-level types use a muted Brisk icon and label. Keep times on one line, reserve the disclosure space for all titles, indent child shot titles and numbers consistently, and align Now and Next at the far right. Reference: Loom Launch Film, Day 1 alignment audit.
+
+On 5 November 2026 Tom approved left-aligning the Shoot day capture menu beneath its three-dot button. The standard options are Pick up later, Skip today and Not required, in that order. Pickup flags the shot for follow-up. Skip records the selected shoot day. Reference: Loom Launch Film, Day 1, shot 7.
+
+On 5 November 2026 Tom approved opening the Shoot day Add dialog directly with Shot selected. Tom subsequently approved a single Item type BriskSelect in the same EditingDialog for Shot, Shot group, Setup, Lunch, Break and Travel. Reuse the schedule type icons in the menu and the selected field. A camera identifies a Shot and a folder identifies a Shot group. Show only the fields for the selected type and prefill operational titles with the selected label. On expanded group headers the quiet plus appears on hover or keyboard focus, stays visible on touch, and opens the shot form for that group. Reference: Loom Launch Film, Day 1, Founder interview and Establishing shots.
+
+Tom requested readable on-set shot notes on 5 November 2026. A saved note uses a persistent quiet file-text IconButton with a View shot note tooltip. Add note appears on row hover or focus and remains visible on touch. Both open the full multiline note in an EditingDialog, including for shared call sheet viewers with shot tracking access. Reference: Loom Launch Film, Day 1, shot 6.
+
+On 5 November 2026 Tom approved the desktop call sheet audit for Loom Launch Film, Day 1. Align the simple Call sheet toolbar to the document edges, retain Share call sheet as the primary action, and use secondary text for captured shot titles. People puts Add person in the header, Edit phone numbers in its actions menu, and phone numbers in direct call links. Section titles and chevrons share a single expand target, with the quiet focus action revealed on header hover or keyboard focus. Day notes remain freeform, with the Chat composer’s bold and italic controls, saved line breaks and emphasis in the shared and print views.
+
+### 5 November 2026 - Desktop call sheet roster and day notes
+
+Tom approved managing the selected day's People directly from the call sheet. On editable Studio sheets, the name opens the Shoot person editor, the row menu removes the person from that day's roster, and Add person starts with that day selected. In the person editor, Remove from entire shoot is a left-aligned ghost text button. Cancel and Save person sit on the right. Only the final Remove from shoot confirmation uses danger styling. Reference: the People section and existing Planning person editor on the Loom Launch Film shoot.
+
+In Notes for the day, click or tab into the freeform text to edit directly. The existing bold and italic controls appear during editing. Read-only and printed sheets display formatted text.
+
+On 5 November 2026 Tom approved the simplified call sheet essentials header. Show the full date, General call, and the venue name and map link. On the editable compact sheet, reuse the quiet pencil IconButton beside the venue on hover or keyboard focus, and show Add location for an empty venue. Reference: Loom Launch Film, Day 1.
+
+On 5 November 2026 Tom requested direct location editing like People on the desktop call sheet. On editable Studio sheets the venue name opens its location editor, the address opens Maps, and Add location in the Locations header starts a venue for the selected day. Whole-shoot removal is a quiet editor action with confirmation. Reference: Loom Launch Film, Day 1, Locations.
+
+On 5 November 2026 Tom approved an always-visible quiet pencil immediately after the day buttons, labelled for the selected day. In the editable Locations list, the row menu on another venue can make it primary for that shoot day. The Primary badge and header follow the same day selection. Reference: Loom Launch Film, Day 1 and Day 2.
+
+
+### Edit version release - approved 6 November 2026
+
+Tom approved the frontend audit correction for Edit and Animation. In the review footer, confirming **Send to Client** as Studio Admin or Studio Staff releases only the selected file version. Uploading, replacing a file, copying a link, sending to Studio and cancelling the confirmation grant no Client visibility. A replacement requires a new release. Both Client access levels can review and approve a released version on a permitted project. Reuse the existing Edit empty state before the first release. Desktop verification covered a private V2 alongside a released V1, a direct link to the private version and a replacement while a Client had the review open in another tab.

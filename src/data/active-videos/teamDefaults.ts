@@ -1,3 +1,4 @@
+import type { Person } from "@/data/people";
 import type {
   DefaultProjectTeamMember,
   Invitation,
@@ -546,4 +547,58 @@ export function formatHours(hours: number) {
 
 export function snapToQuarter(hours: number) {
   return Math.round(hours * 4) / 4;
+}
+
+export function getDirectoryTeamPeople(people: Person[]) {
+  const byId = new Map(mockTeamPeople.map((person) => [person.id, person]));
+  for (const person of people) {
+    if (person.type !== "Client contact" && person.status !== "Archived") byId.set(person.id, toTeamPerson(person));
+  }
+  return byId;
+}
+
+export function toTeamPerson(person: Person, fallbackRole?: TeamRole, hourlyRateOverride?: number): TeamPerson {
+  const defaultRole = fallbackRole ?? getDefaultTeamRole(person);
+  const resolvedHourlyRate = hourlyRateOverride ?? (person.commercial
+    ? person.commercial.rateType === "Day rate" ? person.commercial.defaultRate / 8 : person.commercial.defaultRate
+    : undefined);
+  const hourlyRate = resolvedHourlyRate && resolvedHourlyRate > 0 ? resolvedHourlyRate : undefined;
+  const activeHours = person.workloads
+    .filter((workload) => workload.status === "Waiting on Studio")
+    .reduce((total, workload) => total + workload.predictedHours, 0);
+
+  return {
+    id: person.id,
+    name: person.name,
+    initials: getInitials(person.name),
+    personType: person.type === "Team" ? "Studio Staff" : "Studio Freelancer",
+    defaultRole,
+    hourlyRate,
+    bookedHoursThisWeek: activeHours,
+    weeklyCapacityHours: person.weeklyCapacityHours ?? 40,
+    availabilityLabel: person.availability ?? "Available",
+  };
+}
+
+function getDefaultTeamRole(person: Person): TeamRole {
+  const title = person.jobTitles.join(" ").toLocaleLowerCase("en-AU");
+  if (title.includes("producer")) return "producer";
+  if (title.includes("motion")) return "motionDesigner";
+  if (title.includes("animator")) return "animator";
+  if (title.includes("director of photography") || title.includes("shooter")) return "shooter";
+  if (title.includes("director")) return "director";
+  if (title.includes("colour")) return "colourist";
+  if (title.includes("sound")) return "soundDesigner";
+  if (title.includes("vfx")) return "vfxArtist";
+  if (title.includes("editor")) return "editor";
+  return "custom";
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
 }

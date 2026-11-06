@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { EmphasisButtons } from "@/components/form/EmphasisButtons";
 import { BriskSelect } from "@/components/form/BriskSelect";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -479,24 +480,10 @@ export function ChatComposer({
 
         <div className="composer-toolbar chat-composer-toolbar">
           <div className="composer-tools chat-format-tools" aria-label="Formatting tools">
-            <button
-              className={isBold ? "active" : ""}
-              type="button"
-              aria-label="Bold - Command B"
-              aria-pressed={isBold}
-              onClick={() => setIsBold((current) => !current)}
-            >
-              <strong>B</strong>
-            </button>
-            <button
-              className={isItalic ? "active" : ""}
-              type="button"
-              aria-label="Italic - Command I"
-              aria-pressed={isItalic}
-              onClick={() => setIsItalic((current) => !current)}
-            >
-              <em>I</em>
-            </button>
+            <EmphasisButtons bold={isBold} italic={isItalic} onToggle={(style) => {
+              if (style === "bold") setIsBold((current) => !current);
+              else setIsItalic((current) => !current);
+            }} />
             <button type="button" aria-label="Add link" disabled title="Link editing is not available in this prototype. Paste a URL into your message instead.">
               <DsIcon name="link" size={16} />
             </button>

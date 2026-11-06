@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../../Brisk DS/src/app/components/Input";
@@ -22,12 +22,16 @@ export default function ClientStartVideoRoute() {
   const viewer = usePrototypeViewer();
   const [name, setName] = useState("");
   const [loadedDraftKey, setLoadedDraftKey] = useState<string | null>(null);
+  const submitting = useRef(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const requestedClient = searchParams.get("client");
   const clientId = viewer?.role === "Customer" ? viewer.clientId
-    : viewer?.role === "Studio Staff" ? searchParams.get("client") : null;
+    : viewer?.role === "Studio Staff" ? requestedClient : null;
   const client = viewer && clientId
     ? selectScopedClient(state, viewer.workspaceId, clientId)
     : null;
-  const canStart = Boolean(client && (viewer?.role === "Studio Staff" || (viewer?.role === "Customer"
+  const canStart = Boolean(client && (!requestedClient || requestedClient === client.id) && (viewer?.role === "Studio Staff" || (viewer?.role === "Customer"
     && client.contacts.some((contact) => contact.id === viewer.id && contact.portalAccess !== "Paused")
     && state.invitations.some((invitation) => invitation.userId === viewer.id
       && invitation.clientId === client.id && invitation.workspaceId === viewer.workspaceId
@@ -45,12 +49,20 @@ export default function ClientStartVideoRoute() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canStart || !client || !viewer || !name.trim()) return;
+    if (submitting.current || !canStart || !client || !viewer || !name.trim()) return;
+    submitting.current = true;
+    setIsSubmitting(true);
+    setSaveError("");
     const legacyFields = client.id === clientNewVideoProject.clientId ? readLegacyBriefFields() : undefined;
     const project = viewer.role === "Studio Staff"
       ? createProject({ clientId: client.id, name: name.trim() })
       : createClientVideo({ clientId: client.id, userId: viewer.id, name: name.trim(), fields: legacyFields });
-    if (!project) return;
+    if (!project) {
+      submitting.current = false;
+      setIsSubmitting(false);
+      setSaveError("The video could not be created. Open the Client portal and try again.");
+      return;
+    }
     if (draftStorageKey) window.localStorage.removeItem(draftStorageKey);
     if (legacyFields) window.localStorage.removeItem(legacyBriefStorageKey);
     router.push(getProjectStageHref(project.id, "brief"));
@@ -59,6 +71,15 @@ export default function ClientStartVideoRoute() {
   if (!hasHydrated || (draftStorageKey && loadedDraftKey !== draftStorageKey)) return null;
   if (!canStart || !client || !code || !viewer) {
     return <main className="client-video-naming-unavailable"><h1 className="headings-s-bold">Start Video unavailable</h1><p className="paragraph-s">Open a Client portal to start a video.</p></main>;
+  }
+
+  if (!state.studioBriefTemplates.some((template) => template.workspaceId === viewer.workspaceId)) {
+    return <main className="client-video-naming-unavailable">
+      <h1 className="headings-s-bold">Studio setup is incomplete</h1>
+      <p className="paragraph-s">The Studio needs a Brief template before a video can be created.</p>
+      {viewer.role === "Studio Staff" && <Button onClick={() => router.push("/studio-onboard")}>Continue Studio setup</Button>}
+      <Button variant="secondary" onClick={() => router.back()}>Back</Button>
+    </main>;
   }
 
   return (
@@ -81,9 +102,10 @@ export default function ClientStartVideoRoute() {
             }}
           />
         </div>
+        {saveError && <p role="alert" className="paragraph-s">{saveError}</p>}
         <div className="client-video-naming-actions">
           <Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button>
-          <Button type="submit" disabled={!name.trim()}>Continue to Brief</Button>
+          <Button type="submit" disabled={isSubmitting || !name.trim()}>Continue to Brief</Button>
         </div>
       </form>
     </main>

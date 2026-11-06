@@ -1,5 +1,6 @@
 "use client";
 
+import { useBriskAi } from "@/components/ai/BriskAiContext";
 import { BriefPage } from "@/components/brief/BriefPage";
 import { ProjectCostsPage } from "@/components/costs/ProjectCostsPage";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -8,6 +9,7 @@ import { ProjectUnavailable } from "./CanonicalStageProject";
 
 export function CanonicalProjectBriefRoute({ projectId }: { projectId: string }) {
   const { state, hasHydrated, updateProjectBrief } = usePrototypeState();
+  const { sessionKey } = useBriskAi();
   if (!hasHydrated) return null;
   const project = selectProject(state, projectId);
   const brief = selectProjectBrief(state, projectId);
@@ -15,6 +17,7 @@ export function CanonicalProjectBriefRoute({ projectId }: { projectId: string })
   if (!project || !brief) return hasHydrated ? <ProjectUnavailable /> : null;
   return (
     <BriefPage
+      key={JSON.stringify([sessionKey, projectId])}
       project={project}
       studioName={workspace?.name ?? "Studio"}
       initialFields={brief.fields}

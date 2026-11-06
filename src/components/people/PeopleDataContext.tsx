@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { getDirectoryTeamPeople } from "@/data/active-videos/teamDefaults";
+import type { TeamPerson } from "@/components/active-videos/types";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -38,6 +40,7 @@ export type ProjectStaffWorkload = {
 
 type PeopleDataContextValue = {
   people: Person[];
+  teamPeople: ReadonlyMap<string, TeamPerson>;
   createPerson: (input: CreatePersonInput) => Person;
   deletePerson: (personId: string) => void;
   updatePersonIdentity: (personId: string, update: PersonProfileUpdate) => void;
@@ -85,6 +88,7 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
     const access = studio.staffAccess.find((member) => member.personId === person.id);
     return access?.studioPermission ? { ...person, studioPermission: access.studioPermission } : person;
   }), ...clientContacts], [clientContacts, nativePeople, studio.staffAccess]);
+  const teamPeople = useMemo(() => getDirectoryTeamPeople(people), [people]);
   const syncProjectStaffWorkloads = useCallback((projectId: string, assignments: ProjectStaffWorkload[]) => {
     setNativePeople((current) => {
       let didChange = false;
@@ -106,6 +110,7 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<PeopleDataContextValue>(() => ({
     people,
+    teamPeople,
     createPerson(input) {
       if (input.type === "Client contact") {
         const client = clients.find((candidate) => candidate.id === input.clientId);
@@ -242,7 +247,7 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
       }
       setNativePeople((current) => current.map((person) => person.id === personId ? { ...person, notes } : person));
     },
-  }), [studio.staffAccess, updateStaffAccess, canManageStudio, canManageClientAccount, selectedRole, setSelectedAccessLevel, viewer?.clientId, viewer?.id, addContact, clientContacts, clients, people, removeContact, syncProjectStaffWorkloads, updateContact, updateContactAccess, updateContactProjects, updateContactRole]);
+  }), [studio.staffAccess, updateStaffAccess, canManageStudio, canManageClientAccount, selectedRole, setSelectedAccessLevel, viewer?.clientId, viewer?.id, addContact, clientContacts, clients, people, teamPeople, removeContact, syncProjectStaffWorkloads, updateContact, updateContactAccess, updateContactProjects, updateContactRole]);
 
   return <PeopleDataContext.Provider value={value}>{children}</PeopleDataContext.Provider>;
 }
@@ -253,7 +258,7 @@ export function usePeople() {
   return context;
 }
 
-function makeClientContactPerson(
+export function makeClientContactPerson(
   client: Client,
   contact: ClientContact,
   archived: boolean,

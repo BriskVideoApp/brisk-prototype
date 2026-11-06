@@ -37,8 +37,11 @@ export type ShootDay = {
   notes?: ShootDayNotes;
 };
 
+export type DayNoteMark = { start: number; end: number; bold?: boolean; italic?: boolean };
+
 export type ShootDayNotes = {
   practicalDetails?: string;
+  practicalDetailsMarks?: DayNoteMark[];
   equipment: string;
   wardrobe: string;
   catering: string;
@@ -94,6 +97,8 @@ export type ProductionEntry = {
   linkedShotGroupId?: string;
   captureStatus?: ShotCaptureStatus;
   skippedShootDayIds?: string[];
+  /** Day-only removals for shots used on several call sheets. */
+  removedAssignmentsByDay?: Record<string, { personIds?: string[]; locationId?: string }>;
 };
 
 export type ShootPersonType = "talent" | "crew" | "client" | "other";
@@ -141,6 +146,7 @@ export type ShootAddressSuggestion = {
 };
 
 export type InterviewQuestion = {
+  unassignedDayIds?: string[];
   id: string;
   personId?: string;
   question: string;
@@ -506,14 +512,14 @@ const completeCallSheet: CallSheet = {
       id: "document-1",
       name: "Talent release - Amelia Chen.pdf",
       kind: "release",
-      url: "#release-amelia",
+      url: "/shoot-documents/talent-release.pdf",
       shootDayIds: ["day-1"],
     },
     {
       id: "document-2",
       name: "Studio safety information",
       kind: "link",
-      url: "#studio-safety",
+      url: "/shoot-documents/studio-safety.pdf",
       shootDayIds: ["day-1"],
     },
   ],
@@ -694,7 +700,40 @@ export function ensureShotNumbers(callSheet: CallSheet) {
   return changed ? { ...callSheet, entries } : callSheet;
 }
 
-export function normaliseShootArchitecture(callSheet: CallSheet): CallSheet {
+// Keep the original generated ID so saved shots, schedules and readiness checks stay linked.
+const establishingGroupId = "shot-group-establishing-coverage";
+const originalEstablishingName = "Establishing coverage";
+const establishingName = "Establishing shots";
+
+export function defaultShotGroupId(name: string, fallback: number) {
+  return name === establishingName ? establishingGroupId : `shot-group-${shootIdentityKey(name).replaceAll(" ", "-") || fallback}`;
+}
+
+export function normaliseShootDocuments(documents: ShootDocument[]) {
+  return documents.map((document) => {
+    if (document.url === "#release-amelia") return { ...document, url: "/shoot-documents/talent-release.pdf" };
+    if (document.url === "#studio-safety") return { ...document, url: "/shoot-documents/studio-safety.pdf" };
+    return document;
+  });
+}
+
+export function normaliseDefaultShotGroups(sheet: CallSheet): CallSheet {
+  if (!sheet.shotGroups?.some((group) => group.id === establishingGroupId && group.name === originalEstablishingName)) return sheet;
+  return {
+    ...sheet,
+    shotGroups: sheet.shotGroups.map((group) => group.id === establishingGroupId ? { ...group, name: establishingName } : group),
+    entries: sheet.entries.map((entry) => entry.linkedShotGroupId === establishingGroupId && entry.description === originalEstablishingName
+      ? { ...entry, description: establishingName }
+      : entry),
+  };
+}
+
+export function shootGroupFingerprintName(id: string | undefined, name: string) {
+  return id === establishingGroupId && name === establishingName ? originalEstablishingName : name;
+}
+
+export function normaliseShootArchitecture(stored: CallSheet): CallSheet {
+  const callSheet = normaliseDefaultShotGroups(stored);
   const originalShots = callSheet.entries.filter((entry) => entry.type === "shot");
   const groups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
   const groupByName = new Map(groups.map((group) => [shootIdentityKey(group.name), group]));
@@ -702,21 +741,18 @@ export function normaliseShootArchitecture(callSheet: CallSheet): CallSheet {
     if (shot.shotGroupId === null) {
       return {
         ...shot,
-        dayId: "",
-        startTime: "",
-        durationMinutes: 0,
         captureStatus: shot.captureStatus ?? (shot.captured ? "captured" : "to-capture"),
       } satisfies ProductionEntry;
     }
     let group = shot.shotGroupId ? groups.find((candidate) => candidate.id === shot.shotGroupId) : undefined;
     if (!group) {
-      const groupName = inferArchitectureGroupName(shot);
+      const groupName = inferShotGroupName(shot);
       group = groupByName.get(shootIdentityKey(groupName));
       if (!group) {
         group = {
-          id: `shot-group-${shootIdentityKey(groupName).replaceAll(" ", "-") || groups.length + 1}`,
+          id: defaultShotGroupId(groupName, groups.length + 1),
           name: groupName,
-          description: inferArchitectureGroupDescription(groupName),
+          description: inferShotGroupDescription(groupName),
           subject: shot.subject,
           locationId: shot.locationId,
           order: groups.length,
@@ -757,25 +793,26 @@ export function normaliseShootArchitecture(callSheet: CallSheet): CallSheet {
 
   return ensureShotNumbers({
     ...callSheet,
+    documents: normaliseShootDocuments(callSheet.documents),
     shotGroups: groups,
     entries: [...scheduleEntries, ...shots, ...migratedCoverageEntries],
   });
 }
 
-function inferArchitectureGroupName(shot: ProductionEntry) {
+export function inferShotGroupName(shot: ProductionEntry) {
   if (shot.scriptSection?.trim()) return shot.scriptSection.trim();
   const value = `${shot.description} ${shot.shotCategory ?? ""}`.toLocaleLowerCase("en-AU");
   if (/interview|founder|piece to camera|portrait|talking head/u.test(value)) return "Founder interview";
   if (/product|demonstration|workflow|screen|detail/u.test(value)) return "Product demonstration";
-  if (/establish|exterior|location|signage|atmosphere/u.test(value)) return "Establishing coverage";
+  if (/establish|exterior|location|signage|atmosphere/u.test(value)) return establishingName;
   if (/team|collaboration|workplace|office|b-roll|cutaway|hands/u.test(value)) return "Team and workplace B-roll";
   return "Additional coverage";
 }
 
-function inferArchitectureGroupDescription(groupName: string) {
+export function inferShotGroupDescription(groupName: string) {
   if (groupName === "Founder interview") return "Primary frame, alternate angle, reactions and cutaways.";
   if (groupName === "Product demonstration") return "Product workflow, screen detail and supporting inserts.";
-  if (groupName === "Establishing coverage") return "Location, signage and atmosphere that set the scene.";
+  if (groupName === establishingName) return "Location, signage and atmosphere that set the scene.";
   if (groupName === "Team and workplace B-roll") return "Natural team activity and workplace coverage.";
   return "Extra shots to capture if the day allows.";
 }
@@ -786,6 +823,66 @@ function shootIdentityKey(value: string) {
 
 export function isAssignedToDay(assignment: ShootDayAssignment, dayId: string) {
   return assignment === "all" || assignment.includes(dayId);
+}
+
+export function getShotListTopLevelOrder(callSheet: CallSheet) {
+  const groups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
+  const groupIds = new Set(groups.map((group) => group.id));
+  const standaloneShotIds = callSheet.entries
+    .filter((entry) => entry.type === "shot" && (!entry.shotGroupId || !groupIds.has(entry.shotGroupId)))
+    .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0))
+    .map((entry) => entry.id);
+  const validIds = new Set([...standaloneShotIds, ...groups.map((group) => group.id)]);
+  const nextOrder: string[] = [];
+  const addIfMissing = (id: string) => {
+    if (!validIds.has(id) || nextOrder.includes(id)) return;
+    nextOrder.push(id);
+  };
+
+  (callSheet.shotListTopLevelOrder ?? []).forEach(addIfMissing);
+  standaloneShotIds.forEach(addIfMissing);
+  groups.forEach((group) => addIfMissing(group.id));
+  return nextOrder;
+}
+
+export function getShootShotNumbers(callSheet: CallSheet) {
+  const topLevel = new Map(getShotListTopLevelOrder(callSheet).map((id, index) => [id, index + 1]));
+  const groupIds = new Set(callSheet.shotGroups?.map((group) => group.id));
+  const withinGroup = new Map<string, number>();
+  const numbers = new Map<string, string>();
+  const shots = callSheet.entries.filter((entry) => entry.type === "shot")
+    .sort((a, b) => (a.shotListOrder ?? 0) - (b.shotListOrder ?? 0));
+  for (const shot of shots) {
+    const groupId = shot.shotGroupId;
+    if (groupId && groupIds.has(groupId)) {
+      const index = (withinGroup.get(groupId) ?? 0) + 1;
+      withinGroup.set(groupId, index);
+      numbers.set(shot.id, `${topLevel.get(groupId)}.${index}`);
+    } else {
+      numbers.set(shot.id, String(topLevel.get(shot.id)));
+    }
+  }
+  return numbers;
+}
+
+export type ShotTrackingChange = { notes: string } | { captured: boolean };
+export type TrackShot = (shotId: string, change: ShotTrackingChange) => void;
+
+export function updateShootDayShot(callSheet: CallSheet, dayId: string, shotId: string, change: ShotTrackingChange): CallSheet {
+  if (!getShootDayShots(callSheet, dayId).some((shot) => shot.id === shotId)) return callSheet;
+  return {
+    ...callSheet,
+    entries: callSheet.entries.map((shot) => {
+      if (shot.id !== shotId) return shot;
+      if ("notes" in change) return { ...shot, notes: change.notes };
+      return {
+        ...shot,
+        captured: change.captured,
+        captureStatus: change.captured ? "captured" : "to-capture",
+        skippedShootDayIds: change.captured ? shot.skippedShootDayIds?.filter((id) => id !== dayId) : shot.skippedShootDayIds,
+      };
+    }),
+  };
 }
 
 export function getShootDayShots(callSheet: CallSheet, dayId: string) {

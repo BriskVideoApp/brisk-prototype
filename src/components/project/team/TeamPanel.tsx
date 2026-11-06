@@ -11,7 +11,7 @@ import {
   getSlotLabel,
   getVisibleInvitations,
   redistributeRoleHours,
-  mockTeamPeople,
+  toTeamPerson,
   stageKeys,
   teamRoleLabels,
   teamRoleOptions,
@@ -26,7 +26,6 @@ import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeVie
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { getFreelancerNotificationRecipientId, notificationInboxRecipientByRole } from "@/data/notification-inbox";
 import type { CostCurrency } from "@/data/costs";
-import type { Person } from "@/data/people";
 import { AddRoleButton } from "./AddRoleButton";
 import { RoleEditorModal } from "./RoleEditorModal";
 import { RoleRow } from "./RoleRow";
@@ -69,7 +68,7 @@ export function TeamPanel({
   onAssignmentComplete,
 }: TeamPanelProps) {
   const router = useRouter();
-  const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
+  const { people: directoryPeople, teamPeople, syncProjectStaffWorkloads } = usePeople();
   const { studio } = useStudioSettings();
   const { offers, createOffer, setOfferState } = useCostsData();
   const { publishOfferNotification } = useNotificationInbox();
@@ -95,13 +94,10 @@ export function TeamPanel({
   }), [initialTeam, projectId, studio.production.defaultTeam, videoType]);
   const team = storedTeam ?? startingTeam;
   const people = useMemo(() => {
-    const byId = new Map<string, TeamPerson>(mockTeamPeople.map((person) => [person.id, person]));
-    directoryPeople
-      .filter((person) => person.type !== "Client contact" && person.status !== "Archived")
-      .forEach((person) => byId.set(person.id, toTeamPerson(person)));
+    const byId = new Map(teamPeople);
     extraPeople.forEach((person) => byId.set(person.id, person));
     return [...byId.values()];
-  }, [directoryPeople, extraPeople]);
+  }, [teamPeople, extraPeople]);
 
   useEffect(() => {
     if (!storedTeam) setProjectTeam(projectId, startingTeam);
@@ -617,43 +613,6 @@ export function TeamPanel({
   );
 }
 
-function toTeamPerson(person: Person, fallbackRole?: TeamRole, hourlyRateOverride?: number): TeamPerson {
-  const defaultRole = fallbackRole ?? getDefaultTeamRole(person);
-  const resolvedHourlyRate = hourlyRateOverride ?? (person.commercial
-    ? person.commercial.rateType === "Day rate" ? person.commercial.defaultRate / 8 : person.commercial.defaultRate
-    : undefined);
-  const hourlyRate = resolvedHourlyRate && resolvedHourlyRate > 0 ? resolvedHourlyRate : undefined;
-  const activeHours = person.workloads
-    .filter((workload) => workload.status === "Waiting on Studio")
-    .reduce((total, workload) => total + workload.predictedHours, 0);
-
-  return {
-    id: person.id,
-    name: person.name,
-    initials: getInitials(person.name),
-    personType: person.type === "Team" ? "Studio Staff" : "Studio Freelancer",
-    defaultRole,
-    hourlyRate,
-    bookedHoursThisWeek: activeHours,
-    weeklyCapacityHours: person.weeklyCapacityHours ?? 40,
-    availabilityLabel: person.availability ?? "Available",
-  };
-}
-
-function getDefaultTeamRole(person: Person): TeamRole {
-  const title = person.jobTitles.join(" ").toLocaleLowerCase("en-AU");
-  if (title.includes("producer")) return "producer";
-  if (title.includes("motion")) return "motionDesigner";
-  if (title.includes("animator")) return "animator";
-  if (title.includes("director of photography") || title.includes("shooter")) return "shooter";
-  if (title.includes("director")) return "director";
-  if (title.includes("colour")) return "colourist";
-  if (title.includes("sound")) return "soundDesigner";
-  if (title.includes("vfx")) return "vfxArtist";
-  if (title.includes("editor")) return "editor";
-  return "custom";
-}
-
 function getVisibleTeam(team: RoleSlot[], people: TeamPerson[], access: TeamPanelAccess, viewerPersonId?: string) {
   if (access === "producerAdmin") {
     return team;
@@ -723,13 +682,4 @@ function filterSlotForViewer(slot: RoleSlot, viewerPersonId: string): RoleSlot {
     ...slot,
     invitations: slot.invitations.filter((invitation) => invitation.personId === viewerPersonId || invitation.id === acceptedInvitation?.id),
   };
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
 }

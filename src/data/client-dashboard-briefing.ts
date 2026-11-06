@@ -27,7 +27,7 @@ export function getClientDashboardBriefing({ clientName, studioName, isStudio, h
     title: isStudio ? "Start their first video" : "Start your first video",
     body: isStudio ? !hasInvitation
       ? [`${clientName} hasn't been invited yet. You can `, { action: "start", label: "start their first video" },
-        ...(canInviteClient ? [" yourself, or ", { action: "invite", label: `invite ${clientName}` }, " to complete the Brief."] satisfies ClientDashboardBriefingPart[] : ["."])]
+        ...(canInviteClient ? [" yourself, or ", { action: "invite", label: `invite ${clientName}` }, " to start a video and complete a Brief themselves."] satisfies ClientDashboardBriefingPart[] : ["."])]
       : [{ action: "start", label: `Start a video for ${clientName}` }, ". We'll guide you through the Brief."]
       : [{ action: "start", label: "Give your video a name" }, ", then we'll guide you through the Brief."],
   };

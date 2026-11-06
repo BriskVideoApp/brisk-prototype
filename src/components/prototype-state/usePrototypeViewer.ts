@@ -19,8 +19,17 @@ export function getPrototypeFreelancerViewer(workspaceId: string, participantNam
     workspaceId, clientId: null, personId: person.id, chatUserId: id };
 }
 
+// The naming route has no project or portal path from which to recover the simulated account.
+export function useClientNamingContextKey() {
+  const { selectedAccessLevel } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
+  const { state } = usePrototypeState();
+  return `brisk-client-naming-viewer:${state.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}:${selectedAccessLevel}`;
+}
+
 export function usePrototypeViewer(): PrototypeViewer | null {
   const pathname = usePathname();
+  const namingContextKey = useClientNamingContextKey();
   const { selectedRole, projectRolePreview } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
   const { state } = usePrototypeState();
@@ -51,7 +60,14 @@ export function usePrototypeViewer(): PrototypeViewer | null {
         activeScenario?.accessRole === "Studio Freelancer" ? activeScenario.participantName : undefined);
       return freelancer ? { ...freelancer, testPreviewProjectId } : null;
     }
-    const clientId = routedClientId ?? contextualProject?.clientId ?? activeScenario?.clientId ?? state.session.activeClientId ?? "loom";
+    const namingUserId = pathname === "/customer-dashboard/start-video" && typeof window !== "undefined"
+      ? window.sessionStorage.getItem(namingContextKey) : null;
+    const namingUser = namingUserId ? state.users.find((user) => user.role === "Client"
+      && user.id === namingUserId && user.workspaceId === workspaceId) : undefined;
+    if (namingUserId && !namingUser) return null;
+    const clientId = namingUser?.clientId ?? routedClientId ?? contextualProject?.clientId ?? activeScenario?.clientId ?? state.session.activeClientId
+      ?? (pathname === "/customer-dashboard/start-video" ? null : "loom");
+    if (!clientId) return null;
     const projectMemberIds = contextualProject?.clientMemberIds ?? [];
     const clientUsers = state.users.filter((candidate) => candidate.role === "Client"
       && candidate.clientId === clientId && candidate.workspaceId === workspaceId);
@@ -62,12 +78,12 @@ export function usePrototypeViewer(): PrototypeViewer | null {
         && invitation.userId === candidate.id
         && invitation.projectIds.includes(contextualProject?.id ?? "")
         && invitation.status !== "Expired"));
-    const user = projectMember
+    const user = namingUser ?? projectMember
       ?? clientUsers.find((candidate) => candidate.name === activeScenario?.participantName || candidate.name === "Jess Taylor")
       ?? clientUsers[0];
     const client = state.clients.find((candidate) => candidate.id === clientId && candidate.workspaceId === workspaceId);
     const previewContact = testPreviewProjectId ? client?.contacts.find((contact) => contact.id === client.primaryContactId) ?? client?.contacts[0] : undefined;
     const identity = user ?? previewContact;
     return identity ? { role: selectedRole, id: identity.id, name: identity.name, email: identity.email, workspaceId, clientId, personId: null, chatUserId: identity.email === "jess@loom.com" ? "user-jess" : identity.id, testPreviewProjectId } : null;
-  }, [activeScenario?.accessRole, activeScenario?.clientId, activeScenario?.participantName, pathname, selectedRole, projectRolePreview, state.clients, state.invitations, state.projects, state.session.activeClientId, state.session.activeUserId, state.session.activeWorkspaceId, state.users]);
+  }, [namingContextKey, activeScenario?.accessRole, activeScenario?.clientId, activeScenario?.participantName, pathname, selectedRole, projectRolePreview, state.clients, state.invitations, state.projects, state.session.activeClientId, state.session.activeUserId, state.session.activeWorkspaceId, state.users]);
 }
